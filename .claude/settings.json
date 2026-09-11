@@ -1,0 +1,16 @@
+{
+  "enabledMcpjsonServers": ["playwright", "chrome-devtools"],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/block-python-edit.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

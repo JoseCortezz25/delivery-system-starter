@@ -43,6 +43,7 @@ Organized by asset type:
 - `library/videos/` — brand videos.
 - `library/icons/` — icon sets.
 - `library/sounds/` — sound assets.
+- `library/fonts/` — brand typeface files.
 
 ### `content/` — Content generation primitive
 
@@ -64,6 +65,12 @@ output that lands in `content/`.
 ## Non-negotiable rules
 
 See `RULES.md` for the full set of general technical rules the AI must follow in this project.
+
+## Skills
+
+| Skill | Purpose |
+|---|---|
+| `codex-render-pipeline` | Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use any time a piece needs to be rendered to an image file or an image needs to be resized — call these scripts instead of writing new rendering or resizing code from scratch. |
 
 ## Key terms
 
