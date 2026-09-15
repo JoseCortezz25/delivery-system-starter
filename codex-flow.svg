@@ -1,0 +1,79 @@
+<svg viewBox="0 0 1000 640" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333333"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1000" height="640" fill="#ffffff"/>
+
+  <!-- Stage labels -->
+  <text x="30" y="30" font-size="14" font-weight="700" fill="#888888" letter-spacing="1">1. SETUP — ESTABLISH THE SOURCE OF TRUTH</text>
+  <text x="30" y="210" font-size="14" font-weight="700" fill="#888888" letter-spacing="1">2. BUILD THE KNOWLEDGE (insumos + specs)</text>
+  <text x="30" y="410" font-size="14" font-weight="700" fill="#888888" letter-spacing="1">3. EXECUTION</text>
+
+  <!-- Stage 1: brand docs -> foundations -->
+  <rect x="30" y="50" width="220" height="90" rx="10" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
+  <text x="140" y="85" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">Brand documents</text>
+  <text x="140" y="106" font-size="12" text-anchor="middle" fill="#555555">brandbook, PDFs, notes —</text>
+  <text x="140" y="122" font-size="12" text-anchor="middle" fill="#555555">whatever already exists</text>
+
+  <line x1="250" y1="95" x2="378" y2="95" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="314" y="86" font-size="12" text-anchor="middle" fill="#555555">tokenize</text>
+
+  <rect x="380" y="50" width="220" height="90" rx="10" fill="#e8f0fe" stroke="#3366cc" stroke-width="2"/>
+  <text x="490" y="85" font-size="15" font-weight="700" text-anchor="middle" fill="#1a3d8f">foundations/</text>
+  <text x="490" y="106" font-size="12" text-anchor="middle" fill="#33508f">the brand's source of truth —</text>
+  <text x="490" y="122" font-size="12" text-anchor="middle" fill="#33508f">resolved once, shared by all</text>
+
+  <!-- Stage 2: library + frameworks -->
+  <rect x="30" y="230" width="220" height="90" rx="10" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
+  <text x="140" y="265" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">library/</text>
+  <text x="140" y="286" font-size="12" text-anchor="middle" fill="#555555">insumos — logos, photos,</text>
+  <text x="140" y="302" font-size="12" text-anchor="middle" fill="#555555">video, icons, sounds, fonts</text>
+
+  <rect x="380" y="230" width="220" height="90" rx="10" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
+  <text x="490" y="265" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">frameworks/</text>
+  <text x="490" y="286" font-size="12" text-anchor="middle" fill="#555555">one spec per framework —</text>
+  <text x="490" y="302" font-size="12" text-anchor="middle" fill="#555555">slots, variants, measurements</text>
+
+  <!-- foundations -> frameworks -->
+  <line x1="490" y1="140" x2="490" y2="228" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="500" y="188" font-size="11" fill="#555555">color roles, tone, type</text>
+
+  <!-- library -> frameworks (references by name) -->
+  <line x1="250" y1="275" x2="378" y2="275" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="314" y="266" font-size="11" text-anchor="middle" fill="#555555">referenced by name</text>
+
+  <!-- knowledge/ side box -->
+  <rect x="700" y="240" width="220" height="70" rx="10" fill="#ffffff" stroke="#bbbbbb" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <text x="810" y="268" font-size="14" font-weight="700" text-anchor="middle" fill="#555555">knowledge/</text>
+  <text x="810" y="286" font-size="11" text-anchor="middle" fill="#777777">brand-specific learnings —</text>
+  <text x="810" y="300" font-size="11" text-anchor="middle" fill="#777777">read throughout, any stage</text>
+
+  <!-- Stage 3: engine -> content -->
+  <line x1="490" y1="320" x2="490" y2="408" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="250" y1="300" x2="250" y2="360" stroke="#333333" stroke-width="1.5"/>
+  <line x1="250" y1="360" x2="410" y2="360" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="380" y="410" width="220" height="90" rx="10" fill="#fdece8" stroke="#cc4c33" stroke-width="2"/>
+  <text x="490" y="445" font-size="15" font-weight="700" text-anchor="middle" fill="#8f2f1a">engine/</text>
+  <text x="490" y="466" font-size="12" text-anchor="middle" fill="#8f4433">reads foundations + library +</text>
+  <text x="490" y="482" font-size="12" text-anchor="middle" fill="#8f4433">frameworks, generates a piece</text>
+
+  <line x1="600" y1="455" x2="728" y2="455" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="730" y="410" width="220" height="90" rx="10" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
+  <text x="840" y="445" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">content/</text>
+  <text x="840" y="466" font-size="12" text-anchor="middle" fill="#555555">final pieces, numbered</text>
+  <text x="840" y="482" font-size="12" text-anchor="middle" fill="#555555">per project/campaign</text>
+
+  <!-- content -> references -->
+  <line x1="840" y1="500" x2="840" y2="540" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="850" y="525" font-size="11" fill="#555555">approved pieces</text>
+
+  <rect x="730" y="550" width="220" height="70" rx="10" fill="#ffffff" stroke="#bbbbbb" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <text x="840" y="578" font-size="14" font-weight="700" text-anchor="middle" fill="#555555">references/</text>
+  <text x="840" y="596" font-size="11" text-anchor="middle" fill="#777777">visual index for quick lookup</text>
+  <text x="840" y="610" font-size="11" text-anchor="middle" fill="#777777">— not a primitive, not the engine</text>
+</svg>

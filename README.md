@@ -25,6 +25,10 @@ por una a mano.
 3. **Engine** — el motor que lee esos documentos y genera las piezas reales. Se construye después de
    que foundations y frameworks ya están documentados, nunca antes.
 
+## El flujo completo
+
+![Flujo de Codex: setup → construir el conocimiento → ejecución](./codex-flow.svg)
+
 ## Qué hay en este proyecto
 
 | Carpeta        | Qué guarda                                                                     |
