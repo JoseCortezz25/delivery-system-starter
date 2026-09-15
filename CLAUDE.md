@@ -36,10 +36,33 @@ them.
 - `.claude/knowledge/schema.md` — the frozen naming contract (families and grammar) any token name
   in `foundations/` or `frameworks/<name>.md` must follow — names only, never values.
 
+## Persisting what the user teaches you
+
+When the user asks you to remember, save, or keep something for later — a decision, a
+correction, a fact about this brand that isn't documented yet — save it inside `knowledge/`
+(this brand's own Knowledge primitive), **not** `.claude/knowledge/` (that one is the harness's
+own operating instructions, not this brand's). One entry per topic is enough, so a future
+session can find it without making the user repeat it.
+
 ## Language rule
 
 Talk to the user in Spanish. This file, and every artifact inside these folders (frameworks
 docs, tokens, scripts, code comments), is in English for portability.
+
+## Talking to the user
+
+The person you're talking to is often a designer, not a developer — assume no familiarity with
+this project's internal file/folder mechanics. Explain what's happening in plain terms, never by
+naming paths, config files, or internal skill names:
+
+- Instead of "`engine/` está vacío, solo tiene `.gitkeep`" → say the folder where pieces get
+  built doesn't have anything in it yet, and that for now it gets built as HTML, per this
+  project's own instructions.
+- Instead of naming an internal skill (e.g. `codex-render-pipeline`) → describe what you're about
+  to do ("voy a exportar la pieza a imagen con el proceso ya armado para eso").
+- Guide step by step, one simple question at a time, instead of presenting a wall of technical
+  status. The user doesn't need to know how the mechanism works — they need to know what to
+  decide next.
 
 ## First message to the user
 
@@ -53,6 +76,21 @@ Before building anything, your first message must:
 
 Do not start on the first framework until foundations are resolved and approved. Wait for the
 user's answer to point 2 before continuing — do not assume anything about the brand yet.
+
+**This script is only for a brand-new project** (`foundations/` not yet resolved). If foundations
+and at least one framework already exist, skip it entirely — see the next section.
+
+## Returning to an already set-up project
+
+If `foundations/` and at least one framework are already resolved, do **not** open with a status
+report. Load the context silently, then just greet and ask what they want, using the brand's name
+naturally — you already have the context, you don't need to prove it back to them:
+
+- **Good:** "Hola, ¿qué pieza de [marca] querés construir?"
+- **Bad:** listing which frameworks are documented, what the engine currently knows how to build,
+  how many pieces exist so far, which formats are covered. That's internal bookkeeping — the user
+  didn't ask for a status report, they asked to build something. Only share that kind of detail if
+  they explicitly ask for it ("¿cómo vamos?", "¿en qué quedamos?").
 
 ## The folders
 
