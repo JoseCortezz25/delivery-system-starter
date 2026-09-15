@@ -33,6 +33,8 @@ them.
   with a real browser, the text-fit loop, one browser per batch).
 - `.claude/knowledge/structure-and-assets.md` — the canonical folder tree, where each asset goes,
   the non-redundancy rule between documents, and the new-project startup checklist.
+- `.claude/knowledge/schema.md` — the frozen naming contract (families and grammar) any token name
+  in `foundations/` or `frameworks/<name>.md` must follow — names only, never values.
 
 ## Language rule
 
