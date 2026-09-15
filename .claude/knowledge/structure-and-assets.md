@@ -22,7 +22,8 @@ project/
 │   │   └── <size>/               # final pieces of that delivery, by size
 │   └── <N+1>-<project-name>/
 ├── references/                   # approved-output index — thumbnails/montages for quick lookup
-│   └── <framework>-montage.jpg
+│   └── <framework>/               # one or more reference images per framework — one per size
+│       └── <size>[-<variant>].jpg  # and/or content type is common, not a single combined file
 ├── knowledge/                    # Knowledge primitive — brand-specific facts, not an asset library
 └── engine/                       # rendering engine — scripts that build the pieces
 ```
@@ -69,4 +70,5 @@ the exception, not the norm.
 - [ ] For every approved framework: `frameworks/<name>.md` exists, with every category resolved
       and no gaps for at least its first size
 - [ ] `content/` has a numbered folder for this project/campaign — never a reused one
-- [ ] `references/` has at least one montage per approved framework
+- [ ] `references/<framework>/` has at least one reference image per approved framework — a
+      single combined montage is not required, one image per size/variant is the common case
