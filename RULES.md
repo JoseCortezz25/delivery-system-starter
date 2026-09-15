@@ -35,3 +35,8 @@ belongs inside each `frameworks/<name>.md` document itself.
    that size's row; the folder structure itself lives in
    `.claude/knowledge/structure-and-assets.md`. Assets always live in `library/`, organized by
    type — never duplicated, never moved into a framework-specific folder.
+9. **Construction is HTML — never SVG.** SVG was tried and failed: "El SVG no sirvió: movía
+   textos y posiciones, no es manipulable, no incrusta imágenes bien, no vale para piezas
+   completas ni video." Every engine in this project renders a piece as HTML and exports it to a
+   raster image (see `.claude/knowledge/engine-principles.md`) — never by manipulating an SVG
+   template directly, no matter how the original brand's legacy tooling worked.

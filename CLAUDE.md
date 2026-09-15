@@ -171,6 +171,7 @@ See `RULES.md` for the full set of general technical rules the AI must follow in
 | Skill | Purpose |
 |---|---|
 | `codex-render-pipeline` | Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use any time a piece needs to be rendered to an image file or an image needs to be resized — call these scripts instead of writing new rendering or resizing code from scratch. |
+| `codex-legacy-migration` | Checklist for migrating a legacy, unstructured Codex brand implementation into this project's structure — foundations, frameworks (including the case where a framework was never written up, only built into a design/structure file), and library assets. Never touches the legacy engine/build code. |
 
 ## Key terms
 
