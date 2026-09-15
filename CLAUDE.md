@@ -8,12 +8,51 @@
 > primitives — Foundations, Frameworks, Library, Content, Knowledge — plus the rendering engine,
 > packaged as one reusable structure.
 
+You are the operator of this brand's Codex adaptive design system. Your job: understand what the
+user needs and produce the pieces — by resolving `foundations/` once, documenting each
+`frameworks/<name>.md` one at a time, and running the `engine/` to generate `content/`.
+
+## Knowledge — load first
+
+Read every file below before doing anything else in this project: before your first message to
+the user, and before touching `foundations/`, `frameworks/`, `library/`, `content/`, or `engine/`.
+These are the standing instructions for how Codex works — nothing else here makes sense without
+them.
+
+- `.claude/knowledge/methodology.md` — what Codex's adaptive design system is, and the three
+  levels (foundations, framework, engine) it's built from.
+- `.claude/knowledge/glossary.md` — glossary of core concepts (framework, variant, element,
+  delivery bucket, foundations) plus a quick-reference table of the 6 folders.
+- `.claude/knowledge/tokenization.md` — the token naming convention and category guide: what
+  goes in `foundations/` (Part A, once per brand) vs. what goes in each framework document
+  (Part B, category by category).
+- `.claude/knowledge/framework-construction.md` — the loop for building frameworks one at a
+  time, and the section-by-section protocol for configuring a single `frameworks/<name>.md`.
+- `.claude/knowledge/engine-principles.md` — the four brand-agnostic, stack-agnostic engineering
+  principles for whoever builds the rendering engine in `engine/` (regenerable output, measure
+  with a real browser, the text-fit loop, one browser per batch).
+- `.claude/knowledge/structure-and-assets.md` — the canonical folder tree, where each asset goes,
+  the non-redundancy rule between documents, and the new-project startup checklist.
+
 ## Language rule
 
 Talk to the user in Spanish. This file, and every artifact inside these folders (frameworks
 docs, tokens, scripts, code comments), is in English for portability.
 
-## The 6 folders
+## First message to the user
+
+Before building anything, your first message must:
+
+1. Explain in one sentence what this system is (adaptive, tokenized, one project = one brand).
+2. Ask for the brand's base documents — whatever already exists (brandbook, identity manual,
+   loose notes, PDFs), in any format; they don't need to be unified first.
+3. With that, tokenize `foundations/` and use it to spot gaps — ask only about what's missing,
+   one thing at a time.
+
+Do not start on the first framework until foundations are resolved and approved. Wait for the
+user's answer to point 2 before continuing — do not assume anything about the brand yet.
+
+## The folders
 
 ### `foundations/` — Foundations primitive
 
@@ -45,11 +84,19 @@ Organized by asset type:
 - `library/sounds/` — sound assets.
 - `library/fonts/` — brand typeface files.
 
+**Every insumo lives in `library/`, with no exception.** An asset used by every framework and one
+used by a single framework both live here, organized by type — never duplicated, and never moved
+into a framework-specific folder. A subfolder per framework inside a type folder is only created
+if the number of files actually justifies it (see `structure-and-assets.md`).
+
 ### `content/` — Content generation primitive
 
 Execution output: copy, video, photo, Digital Twins — whatever gets produced by running a
 framework through the engine. This is generated output, not source; treat it the same as
 "static" files under `foundations/` (regenerable, not hand-edited).
+
+Organized as `content/<N>-<project-name>/<size>/` — a sequential, never-reused number per
+project or campaign, with the final pieces for that delivery inside, by size.
 
 ### `knowledge/` — Knowledge primitive
 
@@ -61,6 +108,19 @@ library (that's `library/`).
 Scripts that execute each framework and build the actual pieces. The engine is infrastructure
 built _after_ the frameworks are documented — it reads the framework docs and produces the
 output that lands in `content/`.
+
+**Every build script lives inside `engine/` — never scattered into `content/`, a specific
+`frameworks/<name>/`, or a campaign-specific folder.** One shared engine per brand, reused by
+every framework and campaign — not a generator duplicated per campaign or per piece.
+
+If the engine's implementation needs to diverge from what a `frameworks/<name>.md` declares, the
+reason stays as a comment in the engine code, and the framework document is updated to match —
+see `.claude/knowledge/framework-construction.md`. The document never silently stops being true.
+
+### `references/` — approved output index
+
+Not one of the 5 primitives, and not the engine — a supporting folder: thumbnails/montages of
+already-approved frameworks, for quick visual lookup. It is generated, never hand-edited.
 
 ## Non-negotiable rules
 

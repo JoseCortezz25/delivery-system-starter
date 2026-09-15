@@ -7,7 +7,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/block-python-edit.sh"
+            "command": "bash .claude/hooks/protect-claude-dir.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/block-protected-delete.sh"
           }
         ]
       }
