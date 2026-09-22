@@ -5,7 +5,7 @@
 > creative can be generated as HTML and exported to PNG/JPEG, without hand-diagramming each one.
 >
 > This folder documents the standard layout every brand project should adopt: Codex's core
-> primitives — Foundations, Frameworks, Library, Content, Knowledge — plus the rendering engine,
+> primitives — Foundations, Frameworks, Resources, Content, Knowledge — plus the rendering engine,
 > packaged as one reusable structure.
 
 You are the operator of this brand's Codex adaptive design system. Your job: understand what the
@@ -15,7 +15,7 @@ user needs and produce the pieces — by resolving `foundations/` once, document
 ## Knowledge — load first
 
 Read every file below before doing anything else in this project: before your first message to
-the user, and before touching `foundations/`, `frameworks/`, `library/`, `content/`, or `engine/`.
+the user, and before touching `foundations/`, `frameworks/`, `resources/`, `content/`, or `engine/`.
 These are the standing instructions for how Codex works — nothing else here makes sense without
 them.
 
@@ -32,9 +32,14 @@ them.
   principles for whoever builds the rendering engine in `engine/` (regenerable output, measure
   with a real browser, the text-fit loop, one browser per batch).
 - `.claude/knowledge/structure-and-assets.md` — the canonical folder tree, where each asset goes,
-  the non-redundancy rule between documents, and the new-project startup checklist.
+  the non-redundancy rule between documents, and the Setup completeness checklist.
 - `.claude/knowledge/schema.md` — the frozen naming contract (families and grammar) any token name
   in `foundations/` or `frameworks/<name>.md` must follow — names only, never values.
+
+Then, if this project already has foundations, read `foundations/BRAND.md` (the brand's
+foundations index) before any other foundations file, and load only the foundations files the
+task needs. No `BRAND.md` means a brand-new project (or one from before the index existed — create
+it from the files that exist).
 
 ## Persisting what the user teaches you
 
@@ -64,27 +69,29 @@ naming paths, config files, or internal skill names:
   status. The user doesn't need to know how the mechanism works — they need to know what to
   decide next.
 
-## First message to the user
+## Workflow: Setup and Execution
 
-Before building anything, your first message must:
+Every session runs in one of two stages. The full procedure lives in the `codex-workflow` skill —
+load it at the start of every session and whenever deciding what to do next.
 
-1. Explain in one sentence what this system is (adaptive, tokenized, one project = one brand).
-2. Ask for the brand's base documents — whatever already exists (brandbook, identity manual,
-   loose notes, PDFs), in any format; they don't need to be unified first.
-3. With that, tokenize `foundations/` and use it to spot gaps — ask only about what's missing,
-   one thing at a time.
+1. **Setup** — whenever the brand's knowledge is incomplete, not only when the project is empty
+   (no foundations; foundations but no frameworks; frameworks but missing logos/fonts/images;
+   foundations with gaps). Silently inspect what exists, tell the user in plain terms what's there
+   and what's missing, ask them to hand over everything they have in any format, organize it into
+   the right folders yourself, ask only about gaps (one at a time, never inventing a value), and
+   keep collecting until the user says they have nothing more. Close Setup with one validation
+   piece built from real foundations and resources, approved by the user. Foundations are resolved
+   and approved before the first framework.
+2. **Execution** — only after Setup is closed (user declared done + validation piece approved), or
+   directly when the brand's knowledge is already complete. Produce pieces from the framework
+   docs through `engine/`, export them, deliver into `content/`. If a request hits something not
+   documented, go back to Setup for that gap only, then return.
 
-Do not start on the first framework until foundations are resolved and approved. Wait for the
-user's answer to point 2 before continuing — do not assume anything about the brand yet.
+Never start Execution while Setup has open gaps relevant to the requested piece.
 
-**This script is only for a brand-new project** (`foundations/` not yet resolved). If foundations
-and at least one framework already exist, skip it entirely — see the next section.
-
-## Returning to an already set-up project
-
-If `foundations/` and at least one framework are already resolved, do **not** open with a status
-report. Load the context silently, then just greet and ask what they want, using the brand's name
-naturally — you already have the context, you don't need to prove it back to them:
+**Returning to a complete project:** do **not** open with a status report. Load the context
+silently, then just greet and ask what they want, using the brand's name naturally — you already
+have the context, you don't need to prove it back to them:
 
 - **Good:** "Hola, ¿qué pieza de [marca] querés construir?"
 - **Bad:** listing which frameworks are documented, what the engine currently knows how to build,
@@ -97,10 +104,31 @@ naturally — you already have the context, you don't need to prove it back to t
 ### `foundations/` — Foundations primitive
 
 Shared brand layer, tokenized once per brand: atoms, atom-components, styles, design tokens,
-typography, components, molecules.
+typography, components, molecules. Split into four single-responsibility files:
 
-- **Editable**: token source files, typography scale, color palette, logo rules, tone/legal docs.
-  These are the ones a person maintains by hand and are the single source of truth.
+- `foundations/COLORS.md` — base palette (`color.palette.*`) plus other brand-wide tokens
+  (`radius.*`, foundation-level `pattern.*` slot names).
+- `foundations/FONTS.md` — typography inventory, references to the files in `resources/fonts/`,
+  and brand-wide typography usage rules (per-element assignment stays in each framework).
+- `foundations/LOGOS.md` — references to the files in `resources/logos/` and the logo usage rules
+  the user defines (primary/secondary, light/dark background, clear-space) — never invented.
+- `foundations/COPYS.md` — how the brand communicates: tone, voice, do/don't, prohibited claims,
+  legal boundaries.
+
+Plus one index, `foundations/BRAND.md` — **read it first**: brand name and short description, the
+status and a one-line summary of each of the four files, open gaps, and which `resources/`
+folders hold the brand's files. It only summarizes and points; it never restates a value.
+
+None of them exists in the empty template. Each of the four is created during Setup the first time
+the user gives information for its scope, and grows by scope as the conversation goes; a missing
+file is a Setup gap. They share one format — a machine-readable token block followed by usage
+rules, defined in `.claude/knowledge/tokenization.md` Part A — because frameworks and the
+`engine/` scripts consume them directly. `BRAND.md` is the one exception (no token block, not
+parsed by the engine): it's created at the start of Setup, with the first foundations file, and
+updated every time any of the four is created or changes — shape defined in the same Part A.
+
+- **Editable**: those five files. They are maintained by hand (by the agent, with the user); the
+  four scoped files are the single source of truth, and `BRAND.md` indexes them.
 - **Static**: anything generated FROM those tokens (compiled style sheets, exported swatches,
   rendered component previews). Never hand-edit static output — regenerate it from the editable
   source instead.
@@ -112,19 +140,19 @@ documents intent, channels, color roles, image mode, variants, elements (dynamic
 scaling, and exact measurements per size. A slot receives an atom or a molecule from
 `foundations/`.
 
-### `library/` — Insumos primitive (Librería de insumos)
+### `resources/` — Resources primitive (insumos)
 
-Brand asset library: logos, brand images, brand videos, sounds, and any other raw brand asset.
-Organized by asset type:
+Raw brand assets (insumos): logos, brand images, brand videos, sounds, and any other raw brand
+asset. Organized by asset type:
 
-- `library/logos/` — brand logo files (all variants: full, mark-only, light/dark, etc.).
-- `library/images/` — brand images / photos.
-- `library/videos/` — brand videos.
-- `library/icons/` — icon sets.
-- `library/sounds/` — sound assets.
-- `library/fonts/` — brand typeface files.
+- `resources/logos/` — brand logo files (all variants: full, mark-only, light/dark, etc.).
+- `resources/images/` — brand images / photos.
+- `resources/videos/` — brand videos.
+- `resources/icons/` — icon sets.
+- `resources/sounds/` — sound assets.
+- `resources/fonts/` — brand typeface files.
 
-**Every insumo lives in `library/`, with no exception.** An asset used by every framework and one
+**Every insumo lives in `resources/`, with no exception.** An asset used by every framework and one
 used by a single framework both live here, organized by type — never duplicated, and never moved
 into a framework-specific folder. A subfolder per framework inside a type folder is only created
 if the number of files actually justifies it (see `structure-and-assets.md`).
@@ -140,8 +168,8 @@ project or campaign, with the final pieces for that delivery inside, by size.
 
 ### `knowledge/` — Knowledge primitive
 
-Brand-specific knowledge, learnings, and topics particular to this brand — **not** an asset
-library (that's `library/`).
+Brand-specific knowledge, learnings, and topics particular to this brand — **not** a resource
+store for raw assets (that's `resources/`).
 
 ### `engine/` — Rendering engine
 
@@ -171,7 +199,8 @@ See `RULES.md` for the full set of general technical rules the AI must follow in
 | Skill | Purpose |
 |---|---|
 | `codex-render-pipeline` | Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use any time a piece needs to be rendered to an image file or an image needs to be resized — call these scripts instead of writing new rendering or resizing code from scratch. |
-| `codex-legacy-migration` | Checklist for migrating a legacy, unstructured Codex brand implementation into this project's structure — foundations, frameworks (including the case where a framework was never written up, only built into a design/structure file), and library assets. Never touches the legacy engine/build code. |
+| `codex-legacy-migration` | Checklist for migrating a legacy, unstructured Codex brand implementation into this project's structure — foundations, frameworks (including the case where a framework was never written up, only built into a design/structure file), and resources (raw assets). Never touches the legacy engine/build code. |
+| `codex-workflow` | The mandatory two-stage workflow: Setup (detect and fill gaps in the brand's knowledge, then close with an approved validation piece) and Execution (produce pieces). Use at the start of every session and whenever deciding what to do next. |
 
 ## Key terms
 

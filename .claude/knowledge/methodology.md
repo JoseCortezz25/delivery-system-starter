@@ -20,7 +20,8 @@ specification: a `frameworks/<name>.md` document (see `glossary.md` and the root
 
 The one thing that IS truly cross-cutting — and is therefore resolved once, before touching any
 framework — is the **brand foundations**: the identity that doesn't change no matter which
-framework is being built. See `foundations/`.
+framework is being built. See `foundations/` — `COLORS.md`, `FONTS.md`, `LOGOS.md`, `COPYS.md`,
+indexed by `BRAND.md` (all defined in `tokenization.md` Part A).
 
 ## The three levels
 

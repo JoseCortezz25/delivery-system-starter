@@ -8,7 +8,7 @@
 | **Variant** | A variation of components over the SAME composition — never a different layout | "Offer" variant (with price) vs. "Invitation" variant (message only), on the same structure; or "berry" vs. "mango" variant (same layout, different color/product) |
 | **Element** | Each piece that makes up a framework — text, image, shape, or empty space — whether dynamic or fixed | Headline (dynamic), logo (fixed), platform CTA zone (fixed, empty) |
 | **Delivery bucket** | A group of sizes requested together because they go to the same channel | "Social" (9:16, 1:1) vs. "Display" (banners of several sizes) |
-| **Foundations** | The only thing truly shared across all of this brand's frameworks | base palette, logo, base typography, tone, legal |
+| **Foundations** | The only thing truly shared across all of this brand's frameworks — four files: `COLORS.md`, `FONTS.md`, `LOGOS.md`, `COPYS.md`, indexed by `BRAND.md` (read first) | base palette, logo, base typography, tone, legal |
 | **Slot / hueco** | The position inside a framework where an atom or molecule goes | the headline slot, the logo slot |
 | **Atom / molecule / component** | Atom is the smallest unit; a molecule can contain several atoms and/or molecules | a color swatch (atom), a price tag combining a number + a label (molecule) |
 | **Adaptive design** | The same framework (piece) reflowed into different formats (1:1, 9:16, 16:9, etc.) and channels, without changing its identity — only its slots' sizes, positions, and text scaling adapt per format | one framework rendered at 1:1 and at 9:16 |
@@ -20,11 +20,11 @@ Quick reference — see the root `CLAUDE.md` for the full description of each fo
 
 | Folder | Primitive | Meaning |
 |---|---|---|
-| `foundations/` | Foundations | Shared brand layer, tokenized once per brand: palette, typography, logo, tone, legal. |
+| `foundations/` | Foundations | Shared brand layer, tokenized once per brand, in four files: `COLORS.md` (palette), `FONTS.md` (typography), `LOGOS.md` (logo), `COPYS.md` (tone, legal) — plus `BRAND.md`, the index/summary read first. |
 | `frameworks/` | Frameworks | One document per framework (`frameworks/<name>.md`): slots, intent, variants, measurements. |
-| `library/` | Librería de insumos | Raw brand assets: logos, images, videos, icons, sounds, fonts. |
+| `resources/` | Recursos (insumos) | Raw brand assets: logos, images, videos, icons, sounds, fonts. |
 | `content/` | Content generation | Generated output — copy, video, photo, Digital Twins — produced by running a framework through the engine. |
-| `knowledge/` | Knowledge | Brand-specific knowledge and learnings (not an asset library). |
+| `knowledge/` | Knowledge | Brand-specific knowledge and learnings (not a resource store — raw assets live in `resources/`). |
 | `engine/` | Rendering engine | Scripts that read the framework docs and produce the pieces that land in `content/`. |
 
 Note: this file lives under `.claude/knowledge/` — harness-level knowledge about how Codex itself

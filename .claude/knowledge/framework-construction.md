@@ -4,8 +4,9 @@ This covers two levels in one place: **the loop across frameworks** (the order t
 one after another) and **the protocol for configuring a single one** (the detail of step 2 of
 the loop). There isn't a separate document for each level.
 
-Precondition: foundations resolved (see `tokenization.md` — Part A, with no gaps). If anything is
-missing there, no framework is started.
+Precondition: foundations resolved (see `tokenization.md` — Part A: `foundations/COLORS.md`,
+`FONTS.md`, `LOGOS.md`, `COPYS.md`, with no gaps — `foundations/BRAND.md` shows their status and
+open gaps at a glance). If anything is missing there, no framework is started.
 
 ## The loop, framework by framework
 
@@ -143,7 +144,8 @@ after, every time reality reveals it was wrong.
 The method's general anti-hallucination rules always apply here too. Two signals specific to
 this loop:
 
-- Copy is being drafted while the brand's tone/legal foundations aren't resolved yet.
+- Copy is being drafted while the brand's tone/legal foundations (`foundations/COPYS.md`) aren't
+  resolved yet.
 - A new size (B6) is being added and it's used as an opportunity to redefine a color role, the
   image mode, or a text rule "just for this size" — those rules belong to the whole framework
   (B1, B2, B5), not to one size; if they truly change per size, that's a special behavior and
