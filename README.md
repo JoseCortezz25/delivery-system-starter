@@ -29,13 +29,29 @@ por una a mano.
 
 ![Flujo de Codex: setup → construir el conocimiento → ejecución](./codex-flow.svg)
 
+El trabajo con el agente pasa siempre por dos etapas:
+
+1. **Setup** — aplica cada vez que el conocimiento de la marca está incompleto, no solo cuando el
+   proyecto está vacío (por ejemplo: hay foundations pero no frameworks, o hay frameworks pero
+   faltan logos o fuentes). El agente revisa qué hay, te cuenta en lenguaje simple qué falta, y te
+   pide todo lo que tengas (brandbook, manuales, PDFs, notas, logos, fotos, videos, íconos,
+   fuentes, links de Figma, piezas de referencia) en cualquier formato, aunque esté desordenado.
+   Él lo organiza, pregunta solo por los huecos —uno a la vez, sin inventar nada— y sigue
+   recibiendo material hasta que digas que no tenés más. Para cerrar, arma una pieza de prueba con
+   los datos reales y te la muestra para aprobación.
+2. **Ejecución** — con el Setup cerrado (o si el proyecto ya estaba completo), el agente produce
+   las piezas: las construye en HTML a partir de los frameworks, las exporta a imagen y las
+   entrega organizadas por proyecto y tamaño. Si en el camino aparece algo que no está documentado
+   (un framework nuevo, un logo que falta, un valor sin definir), vuelve al Setup solo para ese
+   hueco y después sigue.
+
 ## Qué hay en este proyecto
 
 | Carpeta        | Qué guarda                                                                     |
 | -------------- | ------------------------------------------------------------------------------ |
-| `foundations/` | Los tokens de la marca: paleta, tipografía, logo, tono, legal                  |
+| `foundations/` | Los tokens de la marca, en 4 archivos: `COLORS.md` (paleta), `FONTS.md` (tipografía), `LOGOS.md` (uso del logo), `COPYS.md` (tono y legal), más `BRAND.md`, un índice/resumen de la marca que la IA lee primero. Se crean durante el Setup a medida que llega la información |
 | `frameworks/`  | Un documento por framework, con su especificación completa                     |
-| `library/`     | Los insumos crudos de la marca: logos, fotos, videos, íconos, sonidos, fuentes |
+| `resources/`   | Recursos (insumos): logos, fotos, videos, íconos, sonidos, fuentes de la marca |
 | `content/`     | Las piezas ya generadas, organizadas por proyecto/campaña                      |
 | `references/`  | Miniaturas/montajes de frameworks ya aprobados, para consulta visual rápida    |
 | `knowledge/`   | Conocimiento específico de esta marca                                          |

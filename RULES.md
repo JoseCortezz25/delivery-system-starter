@@ -27,16 +27,31 @@ belongs inside each `frameworks/<name>.md` document itself.
    created in the moment.
 6. **Approval before scaling.** The first size's document is shown and approved before adding
    further variants or sizes.
-7. **Distill approved decisions into the project's own `CLAUDE.md` as you go.** As foundations and
-   frameworks get approved, that context should be reflected there — so a future session starts
-   from what was already resolved, instead of re-reading the method package from scratch.
-8. **Each fact lives in exactly one place.** Foundations facts live in `foundations/`;
+7. **Organize what the user provides into the right files as you go — never into the harness.**
+   During Setup, every piece of information is written, by scope, into the file that owns it:
+   the matching `foundations/` file (creating it on first info), `frameworks/<name>.md`,
+   `knowledge/` for brand facts and decisions, and raw assets into `resources/`. Keep
+   `foundations/BRAND.md` updated as the index, so a future session starts from what was already
+   resolved (reading `BRAND.md` first) instead of re-asking. `CLAUDE.md`, `RULES.md` and
+   `.claude/` are the harness — never written to from inside the project (see rule 10).
+8. **Each fact lives in exactly one place.** Foundations facts live in the one `foundations/` file
+   that owns their scope (`COLORS.md`, `FONTS.md`, `LOGOS.md`, `COPYS.md`) — `BRAND.md` only
+   indexes them, never restates a value;
    framework-wide facts live in that framework's document; a single size's measurements live in
    that size's row; the folder structure itself lives in
-   `.claude/knowledge/structure-and-assets.md`. Assets always live in `library/`, organized by
+   `.claude/knowledge/structure-and-assets.md`. Assets always live in `resources/`, organized by
    type — never duplicated, never moved into a framework-specific folder.
 9. **Construction is HTML — never SVG.** SVG was tried and failed: "El SVG no sirvió: movía
    textos y posiciones, no es manipulable, no incrusta imágenes bien, no vale para piezas
    completas ni video." Every engine in this project renders a piece as HTML and exports it to a
    raster image (see `.claude/knowledge/engine-principles.md`) — never by manipulating an SVG
    template directly, no matter how the original brand's legacy tooling worked.
+10. **The harness is read-only; the brand folders are the agent's workspace; base folders are
+    never deleted.** Working inside this project, the AI never creates, edits, deletes, or moves
+    `CLAUDE.md`, `RULES.md`, `.mcp.json`, `.gitignore`, or anything inside `.claude/`. It may
+    freely create and edit the documents inside the project folders (e.g. `foundations/*.md`,
+    `frameworks/<name>.md`, `knowledge/`) and add and organize files inside `resources/`. It
+    never deletes or moves away the base folders (`.claude`, `foundations`, `frameworks`,
+    `resources`, `content`, `knowledge`, `engine`, `references`) or any folder inside them —
+    deleting a single file inside them is fine. Enforced by `.claude/hooks/protect-claude-dir.sh`
+    (edits) and `.claude/hooks/block-protected-delete.sh` (deletions).
