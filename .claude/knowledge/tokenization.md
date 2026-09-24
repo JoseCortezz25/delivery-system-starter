@@ -263,8 +263,8 @@ type:
 | Platform CTA zone | empty space | Fixed | — |
 | Price / discount | text | Dynamic | content variant (B4), offer-type only |
 
-No element of the framework is left off this list — if something appears in the reference
-(Figma or image) and isn't here, it isn't defined yet. This is resolved BEFORE B4 (variants),
+No element of the framework is left off this list — if something appears in any of the
+framework's sources and isn't here, it isn't defined yet. This is resolved BEFORE B4 (variants),
 because variants are described in terms of which elements from this list change.
 
 **This list is also the contract for any bulk copy-delivery mechanism** — spreadsheet, feed, CSV,

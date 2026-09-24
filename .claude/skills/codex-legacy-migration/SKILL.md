@@ -90,7 +90,7 @@ engine is not, per the one rule above.
 migration.** This is the SVG scenario, but it generalizes to any case where a framework was only
 ever built directly into a design/structure file, never written up. Treat that structural source
 (SVG, or an equivalent structured design export) the same way `framework-construction.md` treats
-"Path A: structure in Figma" — it gives you real geometry, not intent. Concretely:
+a structured design file such as Figma — it gives you real geometry, not intent. Concretely:
 
 - Read the structural files as text/XML (viewBox, coordinates, real measurements) to get exact
   geometry — this is a design source, not code, even though it's file-based like the generator is.
