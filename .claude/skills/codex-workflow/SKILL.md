@@ -70,6 +70,7 @@ Place each thing where it belongs, per `.claude/knowledge/structure-and-assets.m
 | Logo usage rules | `foundations/LOGOS.md` | Per Part A (A3); only the rules the user defines — logo files go to `resources/logos/` |
 | Tone, voice, do/don't, prohibited claims, legal | `foundations/COPYS.md` | Per Part A (A4) |
 | Framework material (templates, reference pieces, Figma structures) | `frameworks/<name>.md` | Per `framework-construction.md` — one framework at a time, approved before the next |
+| Figma files or links | Wherever each extracted piece belongs (foundations, frameworks, `resources/`) | Per `.claude/knowledge/figma-extraction.md` — read through the local Figma MCP server, one frame at a time, confirming every mapping |
 | Brand facts, decisions, corrections | `knowledge/` | One entry per topic |
 
 Foundations files are created on first information, not upfront: the first time the user gives
