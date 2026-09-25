@@ -1,5 +1,9 @@
 {
-  "enabledMcpjsonServers": ["playwright", "chrome-devtools"],
+  "enabledMcpjsonServers": [
+    "playwright",
+    "chrome-devtools",
+    "figma-desktop"
+  ],
   "hooks": {
     "PreToolUse": [
       {

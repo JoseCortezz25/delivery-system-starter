@@ -28,8 +28,9 @@ indexed by `BRAND.md` (all defined in `tokenization.md` Part A).
 1. **Foundations (shared, once per brand):** base brand palette, base typography, logo,
    communication tone, legal boundaries. Tokenized at the start of the project, from whatever the
    brand expert provides, with gaps filled in before moving on.
-2. **Framework (configured one at a time, result = a document):** each framework arrives through
-   one of two possible paths — from Figma, or from a reference image + description — and is
+2. **Framework (configured one at a time, result = a document):** each framework is built from
+   every source the brand has for it, combined (reference pieces, descriptions, brandbook, and
+   optionally Figma for more accurate geometry) — and is
    configured in detail, section by section, together with the brand expert. The result is
    **a single document, `frameworks/<name>.md`**: intent, objective, channels, color roles, image
    mode, variants, the complete list of elements (dynamic and fixed), typography and text

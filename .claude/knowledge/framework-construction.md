@@ -41,24 +41,29 @@ defined.
 The names the document uses (roles, elements, tokens) always come from the naming convention in
 `tokenization.md` — a loose name outside those families is never invented.
 
-### 0. Entry point — is there a Figma file or not?
+### 0. Entry point — which sources exist for this framework?
 
-Two possible paths for the first size. Which one applies is asked explicitly — never assumed.
+A framework is built from **every source the brand has for it, combined** — never from a single
+one by default. Ask explicitly what exists; never assume. Typical sources, any mix of them:
 
-- **Path A — there is structure in Figma.** Geometry is extracted directly from the file. The
-  `codex-figma-anatomy` skill can create a generated HTML anatomy snapshot from a selected frame.
-  Even so, what each layer means gets confirmed with the brand expert before writing the canonical
-  framework specification — Figma gives position, not always intent. The HTML snapshot does not
-  replace `frameworks/<name>.md`.
-- **Path B — no Figma, only a reference image + description.** First, figure out what kind of
-  reference it is: a finished example piece (already shows the full layout), or a loose asset
-  (e.g. a cut-out product, with nothing composed around it)? If it's a loose asset, the full
-  composition is NOT in the image — it gets confirmed with the brand expert separately, element
-  by element, for whatever still needs to be composed, not just the asset itself. In both cases:
-  before documenting, do exhaustive work, element by element — list every visual element, confirm
-  with the brand expert what it is, its approximate position, and its behavior. Don't move
-  forward until every element is confirmed — an image can be misread, and that error propagates
-  into everything documented on top of it.
+- **Finished reference pieces** (images, PDFs, past campaigns) — show the full composition.
+- **Loose assets** (e.g. a cut-out product with nothing composed around it) — the composition is
+  NOT in the image; it gets confirmed with the brand expert element by element.
+- **Brandbook / guidelines / descriptions** — give intent and rules the visuals don't show.
+- **Structured design files** (Figma, or an equivalent export such as SVG) — give real geometry
+  and values instead of eyeballed ones. **Figma is optional and complementary**: when it exists,
+  it's read through the local Figma MCP server (see `figma-extraction.md`) to bring in more
+  accurate data. The `codex-figma-anatomy` skill can generate an HTML snapshot from a selected
+  Figma frame; that snapshot supports inspection but never replaces the other sources, the brand
+  expert's confirmation, or the canonical `frameworks/<name>.md` specification — Figma gives
+  position, not always intent.
+
+Whatever the mix: before documenting, do exhaustive work, element by element — list every visual
+element, confirm with the brand expert what it is, its position, and its behavior, using the
+most precise source available for each value (e.g. a measurement from Figma over one estimated
+from an image). If two sources disagree, ask which one wins — never pick silently. Don't move
+forward until every element is confirmed — a source can be misread, and that error propagates
+into everything documented on top of it.
 
 ### 1. Intent, objective, and channels (B0)
 
@@ -79,7 +84,7 @@ transcribe everything at the end:
 1. **Color roles** (B1 of `tokenization.md`).
 2. **Image mode** (B2) and its cropping/framing rules.
 3. **Complete element list** (B3) — EVERYTHING that makes up the framework, dynamic or fixed,
-   drawn from path A or B of step 0. This is resolved before variants, because variants are
+   drawn from the sources gathered in step 0. This is resolved before variants, because variants are
    described in terms of which elements change. This list is also the contract for any
    bulk-copy brief (spreadsheet, feed, etc.) — see the note at the end of B3 in
    `tokenization.md`.
@@ -103,8 +108,7 @@ references them by file name, never duplicates them.
 
 ### 4. Continuous verification
 
-Each section, as it's drafted, is reviewed with the brand expert against the reference (Figma or
-image) — the first review doesn't wait for the whole document to be ready. If something had to
+Each section, as it's drafted, is reviewed with the brand expert against the sources gathered in step 0 — the first review doesn't wait for the whole document to be ready. If something had to
 be assumed because it wasn't confirmed, that gets flagged explicitly to the brand expert — never
 silently, and documentation never continues on top of an unconfirmed assumption. As an
 additional sanity check: B6 measurements must be internally consistent and consistent against
