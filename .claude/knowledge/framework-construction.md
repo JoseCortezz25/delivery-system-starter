@@ -53,8 +53,10 @@ one by default. Ask explicitly what exists; never assume. Typical sources, any m
 - **Structured design files** (Figma, or an equivalent export such as SVG) — give real geometry
   and values instead of eyeballed ones. **Figma is optional and complementary**: when it exists,
   it's read through the local Figma MCP server (see `figma-extraction.md`) to bring in more
-  accurate data, but it never replaces the other sources nor the brand expert's confirmation —
-  it gives position, not always intent.
+  accurate data. The `codex-figma-anatomy` skill can generate an HTML snapshot from a selected
+  Figma frame; that snapshot supports inspection but never replaces the other sources, the brand
+  expert's confirmation, or the canonical `frameworks/<name>.md` specification — Figma gives
+  position, not always intent.
 
 Whatever the mix: before documenting, do exhaustive work, element by element — list every visual
 element, confirm with the brand expert what it is, its position, and its behavior, using the

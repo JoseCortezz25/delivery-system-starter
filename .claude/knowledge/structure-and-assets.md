@@ -14,7 +14,10 @@ project/
 │   ├── LOGOS.md                  # logo file refs + user-defined logo usage rules (A3)
 │   └── COPYS.md                  # tone, voice, do/don't, prohibited claims, legal (A4)
 ├── frameworks/
-│   └── <name>.md                 # one document per framework — full spec: B0-B8, every size it covers
+│   ├── README.md                 # index of canonical framework specs and generated Figma anatomy HTML
+│   ├── <name>.md                 # one canonical document per framework — full spec: B0-B8, every size it covers
+│   └── templates/
+│       └── <name>.html           # generated geometry-only anatomy from a selected Figma frame
 ├── resources/                    # Resources primitive (insumos) — every raw brand asset, by type
 │   ├── logos/
 │   ├── images/
@@ -63,6 +66,7 @@ Each fact lives in exactly one place. Everything else references it, never copie
 | Brand name + short description, and the index/status of the four foundations files (status, one-line summary, open gaps, `resources/` pointers) | `foundations/BRAND.md` | Read first, then the file it points to — it never holds a value or rule itself; the facts live only in the four files above |
 | Intent, objective, channels, color roles, image mode, elements, variants, text scaling (shared by every size of ONE framework) | The matching section of that `frameworks/<name>.md` | Every size row references them by name — never redeclared or repeated |
 | Exact measurements of ONE specific size | That size's row, inside the same `frameworks/<name>.md` | Another size never copies these values — if it shares a ratio with another, that's noted and referenced, not repeated |
+| Generated Figma anatomy snapshot | `frameworks/templates/<name>.html` | Indexed in `frameworks/README.md`; derived from the selected Figma frame and never hand-edited |
 | This folder structure | This document (`structure-and-assets.md`) | `methodology.md` only mentions it and links here |
 
 Before creating a new document or file to note a clarification or adjustment, the required
@@ -96,6 +100,8 @@ for a brand-new project. Any unchecked item relevant to the requested piece is a
       frameworks require — referenced by name, none missing on disk
 - [ ] For every approved framework: `frameworks/<name>.md` exists, with every category resolved
       and no gaps for at least its first size
+- [ ] Figma anatomy HTML, when generated, is stored in `frameworks/templates/` and indexed from
+      `frameworks/README.md`; it does not replace the canonical framework specification
 - [ ] Brand-specific facts the user has taught (decisions, corrections) are recorded in
       `knowledge/`
 
