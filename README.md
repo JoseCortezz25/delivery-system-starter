@@ -21,7 +21,8 @@ por una a mano.
    legales. Se resuelve una sola vez, al principio de cada marca.
 2. **Frameworks** — cada estructura visual reutilizable (ej. "producto + logo + texto abajo") se
    documenta en detalle: qué elementos tiene, cómo se comporta el texto largo, las medidas exactas de
-   cada tamaño que cubre. Un framework, un documento.
+   cada tamaño que cubre. Un framework, una especificación canónica; la anatomía geométrica extraída
+   de Figma puede acompañarla como HTML generado.
 3. **Engine** — el motor que lee esos documentos y genera las piezas reales. Se construye después de
    que foundations y frameworks ya están documentados, nunca antes.
 
@@ -50,7 +51,7 @@ El trabajo con el agente pasa siempre por dos etapas:
 | Carpeta        | Qué guarda                                                                     |
 | -------------- | ------------------------------------------------------------------------------ |
 | `foundations/` | Los tokens de la marca, en 4 archivos: `COLORS.md` (paleta), `FONTS.md` (tipografía), `LOGOS.md` (uso del logo), `COPYS.md` (tono y legal), más `BRAND.md`, un índice/resumen de la marca que la IA lee primero. Se crean durante el Setup a medida que llega la información |
-| `frameworks/`  | Un documento por framework, con su especificación completa                     |
+| `frameworks/`  | Una especificación canónica por framework; anatomías HTML de Figma en `templates/`, indexadas en `frameworks/README.md` |
 | `resources/`   | Recursos (insumos): logos, fotos, videos, íconos, sonidos, fuentes de la marca |
 | `content/`     | Las piezas ya generadas, organizadas por proyecto/campaña                      |
 | `references/`  | Miniaturas/montajes de frameworks ya aprobados, para consulta visual rápida    |
@@ -59,8 +60,9 @@ El trabajo con el agente pasa siempre por dos etapas:
 
 ## Cómo se opera esto
 
-Este proyecto está pensado para trabajarse junto a un agente de IA que sigue las instrucciones de
-`CLAUDE.md` y las reglas de `RULES.md`. Un humano aporta el criterio de marca (brandbook,
+Este proyecto está pensado para trabajarse junto a un agente de IA. Claude Code sigue las
+instrucciones de `CLAUDE.md`; OpenCode entra por `AGENTS.md`, que le indica cargar esas mismas
+reglas y las de `RULES.md`. Un humano aporta el criterio de marca (brandbook,
 aprobaciones, copy); la IA tokeniza, documenta cada framework, y genera las piezas — siempre
 preguntando antes de inventar un valor, y pidiendo aprobación antes de escalar a más variantes o
 tamaños. El detalle completo de cómo opera la IA vive en `.claude/knowledge/`.

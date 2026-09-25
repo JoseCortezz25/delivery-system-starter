@@ -135,10 +135,12 @@ updated every time any of the four is created or changes — shape defined in th
 
 ### `frameworks/` — Frameworks primitive
 
-Template system: slots/huecos, one document per framework. Each `frameworks/<name>.md`
+Template system: slots/huecos, one canonical specification per framework. Each `frameworks/<name>.md`
 documents intent, channels, color roles, image mode, variants, elements (dynamic + fixed), text
-scaling, and exact measurements per size. A slot receives an atom or a molecule from
-`foundations/`.
+scaling, and exact measurements per size. A generated, geometry-only Figma anatomy HTML may also
+live in `frameworks/templates/`; it supports inspection and downstream tooling but does not replace
+the Markdown specification. The index is `frameworks/README.md`. A slot receives an atom or a
+molecule from `foundations/`.
 
 ### `resources/` — Resources primitive (insumos)
 
@@ -200,6 +202,7 @@ See `RULES.md` for the full set of general technical rules the AI must follow in
 |---|---|
 | `codex-render-pipeline` | Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use any time a piece needs to be rendered to an image file or an image needs to be resized — call these scripts instead of writing new rendering or resizing code from scratch. |
 | `codex-legacy-migration` | Checklist for migrating a legacy, unstructured Codex brand implementation into this project's structure — foundations, frameworks (including the case where a framework was never written up, only built into a design/structure file), and resources (raw assets). Never touches the legacy engine/build code. |
+| `codex-figma-anatomy` | Extract a selected Figma frame's visible geometry and original copy through Figma MCP, then create a geometry-only HTML anatomy file under `frameworks/templates/` and index it in `frameworks/README.md`. |
 | `codex-workflow` | The mandatory two-stage workflow: Setup (detect and fill gaps in the brand's knowledge, then close with an approved validation piece) and Execution (produce pieces). Use at the start of every session and whenever deciding what to do next. |
 
 ## Key terms

@@ -45,9 +45,11 @@ The names the document uses (roles, elements, tokens) always come from the namin
 
 Two possible paths for the first size. Which one applies is asked explicitly — never assumed.
 
-- **Path A — there is structure in Figma.** Geometry is extracted directly from the file. Even
-  so, what each layer is gets confirmed with the brand expert before documenting it — Figma gives
-  position, not always intent.
+- **Path A — there is structure in Figma.** Geometry is extracted directly from the file. The
+  `codex-figma-anatomy` skill can create a generated HTML anatomy snapshot from a selected frame.
+  Even so, what each layer means gets confirmed with the brand expert before writing the canonical
+  framework specification — Figma gives position, not always intent. The HTML snapshot does not
+  replace `frameworks/<name>.md`.
 - **Path B — no Figma, only a reference image + description.** First, figure out what kind of
   reference it is: a finished example piece (already shows the full layout), or a loose asset
   (e.g. a cut-out product, with nothing composed around it)? If it's a loose asset, the full
