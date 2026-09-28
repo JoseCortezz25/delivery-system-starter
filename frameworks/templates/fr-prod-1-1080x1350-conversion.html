@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>fr_prod_1_1080x1350_conversion — Figma anatomy</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body { padding: 24px; background: #f1f3f5; color: #20252b; font: 14px/1.4 system-ui, sans-serif; }
+    #frame-heading { margin: 0 0 12px; font-weight: 600; }
+    #stage { width: 100%; overflow: auto; }
+    #frame { position: relative; flex: none; overflow: hidden; outline: 1px solid #526777; background: #fff; }
+    .node { position: absolute; }
+    .node-body { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+    .node--text .node-body { white-space: pre-line; overflow: hidden; outline: 1px dashed #327a78; background: #e5f3f1; color: #173b3a; }
+    .node--vector .node-body, .node--image .node-body { outline: 1px dashed #7a658f; background: #f0eafa; color: #514260; }
+    .node-label { position: absolute; z-index: 1; left: 0; top: 0; transform: translateY(-100%); padding: 2px 5px; background: #263847; color: #fff; font: 10px/1.2 system-ui, sans-serif; white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <h1 id="frame-heading"></h1>
+  <div id="stage"><main id="frame"></main></div>
+  <script type="application/json" id="figma-anatomy-data">
+{"source":{"fileKey":"7NOwaaV04lTcz5kqeJBCHt","nodeId":"10464:142","url":"https://www.figma.com/design/7NOwaaV04lTcz5kqeJBCHt/SPAM_ACE?node-id=10464-142&m=dev","sourceCoordinateSpace":"MCP position values; user-authorized interpretation as frame-relative","renderCoordinateSpace":"parent-relative","visibilityPolicy":"exclude-explicit-hidden; assume-visible-if-unspecified","textPolicy":"user-authorized screenshot transcription","notes":["MCP did not document coordinate-space semantics; position values are used as frame-relative under user authorization.","Text is transcribed from the Figma screenshot under user authorization; exact source text and authored line breaks were not present in metadata.","Visibility was not returned by MCP; nodes without explicit hidden state are marked assumed-visible.","Preview colors and outlines are anatomy-viewer UI only and are not Figma styling."]},"frame":{"id":"10464:142","name":"fr_prod_1_1080x1350_conversion","sourceX":4135,"sourceY":1170,"width":1080,"height":1350,"children":[{"id":"10464:143","name":"txt_legal","type":"text","sourceX":392.5,"sourceY":1238,"x":392.5,"y":1238,"width":295,"height":16,"visible":true,"visibilityEvidence":"assumed-visible","text":"© 2026 Hormel Foods, LLC","children":[]},{"id":"10464:144","name":"txt_ paragraph","type":"text","sourceX":96,"sourceY":1040,"x":96,"y":1040,"width":888,"height":88,"visible":true,"visibilityEvidence":"assumed-visible","text":"Sed ut perspiciatis unde omnis iste\nnatus error sit.","children":[]},{"id":"10464:145","name":"txt_headline","type":"text","sourceX":88,"sourceY":861,"x":88,"y":861,"width":904,"height":147,"visible":true,"visibilityEvidence":"assumed-visible","text":"LOREM IPSUM\nDOLOR SED","children":[]},{"id":"10464:146","name":"logo","type":"vector","sourceX":416.5,"sourceY":753,"x":416.5,"y":753,"width":247,"height":76,"visible":true,"visibilityEvidence":"assumed-visible","children":[]},{"id":"10464:147","name":"img_product","type":"rounded-rectangle","sourceX":80,"sourceY":80,"x":80,"y":80,"width":920,"height":578,"visible":true,"visibilityEvidence":"assumed-visible","children":[]}]}}
+  </script>
+  <script>
+    const data = JSON.parse(document.querySelector("#figma-anatomy-data").textContent);
+    const frame = document.querySelector("#frame");
+    document.querySelector("#frame-heading").textContent =
+      `${data.frame.name} · ${data.frame.width} × ${data.frame.height}`;
+    frame.style.width = `${data.frame.width}px`;
+    frame.style.height = `${data.frame.height}px`;
+
+    function render(node) {
+      const name = node.name.toLowerCase();
+      const isImage = node.type.toLowerCase() === "image" || name.startsWith("img_");
+      const typeClass = isImage ? "node--image" : `node--${node.type.toLowerCase()}`;
+      const element = document.createElement("div");
+      element.className = `node ${typeClass} ${node.text == null ? "" : "node--text"}`;
+      element.dataset.figmaNodeId = node.id;
+      element.dataset.figmaName = node.name;
+      element.dataset.figmaType = node.type;
+      Object.assign(element.style, {
+        left: `${node.x}px`, top: `${node.y}px`,
+        width: `${node.width}px`, height: `${node.height}px`,
+      });
+      const body = document.createElement("div");
+      body.className = "node-body";
+      if (node.text != null) body.textContent = node.text;
+      else if (isImage) body.textContent = "Image slot";
+      else if (node.type.toLowerCase() === "vector") body.textContent = "Vector slot";
+      element.append(body);
+      const label = document.createElement("span");
+      label.className = "node-label";
+      label.textContent = `${node.name} (${node.id})`;
+      element.append(label);
+      for (const child of node.children ?? []) element.append(render(child));
+      return element;
+    }
+
+    for (const node of data.frame.children) frame.append(render(node));
+  </script>
+</body>
+</html>

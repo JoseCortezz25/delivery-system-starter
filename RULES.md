@@ -20,9 +20,11 @@ belongs inside each `frameworks/<name>.md` document itself.
    text rules, exact measurements, and sizes are never generalized upward or drafted for several
    frameworks at once — each one is configured on its own, with continuous verification before
    approving it, before moving to the next.
-4. **Each framework is a single document.** The result is always `frameworks/<name>.md`, written
-   at a high level of detail — a specification, for someone to implement later. No code lives at
-   this layer.
+4. **Each framework has one canonical specification.** The result is always `frameworks/<name>.md`,
+   written at a high level of detail for later implementation. A generated, geometry-only Figma
+   anatomy may be stored as `frameworks/templates/<name>.html` and indexed in `frameworks/README.md`;
+   it is a derived companion, not a second specification or production implementation. Regenerate
+   it from Figma rather than hand-editing it.
 5. **Names follow the established token/role family convention.** Never an invented, loose name
    created in the moment.
 6. **Approval before scaling.** The first size's document is shown and approved before adding
@@ -34,11 +36,12 @@ belongs inside each `frameworks/<name>.md` document itself.
    `foundations/BRAND.md` updated as the index, so a future session starts from what was already
    resolved (reading `BRAND.md` first) instead of re-asking. `CLAUDE.md`, `RULES.md` and
    `.claude/` are the harness — never written to from inside the project (see rule 10).
-8. **Each fact lives in exactly one place.** Foundations facts live in the one `foundations/` file
+8. **Each authored fact lives in exactly one place.** Foundations facts live in the one `foundations/` file
    that owns their scope (`COLORS.md`, `FONTS.md`, `LOGOS.md`, `COPYS.md`) — `BRAND.md` only
    indexes them, never restates a value;
    framework-wide facts live in that framework's document; a single size's measurements live in
-   that size's row; the folder structure itself lives in
+   that size's row. Generated anatomy HTML is a derived Figma snapshot, not an independently
+   maintained source of truth. The folder structure itself lives in
    `.claude/knowledge/structure-and-assets.md`. Assets always live in `resources/`, organized by
    type — never duplicated, never moved into a framework-specific folder.
 9. **Construction is HTML — never SVG.** SVG was tried and failed: "El SVG no sirvió: movía
