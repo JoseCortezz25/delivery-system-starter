@@ -21,6 +21,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/block-protected-delete.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/guard-open-and-internals.sh"
           }
         ]
       }
