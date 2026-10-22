@@ -1,12 +1,12 @@
 ---
-name: codex-render-pipeline
+name: decodex-render-pipeline
 description: Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use this skill any time a piece needs to be rendered to an image file or an image needs to be resized — invoke these scripts instead of writing new rendering or resizing code from scratch.
 compatibility: Requires Python 3.9+, Playwright (with Chromium installed), and Pillow.
 metadata:
   version: "0.1.0"
 ---
 
-# Codex Render Pipeline
+# Decodex Render Pipeline
 
 ## Why this skill exists
 

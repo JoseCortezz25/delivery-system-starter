@@ -1,8 +1,8 @@
-# Codex Methodology
+# Decodex Methodology
 
 ## What this is
 
-Codex's adaptive design system is a **set of frameworks**, each with its own complete adaptive
+Decodex's adaptive design system is a **set of frameworks**, each with its own complete adaptive
 configuration (intent, objective, channels, rules, text behavior, image behavior, sizes), built
 one at a time on top of a minimal shared brand base.
 

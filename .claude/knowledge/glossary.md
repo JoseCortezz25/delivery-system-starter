@@ -27,7 +27,7 @@ Quick reference — see the root `CLAUDE.md` for the full description of each fo
 | `knowledge/` | Knowledge | Brand-specific knowledge and learnings (not an asset library). |
 | `engine/` | Rendering engine | Scripts that read the framework docs and produce the pieces that land in `content/`. |
 
-Note: this file lives under `.claude/knowledge/` — harness-level knowledge about how Codex itself
+Note: this file lives under `.claude/knowledge/` — harness-level knowledge about how Decodex itself
 works, available to any AI operating this project. The top-level `knowledge/` folder above is a
 different thing: it's the Knowledge **primitive**, reserved for brand-specific facts about the
 one brand this project is for.

@@ -1,6 +1,6 @@
 # Rules
 
-Conceptual rules for Codex's way of working — how any brand project using this structure is
+Conceptual rules for Decodex's way of working — how any brand project using this structure is
 meant to be built, independent of any specific brand. Framework-specific behavior
 (text scaling, image fitting, exact measurements per size, etc.) is **not** listed here — it
 belongs inside each `frameworks/<name>.md` document itself.

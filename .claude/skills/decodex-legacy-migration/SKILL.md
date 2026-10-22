@@ -1,13 +1,13 @@
 ---
-name: codex-legacy-migration
-description: Migrate a legacy, unstructured Codex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (foundations/, frameworks/, library/, content/, knowledge/, engine/, references/). Use when a brand already has a Codex-style implementation that predates this structure and needs to be brought in.
+name: decodex-legacy-migration
+description: Migrate a legacy, unstructured Decodex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (foundations/, frameworks/, library/, content/, knowledge/, engine/, references/). Use when a brand already has a Decodex-style implementation that predates this structure and needs to be brought in.
 license: See repository LICENSE
 compatibility: Claude Code / Agent Skills-compatible runtimes
 metadata:
   version: "0.1.0"
 ---
 
-# Codex Legacy Migration
+# Decodex Legacy Migration
 
 Generalized from two complete migrations done under this structure. Follow this as a checklist,
 not a script — each step still requires judgment, and every "doesn't fit" case gets flagged, never
