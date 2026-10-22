@@ -20,12 +20,14 @@ specification: a `frameworks/<name>.md` document (see `glossary.md` and the root
 
 The one thing that IS truly cross-cutting — and is therefore resolved once, before touching any
 framework — is the **brand foundations**: the identity that doesn't change no matter which
-framework is being built. See `foundations/`.
+framework is being built. See Decodex (`get_foundations`, `get_brand_colors`, `get_brand_fonts`,
+`get_brand_voice`) and, for what its tools don't cover yet, `foundations/`.
 
 ## The three levels
 
 1. **Foundations (shared, once per brand):** base brand palette, base typography, logo,
-   communication tone, legal boundaries. Tokenized at the start of the project, from whatever the
+   communication tone, legal boundaries. Saved in Decodex at the start of the project (and in
+   `foundations/` for what its tools don't cover), from whatever the
    brand expert provides, with gaps filled in before moving on.
 2. **Framework (configured one at a time, result = a document):** each framework arrives through
    one of two possible paths — from Figma, or from a reference image + description — and is
@@ -35,9 +37,13 @@ framework is being built. See `foundations/`.
    scaling, and the exact measurements of every element — spacing, margins, radii, elevations,
    strokes — for every size the framework covers. There is no code at this layer: the document,
    built together with the brand expert, IS the complete specification for that framework.
+   The document is saved to Decodex with `add_framework`; `frameworks/<name>.md` is its local copy.
 3. **Rendering engine (technical infrastructure, a separate concern):** the implementation built
    AFTERWARDS, reading these framework documents as the specification. Lives in `engine/` — see
    the root `CLAUDE.md` for how it relates to the other folders.
+
+**Who does what.** Setup is done by the Codifier, who writes the brand into Decodex. Execution is
+done by the Maker, who reads it to produce pieces and never changes brand rules.
 
 ## Non-negotiable rules
 
