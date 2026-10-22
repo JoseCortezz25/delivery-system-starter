@@ -16,7 +16,7 @@ This guide has two parts, because not everything gets tokenized at the same mome
 If a category doesn't apply to the current brand, it's declared explicitly as "not applicable" —
 never silently omitted.
 
-## Naming convention (applies in `foundations/` and in each framework's `.md`)
+## Naming convention (applies wherever tokens are written: Decodex, `foundations/`, each framework's `.md`)
 
 Every token is named under one of these families. The family is what repeats identically across
 any brand; the full name changes depending on what the brand actually has. This is the
@@ -50,6 +50,11 @@ improvement, don't apply it silently and don't ignore it.
 
 ## Part A — Foundations (once, shared by every framework)
 
+Part A is saved in Decodex (`set_brand_color`, `add_brand_font`/`add_google_font`,
+`set_brand_voice`, `set_brand_core`, `set_foundation`). What those tools don't cover yet (token
+names, font weights, logo clear-space, colorways) stays in `foundations/` until verified. The
+sections below are the checklist of what to collect.
+
 ### A1. Base brand palette (`color.palette.*`)
 
 The brand's complete official color set, named — not yet assigned to a framework role (that's
@@ -74,13 +79,15 @@ that assignment changes framework to framework.
 
 ### A3. Logo
 
-- Logo file(s) (light and dark version).
+- Logo file(s) (light and dark version), uploaded to Decodex (`request_asset_upload`).
 - Minimum clear-space around the logo (this is a brand rule, not a framework one — it always
-  applies, even though its exact position and measurement is defined per framework in B6).
+  applies, even though its exact position and measurement is defined per framework in B6). No
+  tool covers it, so it stays in `foundations/`.
 
 ### A4. Copy tone and legal boundaries
 
 - Brand tone in 2-3 adjectives + one "do" example line and one "don't" example line.
+  Saved with `set_brand_voice`.
 - Explicit list of prohibited claims (health, legal, competitor comparisons, etc.) and why they're
   prohibited.
 
@@ -90,8 +97,8 @@ that assignment changes framework to framework.
 
 These categories exist inside the configuration of EACH framework, because their value differs
 depending on what that framework solves. They are not filled in ahead of time. They all end up
-living in one place: that framework's `frameworks/<name>.md` document — there is no code, the
-document IS the complete specification.
+living in one place: that framework's document, saved in Decodex with `add_framework` (local copy:
+`frameworks/<name>.md`) — there is no code, the document IS the complete specification.
 
 ### B0. Intent, objective, and channels
 
@@ -218,4 +225,4 @@ canvas height; no shadow; no stroke." — not "the logo goes up top, roughly cen
 ### B8. Assets specific to this framework
 
 Photos, product cutouts — shared across all sizes of this framework, but not necessarily with
-other frameworks.
+other frameworks. Uploaded to Decodex first (`request_asset_upload`), then referenced by name.
