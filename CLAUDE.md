@@ -168,7 +168,8 @@ Shared brand layer, tokenized once per brand: atoms, atom-components, styles, de
 typography, components, molecules.
 
 - **Editable**: token source files, typography scale, color palette, logo rules, tone/legal docs.
-  These are the ones a person maintains by hand and are the single source of truth.
+  Palette, fonts, and voice are saved in Decodex; for what its tools don't cover yet (token
+  naming, font weights, logo clear-space, colorways) these files are the source of truth.
 - **Static**: anything generated FROM those tokens (compiled style sheets, exported swatches,
   rendered component previews). Never hand-edit static output — regenerate it from the editable
   source instead.
@@ -192,7 +193,7 @@ Organized by asset type:
 - `library/sounds/` — sound assets.
 - `library/fonts/` — brand typeface files.
 
-**Every insumo lives in `library/`, with no exception.** An asset used by every framework and one
+**Every insumo is uploaded to Decodex first, then lives in `library/`, with no exception.** An asset used by every framework and one
 used by a single framework both live here, organized by type — never duplicated, and never moved
 into a framework-specific folder. A subfolder per framework inside a type folder is only created
 if the number of files actually justifies it (see `structure-and-assets.md`).
@@ -215,7 +216,8 @@ project or campaign, with the final pieces for that delivery inside, by size.
 ### `knowledge/` — Knowledge primitive
 
 Brand-specific knowledge, learnings, and topics particular to this brand — **not** an asset
-library (that's `library/`).
+library (that's `library/`). Brand facts are saved in Decodex with `add_knowledge`; this folder
+is the local copy.
 
 ### `engine/` — Rendering engine
 

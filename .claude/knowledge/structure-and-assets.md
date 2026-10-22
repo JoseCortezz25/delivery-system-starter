@@ -3,6 +3,9 @@
 This is the only place that defines the folder structure. No other document repeats it — they
 only reference it. See the non-redundancy rule below.
 
+Brand data itself lives in Decodex (see the root `CLAUDE.md`). The folders below are the local
+layer: a copy of what Decodex holds, plus whatever its tools don't cover yet.
+
 ## What exists in a project
 
 ```
@@ -10,7 +13,7 @@ project/
 ├── foundations/                  # Foundations primitive — tokenized once, shared by every framework
 ├── frameworks/
 │   └── <name>.md                 # one document per framework — full spec: B0-B8, every size it covers
-├── library/                      # Insumos primitive — every raw brand asset, organized by type
+├── library/                      # Insumos primitive — every raw brand asset, organized by type (uploaded to Decodex first)
 │   ├── logos/
 │   ├── images/
 │   ├── videos/
@@ -24,7 +27,7 @@ project/
 ├── references/                   # approved-output index — thumbnails/montages for quick lookup
 │   └── <framework>/               # one or more reference images per framework — one per size
 │       └── <size>[-<variant>].jpg  # and/or content type is common, not a single combined file
-├── knowledge/                    # Knowledge primitive — brand-specific facts, not an asset library
+├── knowledge/                    # Knowledge primitive — brand-specific facts, not an asset library (canonical copy in Decodex)
 └── engine/                       # rendering engine — scripts that build the pieces
 ```
 
@@ -36,7 +39,9 @@ always gets the next number — past deliveries are never overwritten or renumbe
 
 ## Where each asset goes
 
-- **Every raw brand asset lives in `library/`, organized by type — with no exception.** A logo
+- **Every raw brand asset is uploaded to Decodex first (`request_asset_upload` or
+  `request_batch_asset_upload`, then curl), and then lives in `library/`, organized by type —
+  with no exception.** A logo
   used everywhere and a photo used by only one framework both live here.
 - **A framework-specific asset is not moved into `frameworks/`.** It stays in `library/`, under
   its type folder; a subfolder per framework is only created if the number of files actually
@@ -51,23 +56,40 @@ Each fact lives in exactly one place. Everything else references it, never copie
 
 | Fact | Lives in | How it's referenced |
 |---|---|---|
-| Base palette, base typography, logo, tone, legal (brand-wide) | `foundations/` | "see foundations" — a hex or a tone rule is never repeated inside a `frameworks/<name>.md` |
-| Intent, objective, channels, color roles, image mode, elements, variants, text scaling (shared by every size of ONE framework) | The matching section of that `frameworks/<name>.md` | Every size row references them by name — never redeclared or repeated |
+| Base palette, base typography, logo, tone, legal (brand-wide) | Decodex (`get_brand_colors`, `get_brand_fonts`, `get_brand_voice`, `get_foundations`); `foundations/` only for what the tools don't cover | "see the brand" — a hex or a tone rule is never repeated inside a `frameworks/<name>.md` |
+| Intent, objective, channels, color roles, image mode, elements, variants, text scaling (shared by every size of ONE framework) | The matching section of that framework (`get_framework` / `frameworks/<name>.md`) | Every size row references them by name — never redeclared or repeated |
 | Exact measurements of ONE specific size | That size's row, inside the same `frameworks/<name>.md` | Another size never copies these values — if it shares a ratio with another, that's noted and referenced, not repeated |
 | This folder structure | This document (`structure-and-assets.md`) | `methodology.md` only mentions it and links here |
 
 Before creating a new document or file to note a clarification or adjustment, the required
 question is: **does this already have a place to live?** Almost always the answer is yes — either
-it's a correction to `foundations/`, or an adjustment to a section of `frameworks/<name>.md` (a
+it's a correction to the brand in Decodex (or `foundations/`), or an adjustment to a section of `frameworks/<name>.md` (a
 general rule if it affects every size, or that size's row if it's just its measurement). The
 change stays inside the existing document, not in a separate file. A new standalone document is
-the exception, not the norm.
+the exception, not the norm. A brand fact goes to `add_knowledge`, never to a new file.
+
+## Where each kind of data lives
+
+| What | Decodex tool (write / read) | Stays local |
+|---|---|---|
+| Palette | `set_brand_color` / `get_brand_colors` | token names |
+| Fonts | `add_brand_font`, `add_google_font` / `get_brand_fonts` | font weights |
+| Tone, legal | `set_brand_voice`, `set_brand_core` / `get_brand_voice` | — |
+| Other foundations | `set_foundation` / `get_foundations` | — |
+| Asset files | `request_asset_upload`, `request_batch_asset_upload` / `get_asset`, `list_assets`, `search_assets` | logo clear-space rules |
+| Framework spec | `add_framework` / `get_framework` | — |
+| Brand facts | `add_knowledge`, `list_knowledge`, `delete_knowledge` | — |
+| Designer learnings | `save_piece_learning` / `search_piece_learnings` | — |
+| Colorways | no tool yet | all of it |
+
+What stays local lives in `foundations/` until the tools cover it.
 
 ## New-project startup checklist
 
-- [ ] `foundations/` exists and has no gaps (see `tokenization.md` Part A)
-- [ ] `library/` has the logo in every version needed
-- [ ] For every approved framework: `frameworks/<name>.md` exists, with every category resolved
+- [ ] `get_brand` confirms the right brand
+- [ ] `get_brand_setup_status` shows no gaps (see `tokenization.md` Part A)
+- [ ] Logos in every version needed are uploaded to Decodex (`list_assets`)
+- [ ] For every approved framework: saved in Decodex (`get_framework`), with every category resolved
       and no gaps for at least its first size
 - [ ] `content/` has a numbered folder for this project/campaign — never a reused one
 - [ ] `references/<framework>/` has at least one reference image per approved framework — a
