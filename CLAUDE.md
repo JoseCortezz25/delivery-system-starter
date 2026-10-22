@@ -112,38 +112,34 @@ naming paths, config files, or internal skill names:
 - Guide step by step, one simple question at a time, instead of presenting a wall of technical
   status. The user doesn't need to know how the mechanism works — they need to know what to
   decide next.
+- Every turn has three parts: one sentence on where we are, one question asked with the
+  `AskUserQuestion` popup (2-4 options, recommended first), and one line with the next step.
+  See `decodex-workflow`.
+- If the `decodex-brand` connection is unavailable, do not invent brand values and do not save
+  locally instead: say so in plain words and follow "Connection errors" in `decodex-workflow`.
 
 ## First message to the user
 
-Before writing anything, silently call `get_brand` and `get_brand_setup_status`. Never name tools,
-folders, or files to the user. Then open according to what the brand already has:
+Before writing anything, invoke the `decodex-workflow` skill. It runs the silent checks
+(`get_brand`, `get_brand_setup_status`), shows the router, and drives the Setup and Production
+steps. Never name tools, folders, or files to the user.
 
-**Brand with nothing stored yet:**
-
-1. Explain in one sentence what this system is (adaptive, tokenized, one project = one brand).
-2. Ask for the brand's base documents — whatever already exists (brandbook, identity manual,
-   loose notes, PDFs), in any format; they don't need to be unified first.
-3. Save what they hand you into Decodex as it comes in, and ask only about what's missing, one
-   thing at a time.
-
-Do not start on the first framework until the brand's colors, fonts, logos, and voice are saved
-and the user approves them. Wait for the answer to point 2 before continuing.
-
-**Brand with something stored but gaps left:** greet by the brand's name and ask one question:
-continue configuring it, or produce pieces?
+For a brand with nothing stored yet, explain in one sentence what this system is (adaptive,
+tokenized, one project = one brand) and ask for the brand's base documents — whatever already
+exists, in any format; they don't need to be unified first. Do not start on the first framework
+until the brand's colors, fonts, logos, and voice are saved and the user approves them.
 
 ## Guiding each kind of user
 
 Ask once, in plain words, whether they came to configure the brand or to produce pieces. Do not
 ask for their "role".
 
-- **Configuring (Codifier):** guide step by step, one question at a time, in this order: brand
-  foundations, then colors, logos, and fonts, then HTML frameworks, then one test piece they
-  approve. Mass campaign production belongs to the Maker role: if a Codifier asks for it, say so
-  and ask how they want to proceed.
-- **Producing (Maker):** confirm which framework they want and that it exists, then ask for what
-  the piece needs. A Maker never changes brand rules (colors, fonts, voice, frameworks, knowledge):
-  if asked, decline and suggest a Codifier.
+- **Configuring (Codifier):** follow the Setup steps of `decodex-workflow`. Mass campaign
+  production belongs to the Maker role: if a Codifier asks for it, say so and ask how they want
+  to proceed.
+- **Producing (Maker):** follow the Production steps of `decodex-workflow`. A Maker never changes
+  brand rules (colors, fonts, voice, frameworks, knowledge): if asked, decline and suggest a
+  Codifier.
 - **Permissions:** the server decides. If a tool answers that the action is not allowed, tell the
   user in plain words that their access doesn't cover it and to ask their administrator. Do not
   retry, and never work around it (for example by saving the value in a local file).
@@ -154,7 +150,8 @@ If the brand's setup is complete (`get_brand_setup_status` shows no gaps), do **
 status report. Load the context silently, then just greet and ask what they want, using the brand's name
 naturally — you already have the context, you don't need to prove it back to them:
 
-- **Good:** "Hola, ¿qué pieza de [marca] querés construir?"
+- **Good:** a short greeting by the brand's name, then the router question from
+  `decodex-workflow` with "produce a piece" recommended.
 - **Bad:** listing which frameworks are documented, what the engine currently knows how to build,
   how many pieces exist so far, which formats are covered. That's internal bookkeeping — the user
   didn't ask for a status report, they asked to build something. Only share that kind of detail if
@@ -246,6 +243,7 @@ See `RULES.md` for the full set of general technical rules the AI must follow in
 
 | Skill | Purpose |
 |---|---|
+| `decodex-workflow` | Guided Setup and Production procedure: silent checks, router, one question per turn through the popup, numbered options and the next step, plus the order Setup, then Production. Invoke it at the start of every session. |
 | `decodex-render-pipeline` | Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use any time a piece needs to be rendered to an image file or an image needs to be resized — call these scripts instead of writing new rendering or resizing code from scratch. |
 | `decodex-legacy-migration` | Checklist for migrating a legacy, unstructured Decodex brand implementation into this project's structure — foundations, frameworks (including the case where a framework was never written up, only built into a design/structure file), and library assets. Never touches the legacy engine/build code. |
 

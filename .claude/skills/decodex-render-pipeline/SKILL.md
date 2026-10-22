@@ -10,11 +10,9 @@ metadata:
 
 ## Why this skill exists
 
-This project's own engine analysis (`analysis/patrones-motor-hit.md` §3.1) found a real, verified
-bug pattern in the HIT brand's rendering engine: its shared `render_save()` only ever supported a
-square clip (`{"width": size, "height": size}`), so every non-square builder (9:16 stories,
-banners) ended up hand-rolling its own near-identical screenshot function. That is exactly the
-class of improvised, one-off code this skill exists to prevent — for any brand, not just HIT.
+A shared render helper that only supports a square clip forces every non-square builder
+(9:16 stories, banners) to hand-roll its own near-identical screenshot function. That is exactly
+the class of improvised, one-off code this skill exists to prevent, for any brand.
 
 **Do not write your own HTML→image rendering code or your own image-resizing code.** Use the
 scripts below instead. They are brand-agnostic — they know nothing about any brand's tokens,
@@ -62,8 +60,7 @@ Arguments:
 - `--format` — forces an output format; otherwise inferred from `--output`'s extension.
 - `--quality` — 1–100, applies to lossy formats only. Default `90`.
 
-Uses `Image.LANCZOS` resampling — the same resampling this ecosystem's own engine already uses for
-downscaled previews (`hit_core.save_preview`).
+Uses `Image.LANCZOS` resampling.
 
 ## Installation
 
