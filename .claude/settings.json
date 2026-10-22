@@ -1,5 +1,5 @@
 {
-  "enabledMcpjsonServers": ["playwright", "chrome-devtools"],
+  "enabledMcpjsonServers": ["playwright", "chrome-devtools", "decodex-brand"],
   "hooks": {
     "PreToolUse": [
       {

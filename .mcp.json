@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "decodex-brand": {
+      "type": "http",
+      "url": "https://mcp.decodex.quadi.io/mcp"
+    },
     "playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest"]
