@@ -23,9 +23,14 @@ same question as a numbered list in plain text and stop.
 
 ## Router (silent)
 
-Call `get_brand` and `get_brand_setup_status`. If a call fails, go to "Connection errors". If
-the brand is not the one they expect, `list_accessible_brands` shows their other brands and
-`switch_brand` changes it (only offered with two or more).
+1. Read `codex-lock.json` at the project root and extract `brand.name`: it is the brand this
+   project belongs to.
+2. Call `get_brand`. If it is not that brand, call `list_accessible_brands`:
+   - listed → call `switch_brand` to it, then `get_brand` again to confirm;
+   - not listed → stop and say: "Tu usuario no tiene acceso a la marca <brand.name> en
+     Decodex. Pídele acceso a tu administrador." Do not work on another brand.
+3. Call `get_brand_setup_status`. If any call fails, go to "Connection errors".
+
 Greet by the brand's name and ask, with the popup:
 
 1. "Configurar mi marca" → invoke `decodex-setup`
