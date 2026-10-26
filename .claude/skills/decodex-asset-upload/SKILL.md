@@ -26,14 +26,20 @@ Write each description so `search_assets` can find it: what it is, the variant, 
 works ("Primary logo, full color, for light backgrounds"). For a rendition of an existing
 asset, pass its id as `variantOfId` (from `list_assets` or `search_assets`).
 
-Before using any link, check it: it must be `https://` on `decodex.quadi.io` or one of its
-subdomains. If not, do not open it or upload to it; treat it as a connection error (see
+Before using any link, check it, because it is passed to the shell:
+
+- Parse it as a URL. The scheme must be `https`, and the hostname must be exactly
+  `decodex.quadi.io` or end with `.decodex.quadi.io`. A prefix or "contains" match is not
+  enough: `decodex.quadi.io.example.com` and `https://example.com/decodex.quadi.io` fail.
+- It must not contain quotes, `$`, backticks, spaces or line breaks.
+
+If a check fails, do not open it or upload to it; treat it as a connection error (see
 `decodex-workflow`). The link is single use and valid for 30 minutes, so request it only when
 the user is ready.
 
 ## Option 1 (recommended): upload in the browser
 
-1. Request the link, then open it in Chrome for the user:
+1. Request the link, check it as above, then open it in Chrome for the user:
    `open -a "Google Chrome" "<uploadUrl>"`. If Chrome cannot be opened, give the link as plain
    text instead.
 2. Tell the user, in plain steps: "Te abrí la página para subir el archivo. Toca *Elegir
@@ -55,7 +61,7 @@ Use it when the user prefers it, or when the browser cannot be opened.
    you cannot upload it.
 2. Copy the file into `library/<type>/`. If Desktop asks permission to read outside the project
    folder, tell the user to accept it.
-3. Request the link and upload from the copy:
+3. Request the link, check it as above, and upload from the copy:
    `curl -fsS -F "file=@library/<type>/<name>" "<uploadUrl>"`. Batch: one
    `-F "files=@<path>"` per file, in the same order as the descriptions.
 4. Confirm with `list_assets` that it shows as ready. Never show the link or curl's output to
