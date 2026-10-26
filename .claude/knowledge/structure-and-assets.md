@@ -39,9 +39,9 @@ always gets the next number — past deliveries are never overwritten or renumbe
 
 ## Where each asset goes
 
-- **Every raw brand asset is uploaded to Decodex first (`request_asset_upload` or
-  `request_batch_asset_upload`, then curl), and then lives in `library/`, organized by type —
-  with no exception.** A logo
+- **Every raw brand asset is uploaded to Decodex first (see `decodex-asset-upload`), and then a
+  copy lives in `library/`, organized by type.** A file the user uploaded in the browser gets
+  its local copy when a piece first needs it. A logo
   used everywhere and a photo used by only one framework both live here.
 - **A framework-specific asset is not moved into `frameworks/`.** It stays in `library/`, under
   its type folder; a subfolder per framework is only created if the number of files actually

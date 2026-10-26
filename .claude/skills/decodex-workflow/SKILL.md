@@ -24,7 +24,9 @@ same question as a numbered list in plain text and stop.
 ## Router (silent)
 
 1. Read `codex-lock.json` at the project root and extract `brand.name`: it is the brand this
-   project belongs to.
+   project belongs to. If there is no `codex-lock.json` (the template itself or an older
+   project), skip the comparison in step 2: use the brand `get_brand` returns, and if the user
+   says it is not theirs, offer the ones `list_accessible_brands` shows and `switch_brand`.
 2. Call `get_brand`. If it is not that brand, call `list_accessible_brands`:
    - listed → call `switch_brand` to it, then `get_brand` again to confirm;
    - not listed → stop and say: "Tu usuario no tiene acceso a la marca <brand.name> en

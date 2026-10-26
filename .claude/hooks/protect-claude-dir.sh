@@ -8,7 +8,7 @@ case "$file" in
     ;;
 esac
 case "$base" in
-  CLAUDE.md|RULES.md|.mcp.json|.gitignore)
+  CLAUDE.md|RULES.md|.mcp.json|.gitignore|codex-lock.json)
     echo "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"The AI is not allowed to modify $base — it is a protected project file. See RULES.md.\"}}"
     ;;
 esac

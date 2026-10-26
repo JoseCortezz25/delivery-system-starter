@@ -24,7 +24,8 @@ brand; call `get_brand` to confirm which one.
   `request_asset_upload`/`request_batch_asset_upload`, `add_knowledge`) instead of hand-editing a
   local file that a tool already covers.
 - **Execution reads from Decodex** and uses what it reads to build pieces.
-- **`frameworks/` and `library/` are regenerable from Decodex.** `foundations/` stays as it is
+- **`frameworks/` is regenerable from Decodex; `library/` is not yet**, because `get_asset`
+  shows an asset but cannot hand over the file. `foundations/` stays as it is
   until we confirm the tools cover everything it holds (token naming, logo clear-space rules, font
   weights, colorways).
 - **`content/`, `engine/`, and `references/` are unchanged.** Decodex does not generate or render
@@ -237,19 +238,14 @@ Organized by asset type:
 - `library/sounds/` — sound assets.
 - `library/fonts/` — brand typeface files.
 
-**Every insumo is uploaded to Decodex first, then lives in `library/`, with no exception.** An asset used by every framework and one
+**Every insumo is uploaded to Decodex first, then a copy lives in `library/`.** A file the user
+uploaded in the browser gets its local copy when a piece first needs it. An asset used by every framework and one
 used by a single framework both live here, organized by type — never duplicated, and never moved
 into a framework-specific folder. A subfolder per framework inside a type folder is only created
 if the number of files actually justifies it (see `structure-and-assets.md`).
 
-**Uploading to Decodex.** Never save a received asset to `library/` before it reaches Decodex.
-Call `request_asset_upload` (or `request_batch_asset_upload`), then run
-`curl -F "file=@<path>" "<uploadUrl>"` (batch: repeat `-F "files=@<path>"`) via Bash.
-Never use `add_asset` or `add_brand_font` for a file: they send the whole file as text through
-the conversation and took about 7 minutes in tests. An image only attached to the conversation is
-not a file: offer the upload link or ask where it is saved, and never guess a path (see
-`decodex-setup`). Write asset
-descriptions specific enough for `search_assets` to find them.
+**Uploading to Decodex.** Every file goes through `decodex-asset-upload`: an upload link opened
+in the browser first, never `add_asset`, and `add_brand_font` only as the font exception.
 
 ### `content/` — Content generation primitive
 
@@ -295,6 +291,7 @@ See `RULES.md` for the full set of general technical rules the AI must follow in
 |---|---|
 | `decodex-workflow` | Entry point of every session: silent checks, router, reply format (one popup question per turn), the order Setup then Production, and connection errors. Invoke it first, at the start of every session. |
 | `decodex-setup` | Step-by-step brand setup (colors, fonts, logo, tone, frameworks, test piece) with the right tool for each item. |
+| `decodex-asset-upload` | The single route to send any file (logo, image, icon, font) to Decodex: an upload link opened in the browser, a host check, verification, and the local copy in `library/`. |
 | `decodex-production` | Producing one piece at a time as HTML exported to an image: inputs, render preflight, review and approval. |
 | `decodex-render-pipeline` | Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use any time a piece needs to be rendered to an image file or an image needs to be resized — call these scripts instead of writing new rendering or resizing code from scratch. |
 | `decodex-legacy-migration` | Checklist for migrating a legacy, unstructured Decodex brand implementation into this project's structure — foundations, frameworks (including the case where a framework was never written up, only built into a design/structure file), and library assets. Never touches the legacy engine/build code. |

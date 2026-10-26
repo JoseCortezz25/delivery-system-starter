@@ -4,7 +4,7 @@ command=$(jq -r '.tool_input.command // empty')
 pre='(^|[[:space:]"'"'"'/])'
 post='($|[[:space:]"'"'"'/])'
 
-for name in CLAUDE.md RULES.md .mcp.json .gitignore .claude; do
+for name in CLAUDE.md RULES.md .mcp.json .gitignore codex-lock.json .claude; do
   esc_name=$(printf '%s' "$name" | sed 's/\./\\./g')
   token="${pre}${esc_name}${post}"
   if echo "$command" | grep -qE "(rm|mv|git[[:space:]]+rm|truncate)[^|;&]*${token}" \
