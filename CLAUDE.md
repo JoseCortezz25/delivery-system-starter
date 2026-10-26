@@ -39,8 +39,8 @@ brand; call `get_brand` to confirm which one.
   `set_brand_core`, `set_foundation`.
 - Frameworks: `add_framework`.
 - Knowledge: `add_knowledge`, `list_knowledge`, `delete_knowledge`.
-- Assets: `add_asset` (image attached to the conversation), `request_asset_upload` and
-  `request_batch_asset_upload` (file on disk), `delete_asset`.
+- Assets: `request_asset_upload` and `request_batch_asset_upload` (the fast path), `delete_asset`.
+  `add_asset` and `add_brand_font` send the whole file as text and take minutes: avoid them.
 - Products: `save_product`, `update_product`, `delete_product`.
 
 **Production (read; needs the produce permission):** `get_foundations`, `get_brand_colors`,
@@ -141,8 +141,8 @@ naming paths, config files, or internal skill names:
 - When you need a value, give an example and accept a plain description. If they lack a
   color code, ask for the logo or an image, read the color from it and confirm with them.
 - Before a step that can take a while, say so first ("Esto puede tardar un momento"). Fonts:
-  offer the Google Fonts option first; an uploaded font file is sent inside the call, so it
-  can take minutes: warn before doing it.
+  offer the Google Fonts option first; an uploaded font file has no direct upload route and
+  takes several minutes (about 7 in tests): warn before doing it and ask for a clear yes.
 - Errors: say what happened in plain words and what to do next. Never paste technical text.
 - Popup options: short plain labels, each with a one-line description.
 
@@ -245,8 +245,10 @@ if the number of files actually justifies it (see `structure-and-assets.md`).
 **Uploading to Decodex.** Never save a received asset to `library/` before it reaches Decodex.
 Call `request_asset_upload` (or `request_batch_asset_upload`), then run
 `curl -F "file=@<path>" "<uploadUrl>"` (batch: repeat `-F "files=@<path>"`) via Bash.
-An image attached to the conversation is saved with `add_asset`, the server's default way; the
-link and `curl` are for a file on disk. Write asset
+Never use `add_asset` or `add_brand_font` for a file: they send the whole file as text through
+the conversation and took about 7 minutes in tests. An image only attached to the conversation is
+not a file: offer the upload link or ask where it is saved, and never guess a path (see
+`decodex-setup`). Write asset
 descriptions specific enough for `search_assets` to find them.
 
 ### `content/` — Content generation primitive
