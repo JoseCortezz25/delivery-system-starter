@@ -1,6 +1,6 @@
 ---
 name: decodex-render-pipeline
-description: Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use this skill any time a piece needs to be rendered to an image file or an image needs to be resized — invoke these scripts instead of writing new rendering or resizing code from scratch.
+description: Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, to scale/resize an existing image, and to measure a reference image (colors, element boxes) for framework construction. Use this skill any time a piece needs to be rendered to an image file or an image needs to be resized — invoke these scripts instead of writing new rendering or resizing code from scratch.
 compatibility: Requires Python 3.9+, and Playwright (with Chromium installed) and Pillow in the project's .venv.
 metadata:
   version: "0.1.0"
@@ -61,6 +61,33 @@ Arguments:
 - `--quality` — 1–100, applies to lossy formats only. Default `90`.
 
 Uses `Image.LANCZOS` resampling.
+
+## `scripts/measure_reference.py` — measure a reference image
+
+Measures a reference image for framework construction (see
+`.claude/knowledge/framework-construction.md`, step 0): its dominant colors, the exact color at a
+point, and the bounding box of an element. Prints JSON to stdout with the canvas width/height;
+Pillow only, no network.
+
+```
+.venv/bin/python .claude/skills/decodex-render-pipeline/scripts/measure_reference.py --image reference.png
+.venv/bin/python .claude/skills/decodex-render-pipeline/scripts/measure_reference.py --image reference.png --palette 5 --probe 90,265
+.venv/bin/python .claude/skills/decodex-render-pipeline/scripts/measure_reference.py --image reference.png --box 60,90,600,230 --background "#043673" --tolerance 30
+```
+
+Arguments:
+
+- `--image` (required) — the reference image.
+- `--palette` — top N colors by area after quantizing, each with hex and share %. Default `8`.
+- `--probe X,Y` (repeatable) — hex of the pixel at that point.
+- `--box X0,Y0,X1,Y1` (repeatable) — bounding box of the pixels inside that region that differ
+  from the background, in px and as % of the canvas (left/right/width of its width,
+  top/bottom/height of its height). `right`/`bottom` are exclusive, so `width = right - left`.
+- `--background` — background hex for `--box`. Default: the most common pixel color.
+- `--tolerance` — max per-channel difference (0–255) still counted as background. Default `40`.
+
+Anti-aliased edges can shift a box by a pixel or two; lower `--tolerance` to include them, raise
+it to ignore them.
 
 ## Installation
 

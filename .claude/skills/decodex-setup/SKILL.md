@@ -29,8 +29,13 @@ color is for: save what they give you and let each tool's reply tell you what is
   - Deleting (`delete_knowledge`, `delete_product`, `delete_asset`): see "Deleting" in
     `decodex-workflow`. `delete_asset` is for stale or pending uploads only.
 - **A3 Frameworks.** See what is already saved with `list_frameworks`, then ask which piece to
-  lay out next (feed 1:1, story 9:16, multi-format banner). One framework at a time, as HTML.
-  Its color and font slots point to saved colors and fonts, so those must exist first. Save with `add_framework` only after approval.
+  lay out next (feed 1:1, story 9:16, multi-format banner). One framework at a time, as HTML,
+  following `.claude/knowledge/framework-construction.md` for the full protocol. In short:
+  start from Figma only when a Figma tool is connected, otherwise from a reference image
+  (measured, not eyeballed); check the reference colors and font weights against what is saved
+  (its color and font slots point to saved colors and fonts, so those must exist first); approve
+  section by section; render the test piece (A4); after approval save with `add_framework` and
+  verify with `list_frameworks` and `get_framework`.
 - **A4 Test piece.** Render it with `decodex-render-pipeline` and open it. Options: 1) approve,
   2) adjust sizes, spacing or logo. Approve the first size before adding sizes or variants.
 - **A5 Close.** When setup status shows no gaps and at least one framework is approved and
