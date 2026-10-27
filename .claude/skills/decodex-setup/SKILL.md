@@ -7,8 +7,8 @@ description: Step-by-step brand setup in Decodex (colors, fonts, logo, tone, fra
 
 Follow the reply format of `decodex-workflow` and the way of talking in the root `CLAUDE.md`.
 Before each question call `get_brand_setup_status` and ask only about the first gap. It reports
-logo, fonts, colors and tone as complete, in progress (a logo uploaded but not ready yet: remind
-the user to finish the upload; `list_assets` shows the link) or not started. Do not ask what a
+logo, fonts, colors, tone and frameworks as complete, in progress (a logo uploaded but not
+ready yet: remind the user to finish the upload; `list_assets` shows the link) or not started. Do not ask what a
 color is for: save what they give you and let each tool's reply tell you what is missing.
 
 - **A1 Brand.** Confirm it with `get_brand`. Wrong brand: `switch_brand` if available.
@@ -17,7 +17,7 @@ color is for: save what they give you and let each tool's reply tell you what is
   images), 3) brand documents or a reference image. Offer a Figma link only when a Figma tool
   is connected. Save each item with its tool:
   - Colors: `set_brand_color` (name, hex, primary or secondary).
-  - Fonts, logos, images and any other file: follow `decodex-asset-upload`.
+  - Fonts, logos, images and any other file: follow `decodex-asset-upload` ("Fonts" for fonts).
   - Tone: `set_brand_voice`. Optional basics (timezone, currency, default language):
     `set_brand_core`. Both replace everything on each call, so read what is stored first
     (`get_brand_voice`) and send every field again, or an omitted one is cleared.
@@ -28,9 +28,9 @@ color is for: save what they give you and let each tool's reply tell you what is
     gives you.
   - Deleting (`delete_knowledge`, `delete_product`, `delete_asset`): see "Deleting" in
     `decodex-workflow`. `delete_asset` is for stale or pending uploads only.
-- **A3 Frameworks.** Ask which piece to lay out first (feed 1:1, story 9:16, multi-format
-  banner). One framework at a time, as HTML. Its color and font slots point to saved colors and
-  fonts, so those must exist first. Save with `add_framework` only after approval.
+- **A3 Frameworks.** See what is already saved with `list_frameworks`, then ask which piece to
+  lay out next (feed 1:1, story 9:16, multi-format banner). One framework at a time, as HTML.
+  Its color and font slots point to saved colors and fonts, so those must exist first. Save with `add_framework` only after approval.
 - **A4 Test piece.** Render it with `decodex-render-pipeline` and open it. Options: 1) approve,
   2) adjust sizes, spacing or logo. Approve the first size before adding sizes or variants.
 - **A5 Close.** When setup status shows no gaps and at least one framework is approved and

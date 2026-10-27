@@ -41,7 +41,7 @@ always gets the next number — past deliveries are never overwritten or renumbe
 
 - **Every raw brand asset is uploaded to Decodex first (see `decodex-asset-upload`), and then a
   copy lives in `library/`, organized by type.** A file the user uploaded in the browser gets
-  its local copy when a piece first needs it. A logo
+  its local copy, downloaded from Decodex, when a piece first needs it. A logo
   used everywhere and a photo used by only one framework both live here.
 - **A framework-specific asset is not moved into `frameworks/`.** It stays in `library/`, under
   its type folder; a subfolder per framework is only created if the number of files actually
@@ -73,11 +73,11 @@ the exception, not the norm. A brand fact goes to `add_knowledge`, never to a ne
 | What | Decodex tool (write / read) | Stays local |
 |---|---|---|
 | Palette | `set_brand_color` / `get_brand_colors` | token names |
-| Fonts | `add_brand_font`, `add_google_font` / `get_brand_fonts` | font weights |
+| Fonts | `request_font_upload`, `add_google_font` (`add_brand_font` fallback) / `get_brand_fonts` | — |
 | Tone, legal | `set_brand_voice`, `set_brand_core` / `get_brand_voice` | — |
 | Other foundations | `set_foundation` / `get_foundations` | — |
-| Asset files | `request_asset_upload`, `request_batch_asset_upload` / `get_asset`, `list_assets`, `search_assets` | logo clear-space rules |
-| Framework spec | `add_framework` / `get_framework` | — |
+| Asset files | `request_asset_upload`, `request_batch_asset_upload` / `get_asset`, `list_assets`, `search_assets`, `get_asset_download_url` | logo clear-space rules |
+| Framework spec | `add_framework` / `list_frameworks`, `get_framework` | — |
 | Brand facts | `add_knowledge`, `list_knowledge`, `delete_knowledge` | — |
 | Designer learnings | `save_piece_learning` / `search_piece_learnings` | — |
 | Colorways | no tool yet | all of it |

@@ -11,8 +11,8 @@ Follow the reply format of `decodex-workflow` and the way of talking in the root
 
 `add_asset` and `add_brand_font` send the whole file as base64 text through the conversation:
 about 7 minutes in tests, and the bytes fill the context. An upload link moves the file outside
-the conversation. Never call `add_asset`, and never read, print or encode a file's bytes into
-the conversation.
+the conversation. Never call `add_asset`, use `add_brand_font` only as the fallback in "Fonts",
+and never read, print or encode a file's bytes into the conversation.
 
 ## Pick the tool
 
@@ -20,13 +20,14 @@ the conversation.
 |---|---|---|
 | One logo, image or icon | `request_asset_upload` | `LOGO`, `PRODUCT_PHOTO`, `ICON` or `OTHER` |
 | Two or more with the same role | `request_batch_asset_upload` | one role for the whole batch |
-| A font | see "Fonts" | — |
+| A font file | `request_font_upload`, one per weight/style (see "Fonts") | `primary`, `secondary`, `body` or `heading` |
 
 Write each description so `search_assets` can find it: what it is, the variant, and where it
 works ("Primary logo, full color, for light backgrounds"). For a rendition of an existing
 asset, pass its id as `variantOfId` (from `list_assets` or `search_assets`).
 
-Before using any link, check it, because it is passed to the shell:
+Before using any link from Decodex (asset upload, font upload or download), check it, because it
+is passed to the shell:
 
 - Parse it as a URL. The scheme must be `https`, and the hostname must be exactly
   `decodex.quadi.io` or end with `.decodex.quadi.io`. A prefix or "contains" match is not
@@ -48,9 +49,7 @@ the user is ready.
 3. When they say it is done, confirm with `list_assets` that it shows as ready. If it is not,
    request a new link once and open it again.
 
-This leaves no local copy, and `get_asset` only shows you the image, it cannot hand you the
-file. When a piece first needs it, ask where it is saved and copy it into `library/<type>/`
-(a copy, no new upload).
+This leaves no local copy; get one with "Local copy" when a piece first needs the file.
 
 ## Option 2: the user says where the file is saved
 
@@ -71,11 +70,29 @@ Use it when the user prefers it, or when the browser cannot be opened.
 
 ## Fonts
 
-Upload links accept images only today: a font sent through one would not be saved as a brand
-font.
-
 1. Offer `add_google_font` (catalog id) first: it is instant.
-2. For a font file, say it can take several minutes and offer: 1) the closest Google font,
-   2) wait for the upload. Use `add_brand_font` only after a clear yes, and keep the file in
-   `library/fonts/`. This is the one exception to the single route, until Decodex adds upload
-   links for fonts.
+2. For a font file, ask for the family name and which weights and styles they have (for example
+   regular, bold, bold italic). Each weight/style is its own file and needs its own link.
+3. Before requesting, check `get_brand_fonts`. If that role already holds a different family,
+   say it will be replaced along with all its files, and continue only after a clear yes. More
+   files of the same family are added to it.
+4. Request one link per file with `request_font_upload` (`role`, `familyName`, `weight` 100 to
+   900 in steps of 100, `style` normal or italic), check it as above and open it like Option 1.
+   It accepts .ttf, .otf, .woff and .woff2 up to 10 MB.
+5. When they say it is done, confirm with `get_brand_fonts` that the weights appear. When a
+   local copy is needed, keep the file in `library/fonts/`.
+6. Use `add_brand_font` only as a fallback when the links cannot be used: say first that it
+   takes several minutes and continue only after a clear yes.
+
+## Local copy
+
+When a piece first needs a file that is not in `library/<type>/` yet:
+
+1. Call `get_asset_download_url` with the asset id (from `list_assets` or `search_assets`) and
+   check the link as above. It lasts 10 minutes, so request it right before downloading.
+2. Download it: `curl -fsS -o "library/<type>/<name>" "<downloadUrl>"`. The server names the
+   file by its id, so choose `<name>` yourself: a short kebab-case name from the asset's
+   description plus the extension of its type (`logo-main-blue-on-yellow.png`). Never show the
+   link or curl's output to the user.
+3. If it fails, request a new link once. If it fails again, ask the user where the file is
+   saved and copy it into `library/<type>/` (a copy, no new upload).

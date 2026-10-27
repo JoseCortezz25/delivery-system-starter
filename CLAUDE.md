@@ -20,14 +20,14 @@ brand; call `get_brand` to confirm which one.
 
 - **Setup writes to Decodex.** When the user hands you a color, font, tone rule, framework spec,
   asset, or brand fact, save it with the matching tool (`set_brand_color`,
-  `add_brand_font`/`add_google_font`, `set_brand_voice`, `add_framework`,
+  `request_font_upload`/`add_google_font`, `set_brand_voice`, `add_framework`,
   `request_asset_upload`/`request_batch_asset_upload`, `add_knowledge`) instead of hand-editing a
   local file that a tool already covers.
 - **Execution reads from Decodex** and uses what it reads to build pieces.
-- **`frameworks/` is regenerable from Decodex; `library/` is not yet**, because `get_asset`
-  shows an asset but cannot hand over the file. `foundations/` stays as it is
-  until we confirm the tools cover everything it holds (token naming, logo clear-space rules, font
-  weights, colorways).
+- **`frameworks/` and `library/` are regenerable from Decodex**: frameworks with
+  `list_frameworks`/`get_framework`, and the original asset files with `get_asset_download_url`.
+  `foundations/` stays as it is until the tools cover token naming, logo clear-space rules and
+  colorways (font weights are now covered by `get_brand_fonts`).
 - **`content/`, `engine/`, and `references/` are unchanged.** Decodex does not generate or render
   pieces; it only centralizes the brand data `engine/` needs.
 
@@ -36,17 +36,20 @@ brand; call `get_brand` to confirm which one.
 **Check first:** `get_brand` (which brand), `get_brand_setup_status` (what is missing).
 
 **Setup (write; needs the configure permission):**
-- Look and voice: `set_brand_color`, `add_brand_font`, `add_google_font`, `set_brand_voice`,
-  `set_brand_core`, `set_foundation`.
+- Look and voice: `set_brand_color`, `set_brand_voice`, `set_brand_core`, `set_foundation`.
+- Fonts: `request_font_upload` (the fast path), `add_google_font`; `add_brand_font` only as a
+  fallback.
 - Frameworks: `add_framework`.
 - Knowledge: `add_knowledge`, `list_knowledge`, `delete_knowledge`.
 - Assets: `request_asset_upload` and `request_batch_asset_upload` (the fast path), `delete_asset`.
-  `add_asset` and `add_brand_font` send the whole file as text and take minutes: avoid them.
+  `add_asset` and `add_brand_font` are slow base64 fallbacks that send the whole file as text:
+  avoid them.
 - Products: `save_product`, `update_product`, `delete_product`.
 
 **Production (read; needs the produce permission):** `get_foundations`, `get_brand_colors`,
-`get_brand_fonts`, `get_brand_voice`, `get_framework`, `get_asset`, `list_assets`,
-`search_assets`, `list_products`, `ask_brand`, `list_accessible_brands`, `switch_brand`.
+`get_brand_fonts`, `get_brand_voice`, `list_frameworks`, `get_framework`, `get_asset`,
+`get_asset_download_url`, `list_assets`, `search_assets`, `list_products`, `ask_brand`,
+`list_accessible_brands`, `switch_brand`.
 
 **Learning:** `save_piece_learning` after a piece, `search_piece_learnings` before starting one.
 
@@ -142,8 +145,8 @@ naming paths, config files, or internal skill names:
 - When you need a value, give an example and accept a plain description. If they lack a
   color code, ask for the logo or an image, read the color from it and confirm with them.
 - Before a step that can take a while, say so first ("Esto puede tardar un momento"). Fonts:
-  offer the Google Fonts option first; an uploaded font file has no direct upload route and
-  takes several minutes (about 7 in tests): warn before doing it and ask for a clear yes.
+  offer the Google Fonts option first; a font file is uploaded through a page opened in the
+  browser, one file per weight.
 - Errors: say what happened in plain words and what to do next. Never paste technical text.
 - Popup options: short plain labels, each with a one-line description.
 
@@ -214,7 +217,7 @@ typography, components, molecules.
 
 - **Editable**: token source files, typography scale, color palette, logo rules, tone/legal docs.
   Palette, fonts, and voice are saved in Decodex; for what its tools don't cover yet (token
-  naming, font weights, logo clear-space, colorways) these files are the source of truth.
+  naming, logo clear-space, colorways) these files are the source of truth.
 - **Static**: anything generated FROM those tokens (compiled style sheets, exported swatches,
   rendered component previews). Never hand-edit static output — regenerate it from the editable
   source instead.
@@ -238,14 +241,15 @@ Organized by asset type:
 - `library/sounds/` — sound assets.
 - `library/fonts/` — brand typeface files.
 
-**Every insumo is uploaded to Decodex first, then a copy lives in `library/`.** A file the user
-uploaded in the browser gets its local copy when a piece first needs it. An asset used by every framework and one
+**Every insumo is uploaded to Decodex first, then a copy lives in `library/`.** The local copy is
+downloaded from Decodex when a piece first needs it. An asset used by every framework and one
 used by a single framework both live here, organized by type — never duplicated, and never moved
 into a framework-specific folder. A subfolder per framework inside a type folder is only created
 if the number of files actually justifies it (see `structure-and-assets.md`).
 
-**Uploading to Decodex.** Every file goes through `decodex-asset-upload`: an upload link opened
-in the browser first, never `add_asset`, and `add_brand_font` only as the font exception.
+**Uploading to Decodex.** Every file, fonts included, goes through `decodex-asset-upload`: an
+upload link opened in the browser first, never `add_asset`, and `add_brand_font` only as a
+fallback.
 
 ### `content/` — Content generation primitive
 
@@ -291,7 +295,7 @@ See `RULES.md` for the full set of general technical rules the AI must follow in
 |---|---|
 | `decodex-workflow` | Entry point of every session: silent checks, router, reply format (one popup question per turn), the order Setup then Production, and connection errors. Invoke it first, at the start of every session. |
 | `decodex-setup` | Step-by-step brand setup (colors, fonts, logo, tone, frameworks, test piece) with the right tool for each item. |
-| `decodex-asset-upload` | The single route to send any file (logo, image, icon, font) to Decodex: an upload link opened in the browser, a host check, verification, and the local copy in `library/`. |
+| `decodex-asset-upload` | The single route to send any file (logo, image, icon, font) to Decodex: an upload link opened in the browser (one per font weight/style), a host check, verification, and the download of the local copy into `library/`. |
 | `decodex-production` | Producing one piece at a time as HTML exported to an image: inputs, render preflight, review and approval. |
 | `decodex-render-pipeline` | Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use any time a piece needs to be rendered to an image file or an image needs to be resized — call these scripts instead of writing new rendering or resizing code from scratch. |
 | `decodex-legacy-migration` | Checklist for migrating a legacy, unstructured Decodex brand implementation into this project's structure — foundations, frameworks (including the case where a framework was never written up, only built into a design/structure file), and library assets. Never touches the legacy engine/build code. |

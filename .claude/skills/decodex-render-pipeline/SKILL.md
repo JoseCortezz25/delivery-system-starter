@@ -1,7 +1,7 @@
 ---
 name: decodex-render-pipeline
 description: Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use this skill any time a piece needs to be rendered to an image file or an image needs to be resized — invoke these scripts instead of writing new rendering or resizing code from scratch.
-compatibility: Requires Python 3.9+, Playwright (with Chromium installed), and Pillow.
+compatibility: Requires Python 3.9+, and Playwright (with Chromium installed) and Pillow in the project's .venv.
 metadata:
   version: "0.1.0"
 ---
@@ -24,9 +24,9 @@ Renders an HTML file (or an inline HTML string) with headless Chromium and captu
 `width x height` clip — never assumes a square canvas.
 
 ```
-python scripts/export_piece.py --html piece.html --width 1080 --height 1920 --output out.png
-python scripts/export_piece.py --html-string "<html>...</html>" --width 300 --height 250 --output out.jpg --format jpeg
-python scripts/export_piece.py --html piece.html --width 1080 --height 1920 --output out.png --scale 2
+.venv/bin/python .claude/skills/decodex-render-pipeline/scripts/export_piece.py --html piece.html --width 1080 --height 1920 --output out.png
+.venv/bin/python .claude/skills/decodex-render-pipeline/scripts/export_piece.py --html-string "<html>...</html>" --width 300 --height 250 --output out.jpg --format jpeg
+.venv/bin/python .claude/skills/decodex-render-pipeline/scripts/export_piece.py --html piece.html --width 1080 --height 1920 --output out.png --scale 2
 ```
 
 Arguments:
@@ -45,10 +45,10 @@ Implementation note: Playwright's `page.screenshot()` natively supports `png` an
 ## `scripts/scale_image.py` — resize an existing image
 
 ```
-python scripts/scale_image.py --input piece.png --output piece_small.png --width 540
-python scripts/scale_image.py --input piece.png --output piece_small.png --height 960
-python scripts/scale_image.py --input piece.png --output piece_2x.png --scale 2.0
-python scripts/scale_image.py --input piece.png --output thumb.jpg --width 300 --height 300
+.venv/bin/python .claude/skills/decodex-render-pipeline/scripts/scale_image.py --input piece.png --output piece_small.png --width 540
+.venv/bin/python .claude/skills/decodex-render-pipeline/scripts/scale_image.py --input piece.png --output piece_small.png --height 960
+.venv/bin/python .claude/skills/decodex-render-pipeline/scripts/scale_image.py --input piece.png --output piece_2x.png --scale 2.0
+.venv/bin/python .claude/skills/decodex-render-pipeline/scripts/scale_image.py --input piece.png --output thumb.jpg --width 300 --height 300
 ```
 
 Arguments:
@@ -64,7 +64,15 @@ Uses `Image.LANCZOS` resampling.
 
 ## Installation
 
+Install into a virtual environment at the project root, never into the system Python: Homebrew
+and recent macOS Python builds refuse a global `pip install` (PEP 668), and forcing it can break
+the user's Python. `.venv` is already ignored by git.
+
 ```
-pip install playwright Pillow
-python -m playwright install chromium
+python3 -m venv .venv
+.venv/bin/pip install playwright Pillow
+.venv/bin/python -m playwright install chromium
 ```
+
+Run every script in this skill with `.venv/bin/python` from the project root, not with `python`
+or `python3`. Chromium is installed once per machine and shared by every project.

@@ -21,19 +21,23 @@ Steps:
 
 - **B1 Brand and framework.** Silent: `get_brand_setup_status`. If gaps remain, say the brand
   is not ready to produce and offer `decodex-setup` (Codifier) or their administrator. Ask
-  which framework they want and confirm it with `get_framework`; if it does not exist, say so
-  and offer the same. Ask: 1) describe the piece, 2) the data is in a spreadsheet, 3) repeat a
-  previous one (`search_piece_learnings`). A spreadsheet is only a column contract (columns map
+  which framework they want among the ones `list_frameworks` shows, and read it with
+  `get_framework`; if none exists, say so and offer the same. Ask: 1) describe the piece,
+  2) the data is in a spreadsheet, 3) repeat a previous one (`search_piece_learnings`). A spreadsheet is only a column contract (columns map
   1:1 to the framework's dynamic elements, plus a variant column): produce its first row as one
   piece and say plainly that batch production is not available yet.
 - **B2 Inputs and preflight.** Framework from `get_framework`; colors, fonts, tokens and tone
   from `get_brand_colors`, `get_brand_fonts`, `get_foundations` and `get_brand_voice` (Google
-  fonts can be linked in the HTML); legal or prohibited claims with `ask_brand` before drafting
+  fonts can be linked in the HTML; an uploaded font cannot be downloaded from Decodex yet, so if
+  its file is not in `library/fonts/`, ask the user where it is saved and copy it there, and
+  never swap in another font without saying so); legal or prohibited claims with `ask_brand` before drafting
   copy; the product with `list_products`; logo and images: find them with `search_assets` or
-  `list_assets`, then use the copy in `library/`. If a needed file is not in `library/`, say so and ask the user for
-  it: never recreate a logo and never transcribe base64. Before the first render check that
-  Python, Playwright, Pillow and Chromium are installed. If something is missing, say it in
-  plain words and ask permission before installing. If the render scripts fail for any reason,
+  `list_assets`, then use the copy in `library/`. If a needed file is not in `library/` yet,
+  get it with "Local copy" in `decodex-asset-upload`: never recreate a logo and never
+  transcribe base64. Before the first render check that the project's `.venv` has Playwright,
+  Pillow and Chromium (see "Installation" in `decodex-render-pipeline`). If something is
+  missing, say it in plain words and ask permission before installing. If the render scripts
+  fail for any reason,
   stop and tell the user. Never copy, rewrite or recreate `export_piece.py` or any other
   rendering script, in any folder, and never render with a different tool.
 - **B3 Plan.** State brand, framework and size. Options: 1) build the first piece
