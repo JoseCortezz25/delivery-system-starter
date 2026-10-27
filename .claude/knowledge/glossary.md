@@ -21,13 +21,12 @@ Quick reference — see the root `CLAUDE.md` for the full description of each fo
 | Folder | Primitive | Meaning |
 |---|---|---|
 | `foundations/` | Foundations | Shared brand layer, tokenized once per brand: palette, typography, logo, tone, legal. Saved in Decodex; this folder keeps what its tools don't cover yet. |
-| `frameworks/` | Frameworks | One document per framework (`frameworks/<name>.md`): slots, intent, variants, measurements. Saved in Decodex with `add_framework`. |
+| `frameworks/` | Frameworks | One document per framework (`frameworks/<name>.md`): slots, intent, variants, measurements. The local working draft while it's built; the approved version lives in Decodex (`add_framework`, read with `get_framework`). |
 | `library/` | Librería de insumos | Raw brand assets: logos, images, videos, icons, sounds, fonts. Uploaded to Decodex (`request_asset_upload`) first, never saved here first. |
 | `content/` | Content generation | Generated output — copy, video, photo, Digital Twins — produced by running a framework through the engine. |
-| `knowledge/` | Knowledge | Brand-specific knowledge and learnings (not an asset library). Brand facts live in Decodex (`add_knowledge`); designer learnings go to `save_piece_learning`. |
 | `engine/` | Rendering engine | Scripts that read the framework docs and produce the pieces that land in `content/`. |
 
 Note: this file lives under `.claude/knowledge/` — harness-level knowledge about how Decodex itself
-works, available to any AI operating this project. The top-level `knowledge/` folder above is a
-different thing: it's the Knowledge **primitive**, reserved for brand-specific facts about the
-one brand this project is for (kept in Decodex via `add_knowledge`).
+works, available to any AI operating this project. Brand knowledge (the Knowledge **primitive**)
+has no local folder: it lives in Decodex — brand facts with `add_knowledge`, designer learnings
+with `save_piece_learning`.

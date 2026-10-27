@@ -38,7 +38,6 @@ por una a mano.
 | `library/`     | Los insumos crudos de la marca: logos, fotos, videos, íconos, sonidos, fuentes |
 | `content/`     | Las piezas ya generadas, organizadas por proyecto/campaña                      |
 | `references/`  | Miniaturas/montajes de frameworks ya aprobados, para consulta visual rápida    |
-| `knowledge/`   | Conocimiento específico de esta marca                                          |
 | `engine/`      | El motor que genera las piezas                                                 |
 
 ## Cómo se opera esto

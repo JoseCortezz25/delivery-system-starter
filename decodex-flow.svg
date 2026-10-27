@@ -45,12 +45,6 @@
   <line x1="250" y1="275" x2="378" y2="275" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
   <text x="314" y="266" font-size="11" text-anchor="middle" fill="#555555">referenced by name</text>
 
-  <!-- knowledge/ side box -->
-  <rect x="700" y="240" width="220" height="70" rx="10" fill="#ffffff" stroke="#bbbbbb" stroke-width="1.5" stroke-dasharray="5,4"/>
-  <text x="810" y="268" font-size="14" font-weight="700" text-anchor="middle" fill="#555555">knowledge/</text>
-  <text x="810" y="286" font-size="11" text-anchor="middle" fill="#777777">brand-specific learnings —</text>
-  <text x="810" y="300" font-size="11" text-anchor="middle" fill="#777777">read throughout, any stage</text>
-
   <!-- Stage 3: engine -> content -->
   <line x1="490" y1="320" x2="490" y2="408" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>
   <line x1="250" y1="300" x2="250" y2="360" stroke="#333333" stroke-width="1.5"/>

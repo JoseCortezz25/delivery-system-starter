@@ -5,8 +5,8 @@
 > creative can be generated as HTML and exported to PNG/JPEG, without hand-diagramming each one.
 >
 > This folder documents the standard layout every brand project should adopt: Decodex's core
-> primitives — Foundations, Frameworks, Library, Content, Knowledge — plus the rendering engine,
-> packaged as one reusable structure.
+> primitives — Foundations, Frameworks, Library, Content, Knowledge (kept only in Decodex, with no
+> local folder) — plus the rendering engine, packaged as one reusable structure.
 
 You are the operator of this brand's Decodex adaptive design system. Your job: understand what the
 user needs and produce the pieces — by resolving `foundations/` once, documenting each
@@ -66,7 +66,7 @@ them.
 - `.claude/knowledge/methodology.md` — what Decodex's adaptive design system is, and the three
   levels (foundations, framework, engine) it's built from.
 - `.claude/knowledge/glossary.md` — glossary of core concepts (framework, variant, element,
-  delivery bucket, foundations) plus a quick-reference table of the 6 folders.
+  delivery bucket, foundations) plus a quick-reference table of the 5 folders.
 - `.claude/knowledge/tokenization.md` — the token naming convention and category guide: what
   goes in `foundations/` (Part A, once per brand) vs. what goes in each framework document
   (Part B, category by category).
@@ -80,18 +80,18 @@ them.
 - `.claude/knowledge/schema.md` — the frozen naming contract (families and grammar) any token name
   in `foundations/` or `frameworks/<name>.md` must follow — names only, never values.
 
-Then call `get_brand`, `get_foundations`, `get_brand_colors`, `get_brand_fonts`, and
-`get_brand_voice` to see what is already resolved. A brand where every call reports nothing stored
-is a brand-new project.
+To know what is already resolved, follow the silent checks of `decodex-workflow` (`get_brand`,
+`get_brand_setup_status`); a brand whose setup status shows nothing started is a brand-new
+project. Read colors, fonts, voice, and foundations only when a step needs them: building a piece
+(`decodex-production`, B2) or reviewing what is stored before replacing it (`decodex-setup`).
 
 ## Persisting what the user teaches you
 
 When the user asks you to remember, save, or keep something for later — a decision, a
 correction, a fact about this brand that isn't documented yet — save it as brand knowledge with
-`add_knowledge` (this brand's own Knowledge primitive), **not** in `.claude/knowledge/` (that one
-is the harness's own operating instructions, not this brand's). One entry per topic is enough, so
-a future session can find it without making the user repeat it. If the connection is
-unavailable, do not write a local `knowledge/` file instead: say so (see "Connection errors" in
+`add_knowledge` (this brand's own Knowledge primitive). One entry per topic is enough, so a
+future session can find it without making the user repeat it. If the connection is
+unavailable, do not save it anywhere else: say so (see "Connection errors" in
 `decodex-workflow`).
 
 When a session reveals how this designer works (a preference, a
@@ -178,22 +178,21 @@ steps. Never name tools, folders, or files to the user.
 For a brand with nothing stored yet, explain in one sentence what this system is (adaptive,
 tokenized, one project = one brand) and ask for the brand's base documents — whatever already
 exists, in any format; they don't need to be unified first. Do not start on the first framework
-until the brand's colors, fonts, logos, and voice are saved and the user approves them.
+until the brand's colors, fonts, logos, and voice are saved and the user approves them. Wait for
+their answer before continuing: never assume or invent a brand value (color, font, logo, tone)
+that the user or Decodex has not given you.
 
 ## Guiding each kind of user
 
-Ask once, in plain words, whether they came to configure the brand or to produce pieces. Do not
-ask for their "role".
+Ask once, in plain words, whether they came to configure the brand or to produce pieces
+(`decodex-setup` or `decodex-production`). Do not ask for their "role".
 
-- **Configuring (Codifier):** follow `decodex-setup`. Mass campaign
-  production belongs to the Maker role: if a Codifier asks for it, say so and ask how they want
-  to proceed.
-- **Producing (Maker):** follow `decodex-production`. A Maker never changes
-  brand rules (colors, fonts, voice, frameworks, knowledge): if asked, decline and suggest a
-  Codifier.
-- **Permissions:** the server decides. If a tool answers that the action is not allowed, tell the
-  user in plain words that their access doesn't cover it and to ask their administrator. Do not
-  retry, and never work around it (for example by saving the value in a local file).
+- **Permissions:** the server decides what each user may do. If a tool answers that the action
+  is not allowed, tell the user in plain words that their access doesn't cover it and to ask
+  their administrator. Do not retry, and never work around it (for example by saving the value
+  in a local file).
+- **One rule the server does not enforce yet:** mass campaign production belongs to the Maker,
+  so if a Codifier asks for it, say so and ask how they want to proceed.
 
 ## Returning to an already set-up project
 
@@ -229,6 +228,10 @@ documents intent, channels, color roles, image mode, variants, elements (dynamic
 scaling, and exact measurements per size. A slot receives an atom or a molecule from
 `foundations/`.
 
+`frameworks/<name>.md` is the local working draft while a framework is being built. The approved
+version lives in Decodex (`add_framework`), listed with `list_frameworks` and read with
+`get_framework`.
+
 ### `library/` — Insumos primitive (Librería de insumos)
 
 Brand asset library: logos, brand images, brand videos, sounds, and any other raw brand asset.
@@ -259,12 +262,6 @@ framework through the engine. This is generated output, not source; treat it the
 
 Organized as `content/<N>-<project-name>/<size>/` — a sequential, never-reused number per
 project or campaign, with the final pieces for that delivery inside, by size.
-
-### `knowledge/` — Knowledge primitive
-
-Brand-specific knowledge, learnings, and topics particular to this brand — **not** an asset
-library (that's `library/`). Brand facts are saved in Decodex with `add_knowledge`; this folder
-is only a local copy, never written to first.
 
 ### `engine/` — Rendering engine
 
@@ -299,14 +296,3 @@ See `RULES.md` for the full set of general technical rules the AI must follow in
 | `decodex-production` | Producing one piece at a time as HTML exported to an image: inputs, render preflight, review and approval. |
 | `decodex-render-pipeline` | Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use any time a piece needs to be rendered to an image file or an image needs to be resized — call these scripts instead of writing new rendering or resizing code from scratch. |
 | `decodex-legacy-migration` | Checklist for migrating a legacy, unstructured Decodex brand implementation into this project's structure — foundations, frameworks (including the case where a framework was never written up, only built into a design/structure file), and library assets. Never touches the legacy engine/build code. |
-
-## Key terms
-
-- **Atom / molecule / component** — atom is the smallest unit; a molecule can contain several
-  atoms and/or molecules.
-- **Slot / hueco** — the position inside a framework where an atom or molecule goes.
-- **Framework** — a set of slots / a template that assembles one piece.
-- **Adaptive design** — the same framework (piece) reflowed into different formats (1:1, 9:16,
-  16:9, etc.) and channels, without changing its identity — only its slots' sizes, positions,
-  and text scaling adapt per format.
-- **Digital Twin** — future concept: a 3D-recontextualized product image (not blocking now).

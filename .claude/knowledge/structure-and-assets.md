@@ -27,7 +27,6 @@ project/
 ├── references/                   # approved-output index — thumbnails/montages for quick lookup
 │   └── <framework>/               # one or more reference images per framework — one per size
 │       └── <size>[-<variant>].jpg  # and/or content type is common, not a single combined file
-├── knowledge/                    # Knowledge primitive — brand-specific facts, not an asset library (canonical copy in Decodex)
 └── engine/                       # rendering engine — scripts that build the pieces
 ```
 
