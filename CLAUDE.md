@@ -245,10 +245,10 @@ Organized by asset type:
 - `library/fonts/` — brand typeface files.
 
 **Every insumo is uploaded to Decodex first, then a copy lives in `library/`.** The local copy is
-downloaded from Decodex when a piece first needs it. An asset used by every framework and one
-used by a single framework both live here, organized by type — never duplicated, and never moved
-into a framework-specific folder. A subfolder per framework inside a type folder is only created
-if the number of files actually justifies it (see `structure-and-assets.md`).
+downloaded from Decodex when a piece first needs it. This applies to every asset, whether every
+framework uses it or only one does: its copy goes in `library/<type>/`, never duplicated and
+never moved into a framework-specific folder. A subfolder per framework inside a type folder is
+only created if the number of files actually justifies it (see `structure-and-assets.md`).
 
 **Uploading to Decodex.** Every file, fonts included, goes through `decodex-asset-upload`: an
 upload link opened in the browser first, never `add_asset`, and `add_brand_font` only as a

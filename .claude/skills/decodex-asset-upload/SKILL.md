@@ -1,6 +1,9 @@
 ---
 name: decodex-asset-upload
 description: The only route to send brand files (logos, images, icons, product photos, fonts, any binary) to Decodex - request an upload link, open it in the browser for the user, verify it, and keep the local copy in library/. Use whenever a file must reach Decodex, from setup, production or a migration.
+compatibility: Requires the decodex-brand MCP connection, curl, and Google Chrome on macOS for the browser upload.
+metadata:
+  version: "0.1.0"
 ---
 
 # Decodex asset upload

@@ -27,7 +27,8 @@ project/
 ├── references/                   # approved-output index — thumbnails/montages for quick lookup
 │   └── <framework>/               # one or more reference images per framework — one per size
 │       └── <size>[-<variant>].jpg  # and/or content type is common, not a single combined file
-└── engine/                       # rendering engine — scripts that build the pieces
+├── engine/                       # rendering engine — scripts that build the pieces
+└── codex-lock.json               # project lock — written once by the plugin, protected (see below)
 ```
 
 Everything here belongs to ONE brand. A project never contains `foundations/` for two different
@@ -36,12 +37,32 @@ brands — if a new brand shows up, it's a new project, with this same tree, emp
 **`content/<N>-<project-name>/` is sequential and never reused.** A new project or campaign
 always gets the next number — past deliveries are never overwritten or renumbered.
 
+## Project lock (`codex-lock.json`)
+
+The plugin writes it once, when it creates the project, and from then on it is protected: the AI
+never edits or deletes it. The template itself has none.
+
+```json
+{
+  "schemaVersion": 1,
+  "harness": { "name": "decodex", "version": "<template tag>", "repo": "<template git URL>", "commit": "<commit sha>" },
+  "brand": { "name": "<brand name as it appears in Decodex>", "codexVersion": "<brand format version>" },
+  "project": { "name": "<project slug>", "purpose": "<free text>", "createdAt": "<ISO 8601 UTC>" },
+  "createdWith": { "plugin": "<plugin name>", "pluginVersion": "<plugin version>" }
+}
+```
+
+The router in `decodex-workflow` reads `brand.name`, and `brand.id` when present. `brand.id` is
+optional: the plugin does not write it yet, because the project is created before connecting to
+Decodex. The other fields are informational.
+
 ## Where each asset goes
 
 - **Every raw brand asset is uploaded to Decodex first (see `decodex-asset-upload`), and then a
   copy lives in `library/`, organized by type.** A file the user uploaded in the browser gets
-  its local copy, downloaded from Decodex, when a piece first needs it. A logo
-  used everywhere and a photo used by only one framework both live here.
+  its local copy, downloaded from Decodex, when a piece first needs it. This applies to every
+  asset, whether every framework uses it (the main logo) or only one does (a product photo):
+  its copy goes in `library/<type>/` all the same.
 - **A framework-specific asset is not moved into `frameworks/`.** It stays in `library/`, under
   its type folder; a subfolder per framework is only created if the number of files actually
   justifies it — the same criterion used for variants (see `framework-construction.md`): don't

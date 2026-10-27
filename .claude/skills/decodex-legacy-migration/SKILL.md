@@ -1,7 +1,6 @@
 ---
 name: decodex-legacy-migration
 description: Migrate a legacy, unstructured Decodex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (foundations/, frameworks/, library/, content/, engine/, references/), with brand facts saved to Decodex. Use when a brand already has a Decodex-style implementation that predates this structure and needs to be brought in.
-license: See repository LICENSE
 compatibility: Claude Code / Agent Skills-compatible runtimes
 metadata:
   version: "0.1.0"

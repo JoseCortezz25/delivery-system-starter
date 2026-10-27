@@ -1,6 +1,9 @@
 ---
 name: decodex-workflow
 description: Entry point of every Decodex brand session. Runs the silent checks, shows the router (configure the brand, create a piece, review what is saved), sets the reply format and the order Setup then Production, and hands off to decodex-setup or decodex-production. Use at the start of every session and whenever the user moves between configuring the brand and producing pieces.
+compatibility: Requires the decodex-brand MCP connection.
+metadata:
+  version: "0.1.0"
 ---
 
 # Decodex workflow
@@ -23,12 +26,20 @@ same question as a numbered list in plain text and stop.
 
 ## Router (silent)
 
-1. Read `codex-lock.json` at the project root and extract `brand.name`: it is the brand this
-   project belongs to. If there is no `codex-lock.json` (the template itself or an older
-   project), skip the comparison in step 2: use the brand `get_brand` returns, and if the user
-   says it is not theirs, offer the ones `list_accessible_brands` shows and `switch_brand`.
-2. Call `get_brand`. If it is not that brand, call `list_accessible_brands`:
-   - listed → call `switch_brand` to it, then `get_brand` again to confirm;
+1. Read `codex-lock.json` at the project root (its fields are in `structure-and-assets.md`):
+   `brand.id` when present, and `brand.name`. That is the brand this project belongs to. If there
+   is no `codex-lock.json` (the template itself or an older project), skip the comparison in
+   step 2: use the brand `get_brand` returns, and if the user says it is not theirs, offer the
+   ones `list_accessible_brands` shows and switch only to the one they pick.
+2. Call `get_brand`. It is the project's brand when its id equals `brand.id`, or, when the lock
+   has no id, when its name equals `brand.name` exactly, ignoring case. If it is not, call
+   `list_accessible_brands` and look for the project's brand the same way:
+   - listed once → ask with the popup before switching: "Este proyecto es de la marca
+     <brand.name>, pero ahora estás conectado a <marca actual>. ¿Cambio a <brand.name>?" with
+     1) "Sí, cambiar" (recommended) and 2) "No". On yes, `switch_brand` with that brand's id,
+     then `get_brand` again to confirm. On no, stop and say this project only works with
+     <brand.name>. Do not work on another brand;
+   - listed more than once (same name) → ask which one, showing each brand's name and id;
    - not listed → stop and say: "Tu usuario no tiene acceso a la marca <brand.name> en
      Decodex. Pídele acceso a tu administrador." Do not work on another brand.
 3. Call `get_brand_setup_status`. If any call fails, go to "Connection errors".

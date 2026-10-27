@@ -1,6 +1,9 @@
 ---
 name: decodex-setup
 description: Step-by-step brand setup in Decodex (colors, fonts, logo, tone, frameworks, test piece), with the right tool for each item and the order it must follow. Use when the user chose to configure the brand or when setup status shows gaps.
+compatibility: Requires the decodex-brand MCP connection with the configure permission.
+metadata:
+  version: "0.1.0"
 ---
 
 # Decodex setup

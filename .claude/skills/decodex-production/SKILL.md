@@ -1,6 +1,9 @@
 ---
 name: decodex-production
 description: Producing brand pieces from a saved Decodex framework, one piece at a time as HTML exported to an image, with inputs, a render preflight, review and approval. Use when the user chose to create a piece and the brand is ready to produce.
+compatibility: Requires the decodex-brand MCP connection and the decodex-render-pipeline .venv (Python 3.9+, Playwright with Chromium, Pillow).
+metadata:
+  version: "0.1.0"
 ---
 
 # Decodex production
