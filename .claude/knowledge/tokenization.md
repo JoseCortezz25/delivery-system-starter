@@ -50,10 +50,11 @@ improvement, don't apply it silently and don't ignore it.
 
 ## Part A — Foundations (once, shared by every framework)
 
-Part A is saved in Decodex (`set_brand_color`, `add_brand_font`/`add_google_font`,
-`set_brand_voice`, `set_brand_core`, `set_foundation`). What those tools don't cover yet (token
-names, font weights, logo clear-space, colorways) stays in `foundations/` until verified. The
-sections below are the checklist of what to collect.
+Part A is saved in Decodex (`set_brand_color`, `request_font_upload`/`add_google_font`,
+`set_brand_voice`, `set_brand_core`, `set_foundation`, and `add_knowledge` for colorways). A token
+is saved with `set_foundation` under its name from this convention; `get_foundations` returns it
+as a CSS custom property with dots turned into dashes (`spacing.safe.left` →
+`--spacing-safe-left`). The sections below are the checklist of what to collect.
 
 ### A1. Base brand palette (`color.palette.*`)
 
@@ -81,8 +82,9 @@ that assignment changes framework to framework.
 
 - Logo file(s) (light and dark version), uploaded to Decodex (`request_asset_upload`).
 - Minimum clear-space around the logo (this is a brand rule, not a framework one — it always
-  applies, even though its exact position and measurement is defined per framework in B6). No
-  tool covers it, so it stays in `foundations/`.
+  applies, even though its exact position and measurement is defined per framework in B6).
+  Saved with `set_foundation` as `logo.clearspace`; a rule written in words comes back from
+  `get_foundations` as plain text, not as a custom property.
 
 ### A4. Copy tone and legal boundaries
 

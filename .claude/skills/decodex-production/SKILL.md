@@ -31,18 +31,19 @@ Steps:
   piece and say plainly that batch production is not available yet.
 - **B2 Inputs and preflight.** Framework from `get_framework`; colors, fonts, tokens and tone
   from `get_brand_colors`, `get_brand_fonts`, `get_foundations` and `get_brand_voice` (Google
-  fonts can be linked in the HTML; an uploaded font cannot be downloaded from Decodex yet, so if
-  its file is not in `library/fonts/`, ask the user where it is saved and copy it there, and
-  never swap in another font without saying so); legal or prohibited claims with `ask_brand` before drafting
-  copy; the product with `list_products`; logo and images: find them with `search_assets` or
-  `list_assets`, then use the copy in `library/`. If a needed file is not in `library/` yet,
-  get it with "Local copy" in `decodex-asset-upload`: never recreate a logo and never
-  transcribe base64. Before the first render check that the project's `.venv` has Playwright,
-  Pillow and Chromium (see "Installation" in `decodex-render-pipeline`). If something is
-  missing, say it in plain words and ask permission before installing. If the render scripts
-  fail for any reason,
-  stop and tell the user. Never copy, rewrite or recreate `export_piece.py` or any other
-  rendering script, in any folder, and never render with a different tool.
+  fonts can be linked in the HTML; an uploaded font whose file is not in `library/fonts/` yet is
+  downloaded with "Local copy" in `decodex-asset-upload`, and if that fails, ask the user where
+  it is saved and copy it there; never swap in another font without saying so; in the HTML use
+  the custom properties exactly as `get_foundations` names them); legal or prohibited claims
+  with `ask_brand` before drafting copy; the product with `list_products`; logo and images:
+  find them with `search_assets` or `list_assets`, then use the copy in `library/`. If a needed
+  file is not in `library/` yet, get it with "Local copy" in `decodex-asset-upload`: never
+  recreate a logo and never transcribe base64. Before the first render check that the
+  project's `.venv` has Playwright, Pillow and Chromium (see "Installation" in
+  `decodex-render-pipeline`). If something is missing, say it in plain words and ask permission
+  before installing. If the render scripts fail for any reason, stop and tell the user. Never
+  copy, rewrite or recreate `export_piece.py` or any other rendering script, in any folder, and
+  never render with a different tool.
 - **B3 Plan.** State brand, framework and size. Options: 1) build the first piece
   (recommended), 2) change the data first.
 - **B4 Build and check.** Save the HTML next to its output in

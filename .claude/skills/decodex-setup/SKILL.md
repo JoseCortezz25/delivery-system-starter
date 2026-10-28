@@ -27,10 +27,13 @@ color is for: save what they give you and let each tool's reply tell you what is
   - Facts, legal rules and colorways: `add_knowledge` (text plus a source label). Only the
     labels can be read back (`list_knowledge`), not the text.
   - Products: `save_product`, `update_product`, `list_products`.
-  - Tokens with no dedicated tool (spacing, radii): `set_foundation`, only for values the user
-    gives you.
-  - Deleting (`delete_knowledge`, `delete_product`, `delete_asset`): see "Deleting" in
-    `decodex-workflow`. `delete_asset` is for stale or pending uploads only.
+  - Tokens with no dedicated tool (spacing, radii, the logo clear-space rule): `set_foundation`,
+    only for values the user gives you, with the key named as in `tokenization.md`
+    (`spacing.safe.left`). `get_foundations` returns it as a CSS custom property with dots
+    turned into dashes (`--spacing-safe-left`), and lists a value that is not valid CSS, like a
+    rule written in words, as plain text below the block.
+  - Deleting (`delete_knowledge`, `delete_product`, `delete_asset`, `delete_foundation`): see
+    "Deleting" in `decodex-workflow`. `delete_asset` is for stale or pending uploads only.
 - **A3 Frameworks.** See what is already saved with `list_frameworks`, then ask which piece to
   lay out next (feed 1:1, story 9:16, multi-format banner). One framework at a time, as HTML,
   following `.claude/knowledge/framework-construction.md` for the full protocol. In short:

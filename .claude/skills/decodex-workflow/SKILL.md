@@ -74,8 +74,8 @@ framework. Colorways: `add_knowledge`.
 ## Deleting
 
 Before any `delete_*` tool, list what exists (`list_assets`, `list_knowledge`,
-`list_products`), say plainly what will be removed, and delete only after a clear yes. A delete
-cannot be undone.
+`list_products`, `get_foundations`), say plainly what will be removed, and delete only after a
+clear yes. A delete cannot be undone.
 
 ## Connection errors
 

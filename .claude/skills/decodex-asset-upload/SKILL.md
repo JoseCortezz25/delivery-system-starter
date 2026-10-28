@@ -82,8 +82,8 @@ Use it when the user prefers it, or when the browser cannot be opened.
 4. Request one link per file with `request_font_upload` (`role`, `familyName`, `weight` 100 to
    900 in steps of 100, `style` normal or italic), check it as above and open it like Option 1.
    It accepts .ttf, .otf, .woff and .woff2 up to 10 MB.
-5. When they say it is done, confirm with `get_brand_fonts` that the weights appear. When a
-   local copy is needed, keep the file in `library/fonts/`.
+5. When they say it is done, confirm with `get_brand_fonts` that the weights appear. Its local
+   copy is downloaded with "Local copy" when a piece first needs it.
 6. Use `add_brand_font` only as a fallback when the links cannot be used: say first that it
    takes several minutes and continue only after a clear yes.
 
@@ -99,3 +99,9 @@ When a piece first needs a file that is not in `library/<type>/` yet:
    link or curl's output to the user.
 3. If it fails, request a new link once. If it fails again, ask the user where the file is
    saved and copy it into `library/<type>/` (a copy, no new upload).
+
+An uploaded font works the same way, with its link from `get_brand_fonts` instead: one link per
+weight and style, valid 60 minutes (call it again for fresh ones). Check each link as above and
+save it as `library/fonts/<family>-<weight>-<style>.<ext>` (`souvenir-std-700-normal.woff2`),
+with the extension of the uploaded file (.ttf, .otf, .woff or .woff2). A font from Google Fonts
+has no file: the HTML links it instead.

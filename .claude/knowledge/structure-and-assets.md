@@ -92,17 +92,17 @@ the exception, not the norm. A brand fact goes to `add_knowledge`, never to a ne
 
 | What | Decodex tool (write / read) | Stays local |
 |---|---|---|
-| Palette | `set_brand_color` / `get_brand_colors` | token names |
-| Fonts | `request_font_upload`, `add_google_font` (`add_brand_font` fallback) / `get_brand_fonts` | — |
+| Palette | `set_brand_color` / `get_brand_colors` | — |
+| Fonts | `request_font_upload`, `add_google_font` (`add_brand_font` fallback) / `get_brand_fonts` (with a download link per uploaded file) | — |
 | Tone, legal | `set_brand_voice`, `set_brand_core` / `get_brand_voice` | — |
-| Other foundations | `set_foundation` / `get_foundations` | — |
-| Asset files | `request_asset_upload`, `request_batch_asset_upload` / `get_asset`, `list_assets`, `search_assets`, `get_asset_download_url` | logo clear-space rules |
+| Other foundations: named tokens, logo clear-space | `set_foundation`, `delete_foundation` / `get_foundations` | — |
+| Asset files | `request_asset_upload`, `request_batch_asset_upload` / `get_asset`, `list_assets`, `search_assets`, `get_asset_download_url` | — |
 | Framework spec | `add_framework` / `list_frameworks`, `get_framework` | — |
-| Brand facts | `add_knowledge`, `list_knowledge`, `delete_knowledge` | — |
+| Brand facts, colorways | `add_knowledge`, `list_knowledge`, `delete_knowledge` | — |
 | Designer learnings | `save_piece_learning` / `search_piece_learnings` | — |
-| Colorways | no tool yet | all of it |
 
-What stays local lives in `foundations/` until the tools cover it.
+Every kind of brand data now has a Decodex tool. `foundations/` stays as it is while the
+transition to Decodex lasts.
 
 ## New-project startup checklist
 
