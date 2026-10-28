@@ -9,11 +9,18 @@ metadata:
 # Decodex sync
 
 Follow the reply format of `decodex-workflow` and the way of talking in the root `CLAUDE.md`. The
-user never hears the words sync, marker, hook, tool, foundations or framework (nor "marcador",
-"servidor", or any English word): say "pasar la base de la marca y las plantillas guardadas en
-este proyecto a la marca" and "bloquear las carpetas locales". Steps 1 and 2 are silent checks:
-never announce them. The first thing the user hears is the sign-in request, the "already done"
-message, or the brand confirmation.
+user is a designer: every message describes what happens to their brand, never how it works.
+
+- Never name a tool, a connection, a file, a folder, a script, a command (other than the one
+  sign-in step below), a role code, or a technical concept: no sync, marker, marcador, hook,
+  tool, herramienta, servidor, conexión, sesión de la herramienta, MCP, decodex-brand,
+  foundations, frameworks, token, permiso de configuración, nor any English word.
+- Say instead: "pasar la base de la marca y las plantillas de este proyecto a la marca",
+  "bloquear las copias locales", "tu acceso", "la marca".
+- Steps 1, 2 and 4 are silent checks: never announce or narrate them ("voy a verificar…",
+  "no existe…", "ahora confirmo…"). The first thing the user hears is the sign-in request, the
+  "already done" message, or the brand confirmation.
+- Use the exact sentences given in each step when there is one.
 
 ## What this does, and what it never does
 
@@ -46,10 +53,11 @@ Call `get_brand` once. Stop on the first failure, without waiting: never sleep, 
 wake-up or retry, because a connection that needs sign-in does not fix itself. All of these mean
 "not signed in": the decodex-brand tools are missing, the connection is still connecting or
 pending, it needs authentication, or the call fails with authentication, expired session or
-unauthorized. Then say plainly that they must sign in to Decodex first and ask for this again:
+unauthorized. Then stop with exactly this message (nothing before it):
 
-- In this same session (Claude Desktop Code or the terminal): type `/mcp`, choose
-  `decodex-brand`, pick the option to authenticate and sign in in the browser window that opens.
+"Todavía no has entrado a Decodex en este chat. Para entrar: escribe /mcp aquí, elige Decodex y
+luego la opción para autenticarte. Se abrirá el navegador para que entres con tu cuenta. Cuando
+termines, pídeme de nuevo que pase la información a la marca."
 
 Any other failure: follow "Connection errors" in `decodex-workflow` and stop. Never fall back to
 working only locally.
@@ -154,8 +162,8 @@ nonzero on failure (`NOT LOCKED: ...`). On failure tell the user plainly that th
 saved in the brand but the folders could not be locked, and stop.
 
 Then confirm the lock works: a `Read` of one file in `foundations/` (or `frameworks/`) must now be
-denied. If it is not denied, tell the user the lock did not take effect and to check that the
-project's protection is installed (RULES.md). Finish with a short win: "Listo, la información
+denied. If it is not denied, tell the user: "La información quedó guardada en la marca, pero no
+pude bloquear las copias locales. Avísale a soporte." and stop. Finish with a short win: "Listo, la información
 quedó guardada en la marca y las carpetas locales quedaron bloqueadas. Desde ahora todo se lee
 desde la marca."
 
