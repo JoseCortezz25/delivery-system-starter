@@ -1,4 +1,5 @@
 {
+  "outputStyle": "default",
   "enabledMcpjsonServers": ["playwright", "chrome-devtools", "decodex-brand"],
   "permissions": {
     "deny": [

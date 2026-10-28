@@ -16,8 +16,13 @@
 # marker is absent.
 # Written for bash 3.2 (macOS default): no ${var,,}, no associative arrays, no mapfile.
 
+# deny REASON: prints the PreToolUse deny decision; backslashes and double quotes in REASON are
+# escaped so the JSON stays valid.
 deny() {
-  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$1"
+  local m=$1
+  m=${m//\\/\\\\}
+  m=${m//\"/\\\"}
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$m"
   exit 0
 }
 
@@ -50,8 +55,26 @@ if [ -e "$GUARD_PROJ/$GUARD_SYNC_MARKER" ] || [ -L "$GUARD_PROJ/$GUARD_SYNC_MARK
 brand_alt=$(printf '%s' "$GUARD_BRAND_DIRS" | tr ' ' '|')
 brand_re="(^|[^a-z0-9_-])($brand_alt)([^a-z0-9_-]|$)"
 
+# What Claude may say to the user after each kind of denial: one plain Spanish sentence, never the
+# file, the folder or this block (the user is a designer; see CLAUDE.md, "Talking to the user").
+TELL_READ='Tell the user only, in Spanish: "Esa información ya está guardada en la marca, así que la consulto directamente desde ahí." Then read it with get_foundations / get_brand_colors / get_framework. Never mention files, folders or this block.'
+TELL_CHANGE='Tell the user only, in Spanish: "Esa información ya está guardada en la marca y aquí no se puede cambiar ni borrar. Si quieres cambiar algo, lo hago directamente en la marca." Then make the change in the brand with the setup tools, only if the user asks for it. Never mention files, folders or this block.'
+TELL_SEARCH='Say nothing to the user about this block: scope the search to engine/, content/, library/, drafts/ or references/ and continue. If you need brand data, read it with get_foundations / get_brand_colors / get_framework. Never mention files, folders or this block.'
+
+# Commands that change or delete what they are given (sed/perl/ruby only with an in-place flag; find
+# with -delete).
+change_re='(^|[^a-z0-9_-])(rm|rmdir|unlink|mv|truncate|shred|srm|chmod|chown|chgrp|chflags|tee|touch|mkdir|ln|dd|install)([^a-z0-9_-]|$)|(^|[^a-z0-9_-])(g?sed|perl|ruby)[[:space:]][^;&|]*(-i|--in-place)|[[:space:]]-delete([[:space:]]|$)'
+
+# deny_brand [read|change|search]: denies a shell command that touches the frozen brand folders. The
+# kind picks what Claude may tell the user; with no kind it is guessed from the command text.
 deny_brand() {
-  deny "foundations/ and frameworks/ are frozen: this project was synced to Decodex (.decodex-sync.json), so the AI may not read, search, copy or change them, not even through the shell. The brand data lives in Decodex: read it with get_foundations, get_brand_colors, get_brand_fonts, get_brand_voice, list_frameworks and get_framework; framework drafts go in drafts/. Scope searches, copies and archives to specific folders that are not frozen (for example engine/, content/, library/, references/ or drafts/), never the project root. Do not try to work around this block. See RULES.md."
+  local kind=${1:-}
+  if [ -z "$kind" ]; then
+    if [[ $lc =~ $change_re ]]; then kind=change; else kind=read; fi
+  fi
+  local tell=$TELL_READ
+  case "$kind" in change) tell=$TELL_CHANGE ;; search) tell=$TELL_SEARCH ;; esac
+  deny "foundations/ and frameworks/ are frozen: this project was synced to Decodex (.decodex-sync.json), so the AI may not read, search, copy or change them, not even through the shell. The brand data lives in Decodex: read it with get_foundations, get_brand_colors, get_brand_fonts, get_brand_voice, list_frameworks and get_framework; framework drafts go in drafts/. Scope searches, copies and archives to specific folders that are not frozen (for example engine/, content/, library/, references/ or drafts/), never the project root. Do not try to work around this block. See RULES.md. $tell"
 }
 
 display_name() {
@@ -140,7 +163,10 @@ re='(&>>|&>|>>|>\||>|<)[[:space:]]*([^[:space:];&|<>()]+)'
 while [[ $rest =~ $re ]]; do
   target=${BASH_REMATCH[2]}
   if [ "${BASH_REMATCH[1]}" != "<" ] && is_protected "$target"; then deny_name "$hit"; fi
-  if is_brand "$target"; then deny_brand; fi
+  if is_brand "$target"; then
+    if [ "${BASH_REMATCH[1]}" = "<" ]; then deny_brand read; fi
+    deny_brand change
+  fi
   rest=${rest#*"${BASH_REMATCH[0]}"}
 done
 
@@ -227,7 +253,7 @@ check_brand() { # check_brand CMD ARG...: locked project only; one simple comman
     tar | gtar | bsdtar | zip | 7z | 7za | cp | gcp | rsync | ditto | scp) recursive=1 ;;
     git)
       case "$sub" in
-        archive | bundle) deny_brand ;; # they package the whole tracked tree
+        archive | bundle) deny_brand read ;; # they package the whole tracked tree
         grep) recursive=1; default_cwd=1; skip_first=1 ;;
       esac ;;
   esac
@@ -250,7 +276,11 @@ check_brand() { # check_brand CMD ARG...: locked project only; one simple comman
   done
   if [ "${#scope[@]}" -eq 0 ] && [ "$default_cwd" -eq 1 ]; then scope=("."); fi
   for a in "${scope[@]}"; do
-    if covers_root "$a"; then deny_brand; fi
+    if covers_root "$a"; then
+      if [[ $lc =~ $change_re ]]; then deny_brand change; fi
+      case "$cmd" in rg | ag | ack | fd | fdfind | grep | egrep | fgrep | ggrep | find | gfind | git) deny_brand search ;; esac
+      deny_brand read
+    fi
   done
   return 0
 }

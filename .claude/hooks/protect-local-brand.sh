@@ -8,13 +8,23 @@
 # both as written (with . and .. folded) and after resolving symlinks.
 # Written for bash 3.2 (macOS default): no ${var,,}, no associative arrays, no mapfile.
 
+# deny REASON: prints the PreToolUse deny decision; backslashes and double quotes in REASON are
+# escaped so the JSON stays valid.
 deny() {
-  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$1"
+  local m=$1
+  m=${m//\\/\\\\}
+  m=${m//\"/\\\"}
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$m"
   exit 0
 }
 
 FROZEN="foundations/ and frameworks/ are frozen: this project was synced to Decodex (.decodex-sync.json), so the AI may not read, search or change them. The brand data lives in Decodex: read it with get_foundations, get_brand_colors, get_brand_fonts, get_brand_voice, list_frameworks and get_framework. Framework drafts go in drafts/."
 SCOPE="Scope the search to a specific folder that is not frozen (for example engine/, content/, library/, references/ or drafts/) with the path parameter, and keep foundations, frameworks and .. out of the pattern."
+# What Claude may say to the user after each kind of denial: one plain Spanish sentence, never the
+# file, the folder or this block (the user is a designer; see CLAUDE.md, "Talking to the user").
+TELL_READ='Tell the user only, in Spanish: "Esa información ya está guardada en la marca, así que la consulto directamente desde ahí." Then read it with get_foundations / get_brand_colors / get_framework. Never mention files, folders or this block.'
+TELL_CHANGE='Tell the user only, in Spanish: "Esa información ya está guardada en la marca y aquí no se puede cambiar ni borrar. Si quieres cambiar algo, lo hago directamente en la marca." Then make the change in the brand with the setup tools, only if the user asks for it. Never mention files, folders or this block.'
+TELL_SEARCH='Say nothing to the user about this block: scope the search to engine/, content/, library/, drafts/ or references/ and continue. If you need brand data, read it with get_foundations / get_brand_colors / get_framework. Never mention files, folders or this block.'
 
 input=$(cat 2>/dev/null)
 
@@ -154,20 +164,21 @@ case "$tool" in
   Read | Write | Edit | MultiEdit | NotebookEdit)
     [ -n "$target" ] || exit 0
     if in_brand "$(lower "$(absolute "$target")")" || in_brand "$(lower "$(resolve "$target")")"; then
-      deny "$FROZEN See RULES.md."
+      if [ "$tool" = "Read" ]; then deny "$FROZEN See RULES.md. $TELL_READ"; fi
+      deny "$FROZEN See RULES.md. $TELL_CHANGE"
     fi ;;
   Glob | Grep)
     if [ -z "$target" ]; then
-      deny "This search has no path, so it would cover the whole project, including the frozen foundations/ and frameworks/. $SCOPE $FROZEN See RULES.md."
+      deny "This search has no path, so it would cover the whole project, including the frozen foundations/ and frameworks/. $SCOPE $FROZEN See RULES.md. $TELL_SEARCH"
     fi
     if contains_brand "$(lower "$(absolute "$target")")" || contains_brand "$(lower "$(resolve "$target")")"; then
-      deny "This search covers the frozen foundations/ or frameworks/ (its path is the project root, a folder above it, or one of them). $SCOPE $FROZEN See RULES.md."
+      deny "This search covers the frozen foundations/ or frameworks/ (its path is the project root, a folder above it, or one of them). $SCOPE $FROZEN See RULES.md. $TELL_SEARCH"
     fi
     globs=$glob
     [ "$tool" = "Glob" ] && globs=$pattern
     if [ -n "$globs" ]; then
       if names_brand "$globs"; then
-        deny "This search pattern names the frozen foundations/ or frameworks/, or climbs out of its folder with '..'. $SCOPE $FROZEN See RULES.md."
+        deny "This search pattern names the frozen foundations/ or frameworks/, or climbs out of its folder with '..'. $SCOPE $FROZEN See RULES.md. $TELL_SEARCH"
       fi
       case "$globs" in
         '~') globs=$HOME ;;
@@ -177,7 +188,7 @@ case "$tool" in
         /*)
           base=$(glob_base "$globs")
           if contains_brand "$(lower "$(fold "$base")")" || contains_brand "$(lower "$(resolve "$base")")"; then
-            deny "This search pattern is an absolute path that covers the frozen foundations/ or frameworks/. $SCOPE $FROZEN See RULES.md."
+            deny "This search pattern is an absolute path that covers the frozen foundations/ or frameworks/. $SCOPE $FROZEN See RULES.md. $TELL_SEARCH"
           fi ;;
       esac
     fi ;;

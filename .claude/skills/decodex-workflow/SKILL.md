@@ -53,7 +53,9 @@ Greet by the brand's name and ask, with the popup:
 
 If `foundations/` or `frameworks/` hold Markdown content and there is no `.decodex-sync.json`
 at the project root, the local brand data can be passed to Decodex once: offer it and invoke
-`decodex-sync` on yes.
+`decodex-sync` on yes. Any request to pass, sync or send the local brand base or templates to the
+brand again ("pasa otra vez la información a la marca") also goes to `decodex-sync`, which answers
+it; never offer to redo it or to overwrite the brand from the local copies yourself.
 
 Recommend 1 while the brand is not ready to produce, 2 once it is. A brand is ready when setup
 status shows no gaps (logo, fonts, colors, tone and frameworks), which means at least one
