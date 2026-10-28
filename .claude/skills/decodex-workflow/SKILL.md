@@ -51,6 +51,10 @@ Greet by the brand's name and ask, with the popup:
 3. "Ver o cambiar lo ya guardado" → read it back with the `get_*` tools; changes go through
    `decodex-setup`
 
+If `foundations/` or `frameworks/` hold Markdown content and there is no `.decodex-sync.json`
+at the project root, the local brand data can be passed to Decodex once: offer it and invoke
+`decodex-sync` on yes.
+
 Recommend 1 while the brand is not ready to produce, 2 once it is. A brand is ready when setup
 status shows no gaps (logo, fonts, colors, tone and frameworks), which means at least one
 framework is saved. Do not open with a status report.
@@ -81,7 +85,8 @@ clear yes. A delete cannot be undone.
 
 If a tool fails or is unavailable: stop, say it in plain words, do not invent values and do
 not save locally instead. Options: 1) retry (log in again), 2) consult only what is already
-in the local folders, nothing saved, 3) stop here.
+in the local folders (never `foundations/` or `frameworks/` once they are locked), nothing
+saved, 3) stop here.
 
 Missing mandatory data (for example fonts): "Falta la tipografía oficial." Options: 1) upload
 the font file, 2) use a system font only for this test (not saved to the brand).

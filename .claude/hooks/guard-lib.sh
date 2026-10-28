@@ -2,9 +2,20 @@
 # Shared helpers for the harness integrity guard (sourced by guard-snapshot.sh and guard-verify.sh).
 # The guard snapshots the protected set before every shell command and restores it afterwards if the
 # command changed it. It does not use git, so it also works in projects that are not repositories.
+# It is also the single source of the protected names for protect-claude-dir.sh,
+# block-protected-delete.sh and protect-local-brand.sh, which source it and fail closed without it.
 
 GUARD_PROJ=${CLAUDE_PROJECT_DIR:-$PWD}
-GUARD_PROTECTED="CLAUDE.md RULES.md .mcp.json .gitignore codex-lock.json .claude"
+
+# The sync marker written by the decodex-sync skill once foundations/ and frameworks/ were synced to
+# Decodex. It is protected ADD-ONLY: once it exists the AI can never edit or delete it (the hooks deny
+# it and the guard restores it), but creating it while it is absent is accepted, because creating it
+# only adds restrictions. Only the user unlocks the project, by deleting it themselves.
+GUARD_SYNC_MARKER=".decodex-sync.json"
+GUARD_PROTECTED="CLAUDE.md RULES.md .mcp.json .gitignore codex-lock.json .claude $GUARD_SYNC_MARKER"
+# Local brand folders frozen while the sync marker exists (see protect-local-brand.sh). They are not
+# part of the snapshot: the PreToolUse hooks are their barrier.
+GUARD_BRAND_DIRS="foundations frameworks"
 
 guard_sha() { # guard_sha FILE...: "<sha256>  <path>" per file
   if command -v sha256sum >/dev/null 2>&1; then sha256sum -- "$@"; else shasum -a 256 -- "$@"; fi
@@ -66,10 +77,22 @@ guard_manifest() {
 # guard_check_and_restore: compares the protected set with the snapshot. Returns 1 when nothing
 # changed; otherwise restores the snapshot exactly, sets GUARD_CHANGED (", "-separated paths) and
 # returns 0 when the restore succeeded or 2 when it did not.
+# guard_drop_new_marker OLD CUR: prints CUR without the sync marker's lines when OLD (the snapshot)
+# has no marker, so creating the marker is never seen as a change. Once the snapshot holds the
+# marker, any change to it (edit, delete, mode) is a change like any other and gets restored.
+guard_drop_new_marker() {
+  if printf '%s\n' "$1" | LC_ALL=C awk -v m="$GUARD_SYNC_MARKER" '$3 == m { f = 1 } END { exit !f }'; then
+    printf '%s\n' "$2"
+  else
+    printf '%s\n' "$2" | LC_ALL=C awk -v m="$GUARD_SYNC_MARKER" '$3 != m'
+  fi
+}
+
 guard_check_and_restore() {
   local cur old changed n list count
   cur=$(guard_manifest) || return 2
   old=$(<"$GUARD_STATE/manifest") || return 2
+  cur=$(guard_drop_new_marker "$old" "$cur")
   [ "$cur" = "$old" ] && return 1
 
   changed=$(comm -3 <(printf '%s\n' "$old") <(printf '%s\n' "$cur") \
@@ -91,6 +114,7 @@ guard_check_and_restore() {
   GUARD_CHANGED=$list
 
   cur=$(guard_manifest) || return 2
+  cur=$(guard_drop_new_marker "$old" "$cur")
   [ "$cur" = "$old" ] || return 2
   return 0
 }

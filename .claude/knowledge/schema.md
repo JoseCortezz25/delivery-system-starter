@@ -1,7 +1,8 @@
 # Naming Schema
 
-This is the contract of token **names** — never values — that any `foundations/` file or
-`frameworks/<name>.md` in this project must use. It is brand-agnostic and framework-agnostic: any
+This is the contract of token **names** — never values — that any foundation saved in Decodex
+(`set_foundation`) or framework document (`drafts/<name>.md`, `add_framework`) in this project must
+use. It is brand-agnostic and framework-agnostic: any
 brand or framework added to this structure follows the same families. See `tokenization.md` for
 what each category means and how to fill it in; this document is the frozen list an engine or a
 linter can check a token name against.
@@ -30,12 +31,12 @@ something doesn't fit any family below, that's a decision to make explicitly —
 
 If a brand has a recurring decorative asset with its own internal color/opacity slots (an icon
 system, a pattern), its slot names are enumerated once, under `pattern.*` or a family named after
-that asset, inside `foundations/` — see `tokenization.md`.
+that asset, in the brand's foundations in Decodex — see `tokenization.md`.
 
 ## What this contract does NOT do
 
-It never assigns values — a hex, a px, a font file. Those live in `foundations/` (brand-wide) or in
-the matching `frameworks/<name>.md` section (framework-specific), per the non-redundancy rule in
+It never assigns values — a hex, a px, a font file. Those live in Decodex: the brand's foundations
+(brand-wide) or the matching section of the framework document (framework-specific), per the non-redundancy rule in
 `structure-and-assets.md`. This document only says which family names are valid, so a typo or an
 invented name outside these families can be caught before it reaches a framework document or the
 engine.

@@ -5,13 +5,15 @@ infrastructure built AFTERWARDS, from the framework documents, not a brand or fr
 itself. This document is the one exception: four engineering principles that are agnostic to
 brand and to stack, worth writing down because they prevent costly mistakes if whoever builds
 the engine doesn't already know them. They aren't blocking for configuring foundations or
-frameworks — they apply once someone builds that implementation, reading each
-`frameworks/<name>.md` as the specification.
+frameworks — they apply once someone builds that implementation, reading each framework's
+approved spec from Decodex (`get_framework`) as the specification, or its draft in
+`drafts/<name>.md` while that framework is still being built.
 
 ## Everything is regenerable
 
 No final asset is hand-edited. If something looks wrong, the fix goes into the token or into the
-corresponding section of `frameworks/<name>.md` — never into the already-exported image file.
+corresponding section of the framework document (`drafts/<name>.md`, then saved again with
+`add_framework`) — never into the already-exported image file.
 Re-producing a piece from the specification must reproduce the expected result, every time.
 
 ## Measure with a real browser, never estimate
