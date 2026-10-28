@@ -1,5 +1,17 @@
 {
   "enabledMcpjsonServers": ["playwright", "chrome-devtools", "decodex-brand"],
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.config/gh/**)",
+      "Bash(sudo *)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {
