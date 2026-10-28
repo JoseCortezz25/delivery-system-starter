@@ -9,9 +9,11 @@ metadata:
 # Decodex sync
 
 Follow the reply format of `decodex-workflow` and the way of talking in the root `CLAUDE.md`. The
-user never hears the words sync, marker, hook, tool, foundations or framework: say "pasar la base
-de la marca y las plantillas guardadas en este proyecto a la marca" and "bloquear las carpetas
-locales".
+user never hears the words sync, marker, hook, tool, foundations or framework (nor "marcador",
+"servidor", or any English word): say "pasar la base de la marca y las plantillas guardadas en
+este proyecto a la marca" and "bloquear las carpetas locales". Steps 1 and 2 are silent checks:
+never announce them. The first thing the user hears is the sign-in request, the "already done"
+message, or the brand confirmation.
 
 ## What this does, and what it never does
 
@@ -40,12 +42,14 @@ it and the integrity guard restores it).
 
 ### 2. Session
 
-Call `get_brand`. If the decodex-brand tools are not available, or the call fails because the
-user is not signed in (authentication, expired session, unauthorized), stop and say plainly
-that they must sign in to Decodex first and then ask for this again:
+Call `get_brand` once. Stop on the first failure, without waiting: never sleep, poll, schedule a
+wake-up or retry, because a connection that needs sign-in does not fix itself. All of these mean
+"not signed in": the decodex-brand tools are missing, the connection is still connecting or
+pending, it needs authentication, or the call fails with authentication, expired session or
+unauthorized. Then say plainly that they must sign in to Decodex first and ask for this again:
 
-- Claude Desktop: Settings → Connectors → Decodex → connect.
-- Claude Code in the terminal: run `/mcp`, choose `decodex-brand` and sign in.
+- In this same session (Claude Desktop Code or the terminal): type `/mcp`, choose
+  `decodex-brand`, pick the option to authenticate and sign in in the browser window that opens.
 
 Any other failure: follow "Connection errors" in `decodex-workflow` and stop. Never fall back to
 working only locally.
