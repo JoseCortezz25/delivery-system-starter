@@ -33,8 +33,8 @@ por una a mano.
 
 | Carpeta        | Qué guarda                                                                     |
 | -------------- | ------------------------------------------------------------------------------ |
-| `foundations/` | Los tokens de la marca: paleta, tipografía, logo, tono, legal                  |
-| `frameworks/`  | Un documento por framework, con su especificación completa                     |
+| `foundations/` | Base local heredada (paleta, tipografía, logo, tono, legal): se sincroniza una vez a Decodex y queda bloqueada |
+| `frameworks/`  | Documentos de framework heredados: se sincronizan una vez a Decodex y quedan bloqueados |
 | `library/`     | Los insumos crudos de la marca: logos, fotos, videos, íconos, sonidos, fuentes |
 | `content/`     | Las piezas ya generadas, organizadas por proyecto/campaña                      |
 | `references/`  | Miniaturas/montajes de frameworks ya aprobados, para consulta visual rápida    |
@@ -47,3 +47,8 @@ Este proyecto está pensado para trabajarse junto a un agente de IA que sigue la
 aprobaciones, copy); la IA tokeniza, documenta cada framework, y genera las piezas — siempre
 preguntando antes de inventar un valor, y pidiendo aprobación antes de escalar a más variantes o
 tamaños. El detalle completo de cómo opera la IA vive en `.claude/knowledge/`.
+
+Decodex es la fuente de verdad de la marca. Si un proyecto todavía tiene contenido en
+`foundations/` o `frameworks/`, la skill `decodex-sync` lo pasa a Decodex una sola vez y luego
+bloquea ambas carpetas con `.decodex-sync.json` (ver `RULES.md`). Solo el usuario puede
+desbloquearlas, borrando ese archivo.

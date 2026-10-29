@@ -16,7 +16,7 @@ This guide has two parts, because not everything gets tokenized at the same mome
 If a category doesn't apply to the current brand, it's declared explicitly as "not applicable" —
 never silently omitted.
 
-## Naming convention (applies wherever tokens are written: Decodex, `foundations/`, each framework's `.md`)
+## Naming convention (applies wherever tokens are written: Decodex, and each framework's working draft)
 
 Every token is named under one of these families. The family is what repeats identically across
 any brand; the full name changes depending on what the brand actually has. This is the
@@ -99,8 +99,7 @@ that assignment changes framework to framework.
 
 These categories exist inside the configuration of EACH framework, because their value differs
 depending on what that framework solves. They are not filled in ahead of time. They all end up
-living in one place: that framework's document, saved in Decodex with `add_framework` (local copy:
-`frameworks/<name>.md`) — there is no code, the document IS the complete specification.
+living in one place: that framework's document, saved in Decodex with `add_framework` (its working draft is a temporary file outside the project) — there is no code, the document IS the complete specification.
 
 ### B0. Intent, objective, and channels
 

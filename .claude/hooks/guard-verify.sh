@@ -2,7 +2,8 @@
 # PostToolUse / PostToolUseFailure (Bash): compare the protected harness set with the snapshot taken
 # by guard-snapshot.sh. If the command changed it (modified, deleted or new files under .claude/, or
 # a protected root file created or deleted), restore the snapshot exactly and tell the AI. Silent
-# when nothing changed.
+# when nothing changed. Creating the sync marker (.decodex-sync.json) while it is absent is not a
+# change: it is add-only (see guard-lib.sh).
 set -u
 
 emit() { # emit REASON
@@ -26,7 +27,7 @@ re='"hook_event_name"[[:space:]]*:[[:space:]]*"([^"]*)"'
   || emit "The integrity check for protected harness files could not run after this command. Ask the user to check .claude/hooks/ and the protected files."
 
 if [ ! -f "$GUARD_STATE/manifest" ] || [ ! -f "$GUARD_STATE/snap.tar" ]; then
-  emit "The protected harness files could not be verified after this command: the integrity snapshot is missing. Ask the user to check CLAUDE.md, RULES.md, .mcp.json, .gitignore, codex-lock.json and .claude/."
+  emit "The protected harness files could not be verified after this command: the integrity snapshot is missing. Ask the user to check CLAUDE.md, RULES.md, .mcp.json, .gitignore, codex-lock.json, .decodex-sync.json and .claude/."
 fi
 
 guard_check_and_restore
