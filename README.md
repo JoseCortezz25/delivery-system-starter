@@ -1,11 +1,11 @@
-# Codex
+# Decodex
 
-**Codex es la codificación de una marca en código.** Es una metodología para
+**Decodex es la codificación de una marca en código.** Es una metodología para
 generar piezas de publicidad a escala, de forma **agéntica**: se toma el design system de una marca
 (paleta, tipografía, logo, tono, plantillas) y se convierte en prompts y tokens estandarizados, para
 que una IA pueda generar las piezas gráficas (HTML → PNG/JPEG) sin diagramar cada una a mano.
 
-> Este repo es la **estructura estándar** (propuesta) que cualquier proyecto de marca en Codex debería
+> Este repo es la **estructura estándar** (propuesta) que cualquier proyecto de marca en Decodex debería
 > adoptar — todavía en construcción y sujeta a ajustes.
 
 ## La idea central
@@ -27,7 +27,7 @@ por una a mano.
 
 ## El flujo completo
 
-![Flujo de Codex: setup → construir el conocimiento → ejecución](./codex-flow.svg)
+![Flujo de Decodex: setup → construir el conocimiento → ejecución](./decodex-flow.svg)
 
 ## Qué hay en este proyecto
 
@@ -38,7 +38,6 @@ por una a mano.
 | `library/`     | Los insumos crudos de la marca: logos, fotos, videos, íconos, sonidos, fuentes |
 | `content/`     | Las piezas ya generadas, organizadas por proyecto/campaña                      |
 | `references/`  | Miniaturas/montajes de frameworks ya aprobados, para consulta visual rápida    |
-| `knowledge/`   | Conocimiento específico de esta marca                                          |
 | `engine/`      | El motor que genera las piezas                                                 |
 
 ## Cómo se opera esto
