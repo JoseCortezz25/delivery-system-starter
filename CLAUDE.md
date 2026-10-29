@@ -53,8 +53,9 @@ brand; call `get_brand` to confirm which one.
 - Frameworks: `add_framework`.
 - Knowledge: `add_knowledge`, `list_knowledge`, `delete_knowledge`.
 - Assets and fonts dropped in the chat: the upload panel, `open_upload_inbox` →
-  `list_inbox_items` → `preview_inbox_classification` → the user's clear yes →
-  `apply_inbox_classification` (`discard_inbox_items` for unwanted files). `update_inbox_item`
+  `list_inbox_items` → `preview_inbox_classification` → `apply_inbox_classification` right
+  away (no confirmation, except a font replacing a saved family) → show what was saved and
+  ask if they want to change anything (`update_asset`, `delete_asset`). `update_inbox_item`
   belongs to the panel only.
 - Assets: `request_asset_upload` and `request_batch_asset_upload` (the fast path), `delete_asset`.
   `add_asset` and `add_brand_font` are slow base64 fallbacks that send the whole file as text:

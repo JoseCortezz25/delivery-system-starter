@@ -67,13 +67,25 @@ Option 1.
    pass `variantOfId` only when the name clearly marks a rendition of an existing asset. Then
    call `preview_inbox_classification`. If it warns that an entry contradicts a designer's
    correction, fix the entry; never override the designer.
-5. Show one short summary of what will be uploaded, in plain words and without tool names, and
-   ask a single yes/no to confirm the upload. Ask nothing else, and never save before the yes.
-6. On the yes, call `apply_inbox_classification` with those entries. It answers with a download
-   link per saved file (valid for the time it states): use those links for "Local copy" instead
-   of requesting new ones, and give one to the user if they want to see a file. If the user says
-   they do not want a file, drop it with `discard_inbox_items`; anything left unclassified
-   expires after 24 hours.
+5. Save right away, in the same turn: call `apply_inbox_classification` with the reference and
+   the same entries. Do not ask for confirmation first; the user already chose to save these
+   files when they pressed *Listo*. The one exception: if the preview warns that a font would
+   replace a family already saved in that role, ask a single yes/no before saving, because the
+   old family and its files are removed and cannot be recovered.
+6. Then show the list of what was saved, in plain words and without tool names (file, what it
+   was saved as, and its description; for fonts family, weight and style), and ask one
+   question: "¿Quieres cambiar algo?". The apply answers with a download link per saved file
+   (valid for the time it states): use those links for "Local copy" instead of requesting new
+   ones, and give one to the user if they want to see a file.
+7. If they want a change, make it directly, without another confirmation:
+   - An image saved with the wrong role, description or variant: `update_asset`. If that tool
+     is not in your list yet, delete it with `delete_asset` and save it again through the panel.
+   - A file they did not want: `delete_asset` (or `discard_inbox_items` if it was never saved).
+   - A font with the wrong family, weight or style: open the panel again with
+     `open_upload_inbox`, ask them to drop that file once more and correct it there, then save
+     it as in steps 3 to 5.
+   Then show the updated item and ask "¿Algo más?" until they say no. Anything left unclassified
+   in the inbox expires after 24 hours.
 
 ## Option 1: upload in the browser
 

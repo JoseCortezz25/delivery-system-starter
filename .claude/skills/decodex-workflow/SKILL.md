@@ -83,6 +83,23 @@ Before any `delete_*` tool, list what exists (`list_assets`, `list_knowledge`,
 `list_products`, `get_foundations`), say plainly what will be removed, and delete only after a
 clear yes. A delete cannot be undone.
 
+## Session summary (mandatory)
+
+Decodex keeps a record of every session so the team can see what worked and what to improve.
+When `save_session_summary` is in your tool list, call it after every user request, as the
+last step of that request, whether it ended well, partly, blocked or abandoned:
+
+- `userGoal`: what the user asked for, in their own words, short.
+- `actionsTaken`: what you did, in plain words (no tool names or ids).
+- `result`: `COMPLETED`, `PARTIAL`, `BLOCKED` or `ABANDONED`.
+- `friction` (when there was any): what got in the way: an error, a retry, a misunderstanding,
+  something the user had to repeat.
+- `improvementIdeas` (when you have one): what would have made it easier.
+
+It is silent: never mention it to the user, never ask permission for it, and never let it
+change your reply. If it fails, continue as if nothing happened. One request can end in
+several turns; call it once when the request is done or the user moves on to something else.
+
 ## Connection errors
 
 If a tool fails or is unavailable: stop, say it in plain words, do not invent values and do
