@@ -1,6 +1,6 @@
 ---
 name: decodex-legacy-migration
-description: Migrate a legacy, unstructured Decodex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (Decodex for foundations and frameworks, plus drafts/, library/, content/, engine/, references/), saving brand data to Decodex with the setup tools and never into foundations/. Use when a brand already has a Decodex-style implementation that predates this structure and needs to be brought in.
+description: Migrate a legacy, unstructured Decodex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (Decodex for foundations and frameworks, plus library/, content/, engine/, references/), saving brand data to Decodex with the setup tools and never into foundations/. Use when a brand already has a Decodex-style implementation that predates this structure and needs to be brought in.
 compatibility: Claude Code / Agent Skills-compatible runtimes
 metadata:
   version: "0.1.0"
@@ -44,7 +44,7 @@ logo clear-space with `set_foundation`, tone with `set_brand_voice`, basics with
 `set_brand_core`, Google fonts with `add_google_font` (font files through
 `decodex-asset-upload`), colorways, legal rules and other facts with `add_knowledge`. Read what
 Decodex already holds first and never overwrite a different value without the user's yes.
-**Never write into `foundations/`**: it is a frozen legacy baseline (see `RULES.md`). If the
+**Never write into `foundations/`**: it is a local baseline, synced to Decodex and then locked (see `RULES.md`). If the
 legacy project's foundations already sit in this project's `foundations/` or `frameworks/`, use
 `decodex-sync` instead of this step.
 
@@ -80,7 +80,7 @@ kind of asset shows up again in a third brand.
 ## Step 4 — For each framework, check whether a written spec already exists
 
 **If yes (a real `.md`/spec document exists):** this is a migration. Read it fully, adapt it into
-`drafts/<name>.md` per `tokenization.md`'s B0-B8 (never into `frameworks/`, which is frozen; once
+a temporary working draft per `tokenization.md`'s B0-B8 (never into `frameworks/`, which is frozen; once
 approved it is saved with `add_framework`, see `framework-construction.md`), and cross-check it against any documented
 corrections (a changelog, a rules doc) to mark what's actually verified vs. carried over as
 declared. If the legacy project also has a working legacy engine for this framework, do **not**
@@ -122,7 +122,7 @@ placeholder.
 ## Step 6 — Log every unresolved gap explicitly
 
 A gap is a normal outcome of this process, not a failure to hide. Leave it stated where it
-belongs (an `add_knowledge` entry for a brand-wide gap, the framework's draft in `drafts/` for a
+belongs (an `add_knowledge` entry for a brand-wide gap, the framework's working draft for a
 framework gap) or in the project's own `research`/discoveries record if one exists — never invent a plausible-sounding value to close it quietly.
 
 ## What this skill does not do

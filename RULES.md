@@ -21,8 +21,8 @@ belongs inside each framework document itself.
    frameworks at once — each one is configured on its own, with continuous verification before
    approving it, before moving to the next.
 4. **Each framework is a single document.** The approved version is saved in Decodex with
-   `add_framework`; `drafts/<name>.md` is its local working draft (see
-   `framework-construction.md`). `frameworks/` is a frozen legacy baseline (see "Frozen brand
+   `add_framework`; its working draft is a temporary file kept outside the project (see
+   `framework-construction.md`). `frameworks/` is a local baseline, synced once to Decodex and then locked (see "Frozen brand
    folders" below). It is written at a high level of detail — a specification, for
    someone to implement later. No code lives at this layer.
 5. **Names follow the established token/role family convention.** Never an invented, loose name
@@ -62,6 +62,6 @@ Hooks in `.claude/hooks/` enforce these rules and deny with a reason that ends i
 - **Frozen brand folders:** while the marker exists, `foundations/` and `frameworks/` are frozen.
   The AI may not read, search, copy or change them with any tool, and searches whose scope is the
   project root (or a folder above it) are denied: scope them to a specific folder (`engine/`,
-  `content/`, `library/`, `references/`, `drafts/`). Read the brand from Decodex instead. The
+  `content/`, `library/`, `references/`). Read the brand from Decodex instead. The
   shell part of this block is best-effort: never try to work around it. Without the marker,
   nothing here applies.

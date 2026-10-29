@@ -9,14 +9,9 @@ metadata:
 # Decodex sync
 
 Follow the reply format of `decodex-workflow` and the way of talking in the root `CLAUDE.md`. The
-user is a designer: every message describes what happens to their brand, never how it works.
+user is a designer: every message describes what happens to their brand, never how it works. The general talk rules are not repeated here — only what is specific to
+this sync flow:
 
-- Never name a tool, a connection, a file, a folder, a script, a command (other than the one
-  sign-in step below), a role code, or a technical concept: no sync, marker, marcador, hook,
-  tool, herramienta, servidor, conexión, sesión de la herramienta, MCP, decodex-brand,
-  foundations, frameworks, token, permiso de configuración, nor any English word.
-- Say instead: "pasar la base de la marca y las plantillas de este proyecto a la marca",
-  "bloquear las copias locales", "tu acceso", "la marca".
 - Steps 1, 2 and 4 are silent checks: never announce or narrate them ("voy a verificar…",
   "no existe…", "ahora confirmo…"). The first thing the user hears is the sign-in request, the
   "already done" message, or the brand confirmation.
@@ -243,6 +238,6 @@ folders, the lock or the denial itself. Never use voseo ("querés", "vos"): alwa
 
 - Read the brand with `get_foundations`, `get_brand_colors`, `get_brand_fonts`,
   `get_brand_voice`, `list_frameworks` and `get_framework`; never from the frozen folders.
-- New framework drafts go in `drafts/<name>.md` (see `framework-construction.md`).
+- New framework drafts are kept in a temporary file outside the project (see `framework-construction.md`).
 - Scope every search (Grep, Glob, `rg`, `find`) to a specific folder such as `engine/`,
-  `content/`, `library/`, `references/` or `drafts/`; a search over the project root is denied.
+  `content/`, `library/` or `references/`; a search over the project root is denied.

@@ -2,7 +2,7 @@
 # PreToolUse (Read|Glob|Grep|Write|Edit|MultiEdit|NotebookEdit): dormant until the decodex-sync skill
 # syncs foundations/ and frameworks/ to Decodex and writes the sync marker (.decodex-sync.json) at the
 # project root. While the marker is absent this hook allows everything, silently. Once it exists, the
-# two folders are a frozen legacy baseline and the AI may not read, search or change them: the brand
+# two folders are a synced, locked local baseline and the AI may not read, search or change them: the brand
 # data lives in Decodex. Shell access to them is handled by block-protected-delete.sh.
 # Matching is case-insensitive (macOS file systems are case-insensitive by default); paths are checked
 # both as written (with . and .. folded) and after resolving symlinks.
@@ -18,13 +18,13 @@ deny() {
   exit 0
 }
 
-FROZEN="foundations/ and frameworks/ are frozen: this project was synced to Decodex (.decodex-sync.json), so the AI may not read, search or change them. The brand data lives in Decodex: read it with get_foundations, get_brand_colors, get_brand_fonts, get_brand_voice, list_frameworks and get_framework. Framework drafts go in drafts/."
-SCOPE="Scope the search to a specific folder that is not frozen (for example engine/, content/, library/, references/ or drafts/) with the path parameter, and keep foundations, frameworks and .. out of the pattern."
+FROZEN="foundations/ and frameworks/ are frozen: this project was synced to Decodex (.decodex-sync.json), so the AI may not read, search or change them. The brand data lives in Decodex: read it with get_foundations, get_brand_colors, get_brand_fonts, get_brand_voice, list_frameworks and get_framework. Framework drafts are kept in a temporary file outside the project."
+SCOPE="Scope the search to a specific folder that is not frozen (for example engine/, content/, library/ or references/) with the path parameter, and keep foundations, frameworks and .. out of the pattern."
 # What Claude may say to the user after each kind of denial: one plain Spanish sentence, never the
 # file, the folder or this block (the user is a designer; see CLAUDE.md, "Talking to the user").
 TELL_READ='Tell the user only, in Spanish: "Esa información ya está guardada en la marca, así que la consulto directamente desde ahí." Then read it with get_foundations / get_brand_colors / get_framework. Never mention files, folders or this block.'
 TELL_CHANGE='Tell the user only, in Spanish: "Esa información ya está guardada en la marca y aquí no se puede cambiar ni borrar. Si quieres cambiar algo, lo hago directamente en la marca." Then make the change in the brand with the setup tools, only if the user asks for it. Never mention files, folders or this block.'
-TELL_SEARCH='Say nothing to the user about this block: scope the search to engine/, content/, library/, drafts/ or references/ and continue. If you need brand data, read it with get_foundations / get_brand_colors / get_framework. Never mention files, folders or this block.'
+TELL_SEARCH='Say nothing to the user about this block: scope the search to engine/, content/, library/ or references/ and continue. If you need brand data, read it with get_foundations / get_brand_colors / get_framework. Never mention files, folders or this block.'
 
 input=$(cat 2>/dev/null)
 

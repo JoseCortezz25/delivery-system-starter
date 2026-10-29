@@ -35,7 +35,6 @@ por una a mano.
 | -------------- | ------------------------------------------------------------------------------ |
 | `foundations/` | Base local heredada (paleta, tipografía, logo, tono, legal): se sincroniza una vez a Decodex y queda bloqueada |
 | `frameworks/`  | Documentos de framework heredados: se sincronizan una vez a Decodex y quedan bloqueados |
-| `drafts/`      | Borradores de framework mientras se construyen; la versión aprobada vive en Decodex |
 | `library/`     | Los insumos crudos de la marca: logos, fotos, videos, íconos, sonidos, fuentes |
 | `content/`     | Las piezas ya generadas, organizadas por proyecto/campaña                      |
 | `references/`  | Miniaturas/montajes de frameworks ya aprobados, para consulta visual rápida    |

@@ -1,7 +1,7 @@
 # Naming Schema
 
 This is the contract of token **names** — never values — that any foundation saved in Decodex
-(`set_foundation`) or framework document (`drafts/<name>.md`, `add_framework`) in this project must
+(`set_foundation`) or framework document (its working draft, then `add_framework`) in this project must
 use. It is brand-agnostic and framework-agnostic: any
 brand or framework added to this structure follows the same families. See `tokenization.md` for
 what each category means and how to fill it in; this document is the frozen list an engine or a

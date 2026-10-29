@@ -16,7 +16,7 @@ opening the next.
    structurally simplest one — what gets learned (text-scaling curves, image behavior) carries
    over to the next ones.
 2. **Configure this framework.** See the detailed protocol below.
-3. **Explicit approval of the base document** (`drafts/<name>.md`, with its first size
+3. **Explicit approval of the base document** (a temporary working draft, with its first size
    resolved) **and of its test piece**, then the approved version is saved in Decodex (steps 6
    and 7 of the protocol below). Nothing moves forward without this.
 4. **Add variants**: fill in the B4 tables (content variants and product/color variants) inside
@@ -33,9 +33,9 @@ opening the next.
 ## Configuration protocol for a single framework (detail of step 2)
 
 Each framework is a mini-project: it has its own intent, objective, channels, and rules. The
-result is **a single document**: drafted locally as `drafts/<name>.md` (the working draft)
+result is **a single document**: drafted in a temporary file outside the project (the working draft)
 and, once approved, saved in Decodex with `add_framework` (the approved version, see step 7).
-Drafts never go in `frameworks/`: that folder is a frozen legacy baseline, synced once with
+The working draft never goes in `frameworks/`: that folder is a local baseline, synced once with
 `decodex-sync` and then locked.
 
 **No code is built at this layer.** The document, while it's being drafted together with the
@@ -80,7 +80,7 @@ Defined before touching structure or rules, one at a time, in the document's fir
 - **Channels** — which channels does it run on? This determines which sizes (B7) need to be
   documented — listed in step 2.7 and filled in one at a time in step 5 of the macro loop.
 
-### 2. Draft `drafts/<name>.md`, section by section
+### 2. Draft the framework, section by section
 
 In this order, one part at a time. Don't move to the next without closing the previous one. Each
 answer is written directly into the document as it comes — answers aren't stockpiled to
@@ -176,8 +176,8 @@ what `list_frameworks` shows; the manifest also carries the sizes (B7), buckets 
 
 `list_frameworks` shows the framework with its one-line description, and `get_framework` shows
 each color and font slot resolved live (e.g. "#043673 (Azul SPAM)"). A slot that doesn't resolve
-means a wrong slug or role: fix it before moving on. From here, `drafts/<name>.md` stays as
-the local working draft; Decodex holds the approved version.
+means a wrong slug or role: fix it before moving on. From here, the working draft stays as
+a temporary file outside the project; Decodex holds the approved version.
 
 ## Keeping the framework document in sync with the engine
 
@@ -188,13 +188,13 @@ What is not allowed is the divergence living only inside the engine:
 
 - The reason for the change is documented as a comment at the point in the engine code where the
   deviation happens — that part doesn't move.
-- The corresponding field in `drafts/<name>.md` (when there is no draft, start one from the
+- The corresponding field in the working draft (when there is no draft, start one from the
   approved `get_framework` spec) is updated to the new, true value or rule, in the same pass. Once the change is approved, save it again with `add_framework` under the same
   name: it overwrites the previous version and its whole slot list, so send every slot again.
   The document is the specification; if the engine and the document disagree, the document has
   silently stopped being true.
 
-`drafts/<name>.md` is not only written before the engine exists — it keeps getting corrected
+The working draft is not only written before the engine exists — it keeps getting corrected
 after, every time reality reveals it was wrong.
 
 ## Signs something is being invented (stop if one appears)

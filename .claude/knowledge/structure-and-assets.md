@@ -5,17 +5,15 @@ only reference it. See the non-redundancy rule below.
 
 Brand data itself lives in Decodex (see the root `CLAUDE.md`), the source of truth. The folders
 below are the local layer: framework drafts, local copies of assets, generated output and the
-engine. `foundations/` and `frameworks/` are a frozen legacy baseline: an older project's local
+engine. `foundations/` and `frameworks/` are a local baseline: an older project's local
 brand data, synced once to Decodex with `decodex-sync` and then locked (see "Sync marker" below).
 
 ## What exists in a project
 
 ```
 project/
-├── foundations/                  # frozen legacy baseline — synced once to Decodex, then locked
-├── frameworks/                   # frozen legacy baseline — synced once to Decodex, then locked
-├── drafts/
-│   └── <name>.md                 # framework working draft — full spec: B0-B8, every size it covers
+├── foundations/                  # local baseline — synced once to Decodex, then locked
+├── frameworks/                   # local baseline — synced once to Decodex, then locked
 ├── library/                      # Insumos primitive — every raw brand asset, organized by type (uploaded to Decodex first)
 │   ├── logos/
 │   ├── images/
@@ -87,7 +85,7 @@ Only the user unlocks the project, by deleting it themselves.
   its local copy, downloaded from Decodex, when a piece first needs it. This applies to every
   asset, whether every framework uses it (the main logo) or only one does (a product photo):
   its copy goes in `library/<type>/` all the same.
-- **A framework-specific asset is not moved into `drafts/` or `frameworks/`.** It stays in
+- **A framework-specific asset is not moved into `frameworks/` or a framework-specific folder.** It stays in
   `library/`, under its type folder; a subfolder per framework is only created if the number of files actually
   justifies it — the same criterion used for variants (see `framework-construction.md`): don't
   split until the volume asks for it.
@@ -101,7 +99,7 @@ Each fact lives in exactly one place. Everything else references it, never copie
 | Fact | Lives in | How it's referenced |
 |---|---|---|
 | Base palette, base typography, logo, tone, legal (brand-wide) | Decodex (`get_brand_colors`, `get_brand_fonts`, `get_brand_voice`, `get_foundations`) | "see the brand" — a hex or a tone rule is never repeated inside a framework document |
-| Intent, objective, channels, color roles, image mode, elements, variants, text scaling (shared by every size of ONE framework) | The matching section of that framework (`get_framework` / `drafts/<name>.md`) | Every size row references them by name — never redeclared or repeated |
+| Intent, objective, channels, color roles, image mode, elements, variants, text scaling (shared by every size of ONE framework) | The matching section of that framework (`get_framework` / its working draft) | Every size row references them by name — never redeclared or repeated |
 | Exact measurements of ONE specific size | That size's row, inside the same framework document | Another size never copies these values — if it shares a ratio with another, that's noted and referenced, not repeated |
 | This folder structure | This document (`structure-and-assets.md`) | `methodology.md` only mentions it and links here |
 
@@ -121,7 +119,7 @@ the exception, not the norm. A brand fact goes to `add_knowledge`, never to a ne
 | Tone, legal | `set_brand_voice`, `set_brand_core` / `get_brand_voice` | — |
 | Other foundations: named tokens, logo clear-space | `set_foundation`, `delete_foundation` / `get_foundations` | — |
 | Asset files | `request_asset_upload`, `request_batch_asset_upload` / `get_asset`, `list_assets`, `search_assets`, `get_asset_download_url` | — |
-| Framework spec | `add_framework` / `list_frameworks`, `get_framework` | `drafts/<name>.md` while it's built |
+| Framework spec | `add_framework` / `list_frameworks`, `get_framework` | its working draft (temporary) while it's built |
 | Brand facts, colorways | `add_knowledge`, `list_knowledge`, `delete_knowledge` | — |
 | Designer learnings | `save_piece_learning` / `search_piece_learnings` | — |
 
