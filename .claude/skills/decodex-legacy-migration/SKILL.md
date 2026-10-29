@@ -1,6 +1,6 @@
 ---
 name: decodex-legacy-migration
-description: Migrate a legacy, unstructured Decodex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (foundations/, frameworks/, library/, content/, engine/, references/), with brand facts saved to Decodex. Use when a brand already has a Decodex-style implementation that predates this structure and needs to be brought in.
+description: Migrate a legacy, unstructured Decodex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (Decodex for foundations and frameworks, plus library/, content/, engine/, references/), saving brand data to Decodex with the setup tools and never into foundations/. Use when a brand already has a Decodex-style implementation that predates this structure and needs to be brought in.
 compatibility: Claude Code / Agent Skills-compatible runtimes
 metadata:
   version: "0.1.0"
@@ -36,24 +36,32 @@ ambiguity, and search for it — don't ingest the whole thing by default. It's a
 valuable source (real corrections, "derived vs. confirmed" flags) — just an expensive one to read
 wholesale.
 
-## Step 2 — Adapt into `foundations/brand.<name>.md`
+## Step 2 — Save the foundations to Decodex
 
-Follow `tokenization.md`'s A1-A4 categories and `schema.md`'s naming grammar.
+Follow `tokenization.md`'s A1-A4 categories and `schema.md`'s naming grammar, and save each item
+with its tool, as in `decodex-setup` (A2): colors with `set_brand_color`, named tokens and the
+logo clear-space with `set_foundation`, tone with `set_brand_voice`, basics with
+`set_brand_core`, Google fonts with `add_google_font` (font files through
+`decodex-asset-upload`), colorways, legal rules and other facts with `add_knowledge`. Read what
+Decodex already holds first and never overwrite a different value without the user's yes.
+**Never write into `foundations/`**: it is a local baseline, synced to Decodex and then locked (see `RULES.md`). If the
+legacy project's foundations already sit in this project's `foundations/` or `frameworks/`, use
+`decodex-sync` instead of this step.
 
 - **If something doesn't fit any A1-A4 category cleanly** (a named set of role-combinations, a
   single decorative asset's own slot interface, anything else that's brand-wide but isn't a
-  palette/typography/logo/tone fact): document it anyway, under an explicit ad hoc heading, marked
-  as a gap. Never force it into the nearest category, and never invent a new formal category on
+  palette/typography/logo/tone fact): save it anyway with `add_knowledge`, under an explicit ad
+  hoc source label, marked as a gap. Never force it into the nearest category, and never invent a new formal category on
   your own — that's a decision for the project's `tokenization.md`/`schema.md`, not for one
   migration.
 - **Check that A4 (tone/legal) actually exists** before concluding it's missing — it may live in a
   different file than expected (an operating guide, not the foundations doc itself).
 - **Watch for filename drift**: the foundations source may name asset files that don't match what
   actually shipped on disk (typos, renamed files, a changed separator). Use the real, on-disk
-  filenames in the migrated document and in `library/`; flag the mismatch in prose. Don't silently
+  filenames in what you save and in `library/`; flag the mismatch in prose. Don't silently
   "correct" the source, and don't silently use the wrong name either.
-- Don't copy a raw data file into the migrated doc (or into `library/`) if its content is already
-  fully absorbed into a table you just wrote — that's pure duplication, not a second source.
+- Don't copy a raw data file into Decodex knowledge (or into `library/`) if its content is already
+  fully absorbed into what you just saved — that's pure duplication, not a second source.
 - **Legacy brand facts that aren't tokens** (notes, decisions, learnings about the brand): save
   them to Decodex with `add_knowledge`, one entry per topic — never into a local folder.
 
@@ -72,7 +80,8 @@ kind of asset shows up again in a third brand.
 ## Step 4 — For each framework, check whether a written spec already exists
 
 **If yes (a real `.md`/spec document exists):** this is a migration. Read it fully, adapt it into
-`frameworks/<name>.md` per `tokenization.md`'s B0-B8, and cross-check it against any documented
+a temporary working draft per `tokenization.md`'s B0-B8 (never into `frameworks/`, which is frozen; once
+approved it is saved with `add_framework`, see `framework-construction.md`), and cross-check it against any documented
 corrections (a changelog, a rules doc) to mark what's actually verified vs. carried over as
 declared. If the legacy project also has a working legacy engine for this framework, do **not**
 open it to "double check" — the written spec (plus any changelog) is the knowledge source; the
@@ -112,9 +121,9 @@ placeholder.
 
 ## Step 6 — Log every unresolved gap explicitly
 
-A gap is a normal outcome of this process, not a failure to hide. Leave it stated in the relevant
-document (foundations or the framework doc) or in the project's own `research`/discoveries record
-if one exists — never invent a plausible-sounding value to close it quietly.
+A gap is a normal outcome of this process, not a failure to hide. Leave it stated where it
+belongs (an `add_knowledge` entry for a brand-wide gap, the framework's working draft for a
+framework gap) or in the project's own `research`/discoveries record if one exists — never invent a plausible-sounding value to close it quietly.
 
 ## What this skill does not do
 

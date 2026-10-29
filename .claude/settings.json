@@ -1,4 +1,5 @@
 {
+  "outputStyle": "default",
   "enabledMcpjsonServers": ["playwright", "chrome-devtools", "decodex-brand"],
   "permissions": {
     "deny": [
@@ -20,6 +21,15 @@
           {
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR\"/.git/decodex-guard/bin/protect-claude-dir.sh 2>/dev/null || bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-claude-dir.sh || { echo \"The protected harness hook protect-claude-dir.sh is missing or failed. Ask the user to restore .claude/hooks/. See RULES.md.\" >&2; exit 2; }"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Glob|Grep|Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.git/decodex-guard/bin/protect-local-brand.sh 2>/dev/null || bash \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-local-brand.sh || { echo \"The protected harness hook protect-local-brand.sh is missing or failed. Ask the user to restore .claude/hooks/. See RULES.md.\" >&2; exit 2; }"
           }
         ]
       },
