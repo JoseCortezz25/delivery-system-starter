@@ -1,13 +1,12 @@
 ---
-name: codex-legacy-migration
-description: Migrate a legacy, unstructured Codex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (foundations/, frameworks/, resources/, content/, knowledge/, engine/, references/). Use when a brand already has a Codex-style implementation that predates this structure and needs to be brought in.
-license: See repository LICENSE
+name: decodex-legacy-migration
+description: Migrate a legacy, unstructured Decodex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (foundations/, frameworks/, library/, content/, engine/, references/), with brand facts saved to Decodex. Use when a brand already has a Decodex-style implementation that predates this structure and needs to be brought in.
 compatibility: Claude Code / Agent Skills-compatible runtimes
 metadata:
   version: "0.1.0"
 ---
 
-# Codex Legacy Migration
+# Decodex Legacy Migration
 
 Generalized from two complete migrations done under this structure. Follow this as a checklist,
 not a script — each step still requires judgment, and every "doesn't fit" case gets flagged, never
@@ -37,44 +36,37 @@ ambiguity, and search for it — don't ingest the whole thing by default. It's a
 valuable source (real corrections, "derived vs. confirmed" flags) — just an expensive one to read
 wholesale.
 
-## Step 2 — Adapt into the four `foundations/` files
+## Step 2 — Adapt into `foundations/brand.<name>.md`
 
-Split the legacy foundations into `foundations/COLORS.md` (A1), `FONTS.md` (A2), `LOGOS.md` (A3)
-and `COPYS.md` (A4), each in the file format defined in `tokenization.md` Part A, with names per
-`schema.md`'s grammar. Create only the files the legacy source actually has information for — a
-scope with nothing in the source gets no file (it's a gap, logged in Step 6).
+Follow `tokenization.md`'s A1-A4 categories and `schema.md`'s naming grammar.
 
-Then create `foundations/BRAND.md`, the foundations index, from the files you just migrated
-(shape: `tokenization.md` Part A): brand name and description, the status and one-line summary of
-each of the four files (a scope with no file is `not created yet`), the open `null # gap:` tokens,
-and the `resources/` folders that hold the brand's files — update it again after Step 3 if the
-resource pointers change. It indexes the four files; it never restates a value from them.
-
-- **If something doesn't fit any of the four scopes cleanly** (a named set of role-combinations, a
+- **If something doesn't fit any A1-A4 category cleanly** (a named set of role-combinations, a
   single decorative asset's own slot interface, anything else that's brand-wide but isn't a
-  palette/typography/logo/tone fact): document it anyway, under an explicit ad hoc heading in the
-  prose part of the closest-scope file, marked as a gap. Never force it into a token family it
-  doesn't belong to, and never invent a new formal category or file on your own — that's a
-  decision for the project's `tokenization.md`/`schema.md`, not for one migration.
-- **Check that A4 (tone/legal, `COPYS.md`) actually exists** before concluding it's missing — it
-  may live in a different file than expected (an operating guide, not the foundations doc itself).
+  palette/typography/logo/tone fact): document it anyway, under an explicit ad hoc heading, marked
+  as a gap. Never force it into the nearest category, and never invent a new formal category on
+  your own — that's a decision for the project's `tokenization.md`/`schema.md`, not for one
+  migration.
+- **Check that A4 (tone/legal) actually exists** before concluding it's missing — it may live in a
+  different file than expected (an operating guide, not the foundations doc itself).
 - **Watch for filename drift**: the foundations source may name asset files that don't match what
   actually shipped on disk (typos, renamed files, a changed separator). Use the real, on-disk
-  filenames in the migrated `font.file.*` / `logo.*` tokens and in `resources/`; flag the mismatch
-  in prose. Don't silently "correct" the source, and don't silently use the wrong name either.
-- Don't copy a raw data file into the migrated doc (or into `resources/`) if its content is already
+  filenames in the migrated document and in `library/`; flag the mismatch in prose. Don't silently
+  "correct" the source, and don't silently use the wrong name either.
+- Don't copy a raw data file into the migrated doc (or into `library/`) if its content is already
   fully absorbed into a table you just wrote — that's pure duplication, not a second source.
+- **Legacy brand facts that aren't tokens** (notes, decisions, learnings about the brand): save
+  them to Decodex with `add_knowledge`, one entry per topic — never into a local folder.
 
-## Step 3 — Copy real assets into `resources/`, organized by type
+## Step 3 — Copy real assets into `library/`, organized by type
 
 Inspect what's actually inside each source asset folder before deciding where it goes — don't
-infer the category from the source folder's own name. Organize by type into the existing `resources/`
+infer the category from the source folder's own name. Organize by type into the existing `library/`
 subfolders (`logos/`, `images/`, `videos/`, `icons/`, `sounds/`, `fonts/`).
 
 Some assets won't fit any existing subfolder cleanly (reusable design-component templates, fixed
 graphic elements that are closer to framework building blocks than plain insumos). Place them in
 the closest existing category and say so explicitly in your report — that's a judgment call, not a
-new rule. Don't invent a new `resources/` subfolder for a one-off case; only propose one if the same
+new rule. Don't invent a new `library/` subfolder for a one-off case; only propose one if the same
 kind of asset shows up again in a third brand.
 
 ## Step 4 — For each framework, check whether a written spec already exists
@@ -90,7 +82,7 @@ engine is not, per the one rule above.
 migration.** This is the SVG scenario, but it generalizes to any case where a framework was only
 ever built directly into a design/structure file, never written up. Treat that structural source
 (SVG, or an equivalent structured design export) the same way `framework-construction.md` treats
-a structured design file such as Figma — it gives you real geometry, not intent. Concretely:
+"Path A: structure in Figma" — it gives you real geometry, not intent. Concretely:
 
 - Read the structural files as text/XML (viewBox, coordinates, real measurements) to get exact
   geometry — this is a design source, not code, even though it's file-based like the generator is.

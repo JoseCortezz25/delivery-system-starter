@@ -1,8 +1,8 @@
-# Codex Methodology
+# Decodex Methodology
 
 ## What this is
 
-Codex's adaptive design system is a **set of frameworks**, each with its own complete adaptive
+Decodex's adaptive design system is a **set of frameworks**, each with its own complete adaptive
 configuration (intent, objective, channels, rules, text behavior, image behavior, sizes), built
 one at a time on top of a minimal shared brand base.
 
@@ -16,30 +16,36 @@ tokens inside another brand's project.
 framework.** There is no single "adaptive rules" document that applies uniformly to everything.
 Each framework behaves differently because it solves a different problem (a product shot vs. an
 environment photo, a price offer vs. a brand message), so each one needs its own complete
-specification: a `frameworks/<name>.md` document (see `glossary.md` and the root `CLAUDE.md`).
+specification: one framework document, drafted as `frameworks/<name>.md` and approved in Decodex
+(see `glossary.md` and the root `CLAUDE.md`).
 
 The one thing that IS truly cross-cutting — and is therefore resolved once, before touching any
 framework — is the **brand foundations**: the identity that doesn't change no matter which
-framework is being built. See `foundations/` — `COLORS.md`, `FONTS.md`, `LOGOS.md`, `COPYS.md`,
-indexed by `BRAND.md` (all defined in `tokenization.md` Part A).
+framework is being built. See Decodex (`get_foundations`, `get_brand_colors`, `get_brand_fonts`,
+`get_brand_voice`) and, for what its tools don't cover yet, `foundations/`.
 
 ## The three levels
 
 1. **Foundations (shared, once per brand):** base brand palette, base typography, logo,
-   communication tone, legal boundaries. Tokenized at the start of the project, from whatever the
+   communication tone, legal boundaries. Saved in Decodex at the start of the project (and in
+   `foundations/` for what its tools don't cover), from whatever the
    brand expert provides, with gaps filled in before moving on.
-2. **Framework (configured one at a time, result = a document):** each framework is built from
-   every source the brand has for it, combined (reference pieces, descriptions, brandbook, and
-   optionally Figma for more accurate geometry) — and is
+2. **Framework (configured one at a time, result = a document):** each framework arrives through
+   one of two possible paths — from Figma, or from a reference image + description — and is
    configured in detail, section by section, together with the brand expert. The result is
    **a single document, `frameworks/<name>.md`**: intent, objective, channels, color roles, image
    mode, variants, the complete list of elements (dynamic and fixed), typography and text
    scaling, and the exact measurements of every element — spacing, margins, radii, elevations,
    strokes — for every size the framework covers. There is no code at this layer: the document,
    built together with the brand expert, IS the complete specification for that framework.
+   `frameworks/<name>.md` is the local working draft; once approved, the document is saved to
+   Decodex with `add_framework`, and that is the version that holds (`get_framework`).
 3. **Rendering engine (technical infrastructure, a separate concern):** the implementation built
    AFTERWARDS, reading these framework documents as the specification. Lives in `engine/` — see
    the root `CLAUDE.md` for how it relates to the other folders.
+
+**Who does what.** Setup is done by the Codifier, who writes the brand into Decodex. Execution is
+done by the Maker, who reads it to produce pieces and never changes brand rules.
 
 ## Non-negotiable rules
 

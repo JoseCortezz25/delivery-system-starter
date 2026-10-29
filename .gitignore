@@ -10,6 +10,7 @@ env/
 venv/
 ENV/
 .env
+.env.*
 .python-version
 pip-log.txt
 pip-delete-this-directory.txt
@@ -19,3 +20,9 @@ pip-delete-this-directory.txt
 *.egg-info/
 # macOS
 .DS_Store
+
+# Secrets
+*.pem
+
+# Claude Code personal settings
+.claude/settings.local.json

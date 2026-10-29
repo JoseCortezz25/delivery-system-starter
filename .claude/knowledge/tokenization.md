@@ -16,7 +16,7 @@ This guide has two parts, because not everything gets tokenized at the same mome
 If a category doesn't apply to the current brand, it's declared explicitly as "not applicable" —
 never silently omitted.
 
-## Naming convention (applies in `foundations/` and in each framework's `.md`)
+## Naming convention (applies wherever tokens are written: Decodex, `foundations/`, each framework's `.md`)
 
 Every token is named under one of these families. The family is what repeats identically across
 any brand; the full name changes depending on what the brand actually has. This is the
@@ -25,17 +25,15 @@ should use too (see `engine-principles.md`).
 
 | Family | What it's for | Level |
 |---|---|---|
-| `color.palette.*` | The raw hex, by name (A1, `foundations/COLORS.md`) — never referenced directly from a framework | Foundations |
+| `color.palette.*` | The raw hex, by name (A1) — never referenced directly from a framework | Foundations |
 | `color.role.*` | The semantic layer a framework does reference (B1) — points to a `color.palette.*`, never to a hex | Framework |
-| `font.family.*` / `font.weight.*` / `font.size.*` / `font.tracking.*` / `font.leading.*` | Typography: inventory (A2, `foundations/FONTS.md`) and per-element assignment/scaling (B5) | Foundations + Framework |
-| `font.file.*` | Path to a typeface file in `resources/fonts/` (A2) | Foundations |
-| `logo.*` | Path to a logo version in `resources/logos/` (A3, `foundations/LOGOS.md`) | Foundations |
+| `font.family.*` / `font.weight.*` / `font.size.*` / `font.tracking.*` / `font.leading.*` | Typography: inventory (A2) and per-element assignment/scaling (B5) | Foundations + Framework |
 | `spacing.safe.*` | Safe margins (e.g. `spacing.safe.top`) | Framework |
 | `product.*` / `media.*` | Assets for "product" mode or "photo" mode (B2, B8) | Framework |
 | `container.*` / `content.*` | Layout geometry — position, size, anchor (B6) | Framework, per size |
 | `cta.safezone.*` | The zone a platform (Meta, etc.) reserves for its own button — the system never draws anything there | Framework |
-| `pattern.*` | If the brand has its own decorative motif (e.g. a recurring background icon or texture) — slot names in `foundations/COLORS.md`, per-piece use in the framework | Foundations (slot names) + Framework |
-| `radius.*` | Reusable corner radii (e.g. `radius.pill`, `radius.card`) | Foundations (`foundations/COLORS.md`) or Framework, depending on whether it's brand-wide or piece-specific |
+| `pattern.*` | If the brand has its own decorative motif (e.g. a recurring background icon or texture) | Framework |
+| `radius.*` | Reusable corner radii (e.g. `radius.pill`, `radius.card`) | Foundations or Framework, depending on whether it's brand-wide or piece-specific |
 
 If something doesn't fit any family, add a new row to this table — the list isn't closed. But a
 new family follows the same grammar as the others: `family.subfamily.detail`, in English, in
@@ -52,156 +50,46 @@ improvement, don't apply it silently and don't ignore it.
 
 ## Part A — Foundations (once, shared by every framework)
 
-Foundations is split into four single-responsibility files, one per category below, plus one
-index, `BRAND.md`, that summarizes them — its only own facts are the brand's name and short
-description. Each foundations fact lives in exactly
-one of the four, chosen by scope:
+Part A is saved in Decodex (`set_brand_color`, `request_font_upload`/`add_google_font`,
+`set_brand_voice`, `set_brand_core`, `set_foundation`, and `add_knowledge` for colorways). A token
+is saved with `set_foundation` under its name from this convention; `get_foundations` returns it
+as a CSS custom property with dots turned into dashes (`spacing.safe.left` →
+`--spacing-safe-left`). The sections below are the checklist of what to collect.
 
-| Category | File | Scope |
+### A1. Base brand palette (`color.palette.*`)
+
+The brand's complete official color set, named — not yet assigned to a framework role (that's
+B1). These names are never referenced directly from a framework: a framework always goes through
+a role (B1).
+
+| Name | Hex | Notes |
 |---|---|---|
-| A1 | `foundations/COLORS.md` | Base palette + other brand-wide, non-typographic tokens (`radius.*`, foundation-level `pattern.*` slot names) |
-| A2 | `foundations/FONTS.md` | Typography inventory, font files, brand-wide typography usage rules |
-| A3 | `foundations/LOGOS.md` | Logo files and the logo usage rules the user has defined |
-| A4 | `foundations/COPYS.md` | Tone, voice, do/don't examples, prohibited claims and legal boundaries |
-| Index | `foundations/BRAND.md` | Brand name + short description, and the status/summary of the four files above — never a token value or rule (see "The foundations index" below) |
+| | | |
 
-**Lifecycle.** None of these files exists in the empty template (`foundations/` only holds
-`.gitkeep`). The agent creates each file during Setup the first time the user provides
-information for its scope, and keeps adding to the right file, by scope, as the conversation
-goes. A file that doesn't exist yet means its scope has no information yet — that's a Setup gap.
-The four A1-A4 files are the input the `engine/` scripts read for the first iteration of
-frameworks and pieces.
+### A2. Base typography
 
-| File | Created when | Updated when |
-|---|---|---|
-| `BRAND.md` | At the start of Setup, as soon as the brand name / first info is known — together with the first A1-A4 file | Every time any A1-A4 file is created or changes (status, summary, open gaps) |
-| `COLORS.md` / `FONTS.md` / `LOGOS.md` / `COPYS.md` | The first time the user gives information for that file's scope | Whenever new information for that scope arrives or a value is corrected |
+The complete inventory of families/weights the brand has available — could be 2, could be 7,
+whatever the brand uses:
 
-### Foundations file format (single definition — every other document references this)
+| Family/weight | Notes |
+|---|---|
 
-Every foundations file except `BRAND.md` has the same two parts, in this order (`BRAND.md` is
-the index, not a source — it has no token block and is never parsed by the engine; its own shape
-is defined in "The foundations index" below):
+Only the inventory goes here. Which family a given element (headline, sub, CTA) uses INSIDE a
+specific framework — same as its sizes and scaling rules — does NOT go here: that's B5, because
+that assignment changes framework to framework.
 
-1. **Token block** — the first fenced ` ```yaml ` block in the file, under a `## Tokens` heading.
-   This is what the `engine/` scripts parse; they read only this block, never the prose.
-   - A flat map: one `token.name: value` pair per line. Keys are the full dotted token name per
-     `schema.md` — no nesting, no anchors, no multi-line values.
-   - Values are quoted strings (`"#E4002B"`, `"700"`, `"999px"`).
-   - A file reference is a quoted path relative to the project root, pointing into `resources/`
-     (e.g. `"resources/fonts/BrandSans-Bold.otf"`). The file itself is never copied into
-     `foundations/`.
-   - A token the brand is known to have but whose value hasn't been provided is written as
-     `null` with a `# gap:` comment. The engine refuses to render with a `null` it needs — it
-     never substitutes a default. A token nobody has mentioned is simply absent.
-   - A file whose scope has no machine-readable values (typically `COPYS.md`) still has the
-     block, empty (`{}`), so every file parses the same way.
-2. **Usage rules** — prose after the block, under `## Usage rules`: when and how each token is
-   used, do/don't examples, notes. Prose never restates a value that is in the block — it refers
-   to it by token name.
+### A3. Logo
 
-Minimal example (`foundations/COLORS.md`):
+- Logo file(s) (light and dark version), uploaded to Decodex (`request_asset_upload`).
+- Minimum clear-space around the logo (this is a brand rule, not a framework one — it always
+  applies, even though its exact position and measurement is defined per framework in B6).
+  Saved with `set_foundation` as `logo.clearspace`; a rule written in words comes back from
+  `get_foundations` as plain text, not as a custom property.
 
-````markdown
-# Colors
+### A4. Copy tone and legal boundaries
 
-## Tokens
-
-```yaml
-color.palette.red: "#E4002B"
-color.palette.white: "#FFFFFF"
-color.palette.navy: null  # gap: brand mentions a navy, hex not provided yet
-radius.pill: "999px"
-```
-
-## Usage rules
-
-- `color.palette.red` is the brand's signature color; it is never used for body text.
-````
-
-### The foundations index → `foundations/BRAND.md` (single definition)
-
-The entry point to the brand's foundations: the agent reads `BRAND.md` first, then loads only the
-A1-A4 files the task at hand needs. It summarizes and points — it never restates a value (no hex,
-no font file path, no tone or usage rule text); at most it names tokens. Every fact stays in the
-file that owns its scope, so a change to a fact is made there and only the index's status/summary
-line is refreshed here.
-
-Exempt from the token-block format: no `## Tokens` block, not parsed by the `engine/` (the engine
-reads the A1-A4 token blocks directly). It always has these sections, in this order:
-
-1. **Title + description** — `# <Brand name>`, then one or two sentences on what the brand is.
-2. **`## Foundations files`** — one row per A1-A4 file, always all four: file, scope, status, and
-   a one-line summary of what it currently covers. Status is one of: `created`, `created — open
-   gaps` (its token block has `null # gap:` tokens), `not created yet` (Setup gap).
-3. **`## Open gaps`** — a short list: each missing file and each open `null # gap:` token, by
-   token name, pointing to the file that holds it. `None` when there are none.
-4. **`## Resources`** — the `resources/` subfolders that hold this brand's files, with a few
-   words on what each has. Only folders that actually hold files.
-
-Minimal example (`foundations/BRAND.md`):
-
-````markdown
-# Acme
-
-Acme is a regional supermarket chain; its ads are bold, price-led and family-oriented.
-
-## Foundations files
-
-| File | Scope | Status | Covers |
-|---|---|---|---|
-| `COLORS.md` | A1 palette, brand-wide radii/patterns | created — open gaps | 3 palette colors (`color.palette.red`, `.white`, `.navy`), `radius.pill` |
-| `FONTS.md` | A2 typography | created | 1 family (`font.family.display`), 2 weights, file refs |
-| `LOGOS.md` | A3 logo | not created yet | — |
-| `COPYS.md` | A4 tone, legal | created | tone, do/don't lines, prohibited claims |
-
-## Open gaps
-
-- `LOGOS.md` — no logo information yet.
-- `COLORS.md` — `color.palette.navy` value not provided.
-
-## Resources
-
-- `resources/fonts/` — display typeface files.
-````
-
-### A1. Base brand palette and brand-wide tokens → `foundations/COLORS.md`
-
-The brand's complete official color set as `color.palette.*` tokens — named, not yet assigned to
-a framework role (that's B1). These names are never referenced directly from a framework: a
-framework always goes through a role (B1). Each color may carry a usage note in the prose part.
-
-Other tokens that are truly brand-wide and not typographic also live here: `radius.*` values the
-brand applies everywhere, and foundation-level `pattern.*` slot names (see `schema.md`). A radius
-or pattern specific to one framework stays in that framework's document.
-
-### A2. Base typography → `foundations/FONTS.md`
-
-- **Inventory**: the complete set of families/weights the brand has available — could be 2, could
-  be 7 — as `font.family.*` / `font.weight.*` tokens.
-- **Files**: each family/weight's typeface file in `resources/fonts/`, referenced as a
-  `font.file.*` token (by path, never duplicated).
-- **Brand-wide usage rules** (prose): rules that hold in every framework — e.g. "family X is only
-  for headlines", "body copy is never set in the display face".
-
-Which family a given element (headline, sub, CTA) uses INSIDE a specific framework — same as its
-sizes and scaling rules — does NOT go here: that's B5, because that assignment changes framework
-to framework. `FONTS.md` holds the brand-wide rules B5 must respect.
-
-### A3. Logo → `foundations/LOGOS.md`
-
-- **Files**: each logo version in `resources/logos/`, referenced by path as a `logo.*` token
-  (e.g. `logo.primary.onLight`, `logo.secondary.onDark`) — never duplicated.
-- **Usage rules**, only the ones the user defines during Setup — none is mandatory: which version
-  is primary vs. secondary, which goes on light vs. dark backgrounds, minimum clear-space, when to
-  use each version. A rule the user hasn't defined is either absent or marked "not defined yet" —
-  never invented. Clear-space, if defined, is a brand rule, not a framework one — it always
-  applies, even though its exact position and measurement is defined per framework in B6.
-
-### A4. Copy tone and legal boundaries → `foundations/COPYS.md`
-
-- How the brand communicates: tone (e.g. 2-3 adjectives), voice, and "do" / "don't" example
-  lines.
+- Brand tone in 2-3 adjectives + one "do" example line and one "don't" example line.
+  Saved with `set_brand_voice`.
 - Explicit list of prohibited claims (health, legal, competitor comparisons, etc.) and why they're
   prohibited.
 
@@ -211,8 +99,8 @@ to framework. `FONTS.md` holds the brand-wide rules B5 must respect.
 
 These categories exist inside the configuration of EACH framework, because their value differs
 depending on what that framework solves. They are not filled in ahead of time. They all end up
-living in one place: that framework's `frameworks/<name>.md` document — there is no code, the
-document IS the complete specification.
+living in one place: that framework's document, saved in Decodex with `add_framework` (local copy:
+`frameworks/<name>.md`) — there is no code, the document IS the complete specification.
 
 ### B0. Intent, objective, and channels
 
@@ -263,8 +151,8 @@ type:
 | Platform CTA zone | empty space | Fixed | — |
 | Price / discount | text | Dynamic | content variant (B4), offer-type only |
 
-No element of the framework is left off this list — if something appears in any of the
-framework's sources and isn't here, it isn't defined yet. This is resolved BEFORE B4 (variants),
+No element of the framework is left off this list — if something appears in the reference
+(Figma or image) and isn't here, it isn't defined yet. This is resolved BEFORE B4 (variants),
 because variants are described in terms of which elements from this list change.
 
 **This list is also the contract for any bulk copy-delivery mechanism** — spreadsheet, feed, CSV,
@@ -339,4 +227,4 @@ canvas height; no shadow; no stroke." — not "the logo goes up top, roughly cen
 ### B8. Assets specific to this framework
 
 Photos, product cutouts — shared across all sizes of this framework, but not necessarily with
-other frameworks.
+other frameworks. Uploaded to Decodex first (`request_asset_upload`), then referenced by name.

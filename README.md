@@ -1,11 +1,11 @@
-# Codex
+# Decodex
 
-**Codex es la codificación de una marca en código.** Es una metodología para
+**Decodex es la codificación de una marca en código.** Es una metodología para
 generar piezas de publicidad a escala, de forma **agéntica**: se toma el design system de una marca
 (paleta, tipografía, logo, tono, plantillas) y se convierte en prompts y tokens estandarizados, para
 que una IA pueda generar las piezas gráficas (HTML → PNG/JPEG) sin diagramar cada una a mano.
 
-> Este repo es la **estructura estándar** (propuesta) que cualquier proyecto de marca en Codex debería
+> Este repo es la **estructura estándar** (propuesta) que cualquier proyecto de marca en Decodex debería
 > adoptar — todavía en construcción y sujeta a ajustes.
 
 ## La idea central
@@ -21,48 +21,29 @@ por una a mano.
    legales. Se resuelve una sola vez, al principio de cada marca.
 2. **Frameworks** — cada estructura visual reutilizable (ej. "producto + logo + texto abajo") se
    documenta en detalle: qué elementos tiene, cómo se comporta el texto largo, las medidas exactas de
-   cada tamaño que cubre. Un framework, una especificación canónica; la anatomía geométrica extraída
-   de Figma puede acompañarla como HTML generado.
+   cada tamaño que cubre. Un framework, un documento.
 3. **Engine** — el motor que lee esos documentos y genera las piezas reales. Se construye después de
    que foundations y frameworks ya están documentados, nunca antes.
 
 ## El flujo completo
 
-![Flujo de Codex: setup → construir el conocimiento → ejecución](./codex-flow.svg)
-
-El trabajo con el agente pasa siempre por dos etapas:
-
-1. **Setup** — aplica cada vez que el conocimiento de la marca está incompleto, no solo cuando el
-   proyecto está vacío (por ejemplo: hay foundations pero no frameworks, o hay frameworks pero
-   faltan logos o fuentes). El agente revisa qué hay, te cuenta en lenguaje simple qué falta, y te
-   pide todo lo que tengas (brandbook, manuales, PDFs, notas, logos, fotos, videos, íconos,
-   fuentes, links de Figma, piezas de referencia) en cualquier formato, aunque esté desordenado.
-   Él lo organiza, pregunta solo por los huecos —uno a la vez, sin inventar nada— y sigue
-   recibiendo material hasta que digas que no tenés más. Para cerrar, arma una pieza de prueba con
-   los datos reales y te la muestra para aprobación.
-2. **Ejecución** — con el Setup cerrado (o si el proyecto ya estaba completo), el agente produce
-   las piezas: las construye en HTML a partir de los frameworks, las exporta a imagen y las
-   entrega organizadas por proyecto y tamaño. Si en el camino aparece algo que no está documentado
-   (un framework nuevo, un logo que falta, un valor sin definir), vuelve al Setup solo para ese
-   hueco y después sigue.
+![Flujo de Decodex: setup → construir el conocimiento → ejecución](./decodex-flow.svg)
 
 ## Qué hay en este proyecto
 
 | Carpeta        | Qué guarda                                                                     |
 | -------------- | ------------------------------------------------------------------------------ |
-| `foundations/` | Los tokens de la marca, en 4 archivos: `COLORS.md` (paleta), `FONTS.md` (tipografía), `LOGOS.md` (uso del logo), `COPYS.md` (tono y legal), más `BRAND.md`, un índice/resumen de la marca que la IA lee primero. Se crean durante el Setup a medida que llega la información |
-| `frameworks/`  | Una especificación canónica por framework; anatomías HTML de Figma en `templates/`, indexadas en `frameworks/README.md` |
-| `resources/`   | Recursos (insumos): logos, fotos, videos, íconos, sonidos, fuentes de la marca |
+| `foundations/` | Los tokens de la marca: paleta, tipografía, logo, tono, legal                  |
+| `frameworks/`  | Un documento por framework, con su especificación completa                     |
+| `library/`     | Los insumos crudos de la marca: logos, fotos, videos, íconos, sonidos, fuentes |
 | `content/`     | Las piezas ya generadas, organizadas por proyecto/campaña                      |
 | `references/`  | Miniaturas/montajes de frameworks ya aprobados, para consulta visual rápida    |
-| `knowledge/`   | Conocimiento específico de esta marca                                          |
 | `engine/`      | El motor que genera las piezas                                                 |
 
 ## Cómo se opera esto
 
-Este proyecto está pensado para trabajarse junto a un agente de IA. Claude Code sigue las
-instrucciones de `CLAUDE.md`; OpenCode entra por `AGENTS.md`, que le indica cargar esas mismas
-reglas y las de `RULES.md`. Un humano aporta el criterio de marca (brandbook,
+Este proyecto está pensado para trabajarse junto a un agente de IA que sigue las instrucciones de
+`CLAUDE.md` y las reglas de `RULES.md`. Un humano aporta el criterio de marca (brandbook,
 aprobaciones, copy); la IA tokeniza, documenta cada framework, y genera las piezas — siempre
 preguntando antes de inventar un valor, y pidiendo aprobación antes de escalar a más variantes o
 tamaños. El detalle completo de cómo opera la IA vive en `.claude/knowledge/`.
