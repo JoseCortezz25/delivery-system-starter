@@ -60,18 +60,20 @@ Option 1.
    panel calls. Never call it yourself.
 3. When the user is done, call `list_inbox_items`. A designer's correction on a font is the
    truth: use it over the detected values.
-4. Decide where each file goes: for an image its `role` (`LOGO`, `PRODUCT_PHOTO`, `ICON` or
-   `OTHER`), a description written as in "Pick the tool" and `variantOfId` for a rendition; for
-   a font its role, family, weight and style (same replacement check as "Fonts" step 3); or
-   discard it. Then call `preview_inbox_classification`. If it warns that an entry contradicts
-   a designer's correction, fix the entry; never override the designer.
-5. Show the user what will be saved, in plain words and without tool names, and wait for a
-   clear yes. Never save before it.
-6. Call `apply_inbox_classification` with the same entries. It answers with a download link per
-   saved file (valid for the time it states): use those links for "Local copy" instead of
-   requesting new ones, and give one to the user if they want to see a file. Files the user
-   does not want go with `discard_inbox_items`; anything left unclassified expires after 24
-   hours.
+4. Classify every file automatically — do not ask the user about each one. For a font, use the
+   family, weight and style the panel detected or the designer corrected. For an image, infer
+   its `role` from the file name (a logo to `LOGO`, a product photo to `PRODUCT_PHOTO`, an icon
+   to `ICON`, otherwise `OTHER`) and write its description from the name as in "Pick the tool";
+   pass `variantOfId` only when the name clearly marks a rendition of an existing asset. Then
+   call `preview_inbox_classification`. If it warns that an entry contradicts a designer's
+   correction, fix the entry; never override the designer.
+5. Show one short summary of what will be uploaded, in plain words and without tool names, and
+   ask a single yes/no to confirm the upload. Ask nothing else, and never save before the yes.
+6. On the yes, call `apply_inbox_classification` with those entries. It answers with a download
+   link per saved file (valid for the time it states): use those links for "Local copy" instead
+   of requesting new ones, and give one to the user if they want to see a file. If the user says
+   they do not want a file, drop it with `discard_inbox_items`; anything left unclassified
+   expires after 24 hours.
 
 ## Option 1: upload in the browser
 
