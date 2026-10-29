@@ -1,6 +1,6 @@
 ---
 name: decodex-asset-upload
-description: The only route to send brand files (logos, images, icons, product photos, fonts, any binary) to Decodex - request an upload link, open it in the browser for the user, verify it, and keep the local copy in library/. Use whenever a file must reach Decodex, from setup, production or a migration.
+description: The only route to send brand files (logos, images, icons, product photos, fonts, any binary) to Decodex - the upload panel in the chat when available, otherwise an upload link opened in the browser, then verify it and keep the local copy in library/. Use whenever a file must reach Decodex, from setup, production or a migration.
 compatibility: Requires the decodex-brand MCP connection, curl, and Google Chrome on macOS for the browser upload.
 metadata:
   version: "0.1.0"
@@ -41,7 +41,42 @@ If a check fails, do not open it or upload to it; treat it as a connection error
 `decodex-workflow`). The link is single use and valid for 30 minutes, so request it only when
 the user is ready.
 
-## Option 1 (recommended): upload in the browser
+## Option 0 (recommended when available): the upload panel in the chat
+
+Use it whenever `open_upload_inbox` is in your tool list (it needs the configure permission and
+Decodex must have it turned on). It takes every kind of file at once, fonts included, so the
+user drops everything in one go instead of one link per file. If the tool is not there, go to
+Option 1.
+
+1. Call `open_upload_inbox`. In Claude Desktop or the web a panel opens inside the chat, with
+   the brand's name at the top. Tell the user, in plain steps: "Te abrí un panel aquí en el
+   chat. Revisa que arriba diga el nombre de tu marca, arrastra todos los archivos (logos,
+   fotos, fuentes) y toca *Listo* cuando termines". If no panel appears, the tool's text
+   carries a backup link to the same upload page: check it as above and open it in Chrome like
+   Option 1. A session lasts 30 minutes and takes up to 50 files: images up to 25 MB, fonts
+   (.ttf, .otf, .woff, .woff2) up to 10 MB.
+2. The files land unclassified. For fonts the panel shows "family · weight · style" and lets
+   the designer correct them there; that saves through `update_inbox_item`, which only the
+   panel calls. Never call it yourself.
+3. When the user is done, call `list_inbox_items`. A designer's correction on a font is the
+   truth: use it over the detected values.
+4. Decide where each file goes: for an image its `role` (`LOGO`, `PRODUCT_PHOTO`, `ICON` or
+   `OTHER`), a description written as in "Pick the tool" and `variantOfId` for a rendition; for
+   a font its role, family, weight and style (same replacement check as "Fonts" step 3); or
+   discard it. Then call `preview_inbox_classification`. If it warns that an entry contradicts
+   a designer's correction, fix the entry; never override the designer.
+5. Show the user what will be saved, in plain words and without tool names, and wait for a
+   clear yes. Never save before it.
+6. Call `apply_inbox_classification` with the same entries. It answers with a download link per
+   saved file (valid for the time it states): use those links for "Local copy" instead of
+   requesting new ones, and give one to the user if they want to see a file. Files the user
+   does not want go with `discard_inbox_items`; anything left unclassified expires after 24
+   hours.
+
+## Option 1: upload in the browser
+
+The recommended route when the upload panel is not available.
+
 
 1. Request the link, check it as above, then open it in Chrome for the user:
    `open -a "Google Chrome" "<uploadUrl>"`. If Chrome cannot be opened, give the link as plain
@@ -92,7 +127,8 @@ Use it when the user prefers it, or when the browser cannot be opened.
 When a piece first needs a file that is not in `library/<type>/` yet:
 
 1. Call `get_asset_download_url` with the asset id (from `list_assets` or `search_assets`) and
-   check the link as above. It lasts 10 minutes, so request it right before downloading.
+   check the link as above. It is valid for the time the tool states, so request it right before
+   downloading.
 2. Download it: `curl -fsS -o "library/<type>/<name>" "<downloadUrl>"`. The server names the
    file by its id, so choose `<name>` yourself: a short kebab-case name from the asset's
    description plus the extension of its type (`logo-main-blue-on-yellow.png`). Never show the

@@ -81,7 +81,8 @@ Only the user unlocks the project, by deleting it themselves.
 ## Where each asset goes
 
 - **Every raw brand asset is uploaded to Decodex first (see `decodex-asset-upload`), and then a
-  copy lives in `library/`, organized by type.** A file the user uploaded in the browser gets
+  copy lives in `library/`, organized by type.** A file the user uploaded in the chat panel or
+  in the browser gets
   its local copy, downloaded from Decodex, when a piece first needs it. This applies to every
   asset, whether every framework uses it (the main logo) or only one does (a product photo):
   its copy goes in `library/<type>/` all the same.
@@ -115,10 +116,10 @@ the exception, not the norm. A brand fact goes to `add_knowledge`, never to a ne
 | What | Decodex tool (write / read) | Stays local |
 |---|---|---|
 | Palette | `set_brand_color` / `get_brand_colors` | — |
-| Fonts | `request_font_upload`, `add_google_font` (`add_brand_font` fallback) / `get_brand_fonts` (with a download link per uploaded file) | — |
+| Fonts | upload panel (`open_upload_inbox` → `apply_inbox_classification`), `request_font_upload`, `add_google_font` (`add_brand_font` fallback) / `get_brand_fonts` (with a download link per uploaded file) | — |
 | Tone, legal | `set_brand_voice`, `set_brand_core` / `get_brand_voice` | — |
 | Other foundations: named tokens, logo clear-space | `set_foundation`, `delete_foundation` / `get_foundations` | — |
-| Asset files | `request_asset_upload`, `request_batch_asset_upload` / `get_asset`, `list_assets`, `search_assets`, `get_asset_download_url` | — |
+| Asset files | upload panel (`open_upload_inbox` → `apply_inbox_classification`), `request_asset_upload`, `request_batch_asset_upload` / `get_asset`, `list_assets`, `search_assets`, `get_asset_download_url` | — |
 | Framework spec | `add_framework` / `list_frameworks`, `get_framework` | its working draft (temporary) while it's built |
 | Brand facts, colorways | `add_knowledge`, `list_knowledge`, `delete_knowledge` | — |
 | Designer learnings | `save_piece_learning` / `search_piece_learnings` | — |
