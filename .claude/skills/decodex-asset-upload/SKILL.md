@@ -1,6 +1,6 @@
 ---
 name: decodex-asset-upload
-description: The only route to send brand files (logos, images, icons, product photos, fonts, any binary) to Decodex - the upload panel in the chat when available, otherwise an upload link opened in the browser, then verify it and keep the local copy in library/. Use whenever a file must reach Decodex, from setup, production or a migration.
+description: The only route to send brand files (logos, images, icons, product photos, fonts, any binary) and brand documents (.md, .txt, PDF, .pptx, .docx) to Decodex - the upload panel in the chat when available, otherwise an upload link opened in the browser, then verify it and keep the local copy in library/. Use whenever a file must reach Decodex, from setup, production or a migration.
 compatibility: Requires the decodex-brand MCP connection, curl, and Google Chrome on macOS for the browser upload.
 metadata:
   version: "0.1.0"
@@ -44,17 +44,18 @@ the user is ready.
 ## Option 0 (recommended when available): the upload panel in the chat
 
 Use it whenever `open_upload_inbox` is in your tool list (it needs the configure permission and
-Decodex must have it turned on). It takes every kind of file at once, fonts included, so the
+Decodex must have it turned on). It takes every kind of file at once, fonts and `.md`/`.txt` documents included, so the
 user drops everything in one go instead of one link per file. If the tool is not there, go to
 Option 1.
 
 1. Call `open_upload_inbox`. In Claude Desktop or the web a panel opens inside the chat, with
    the brand's name at the top. Tell the user, in plain steps: "Te abrí un panel aquí en el
    chat. Revisa que arriba diga el nombre de tu marca, arrastra todos los archivos (logos,
-   fotos, fuentes) y toca *Listo* cuando termines". If no panel appears, the tool's text
+   fotos, fuentes, documentos .md o .txt) y toca *Listo* cuando termines". If no panel appears, the tool's text
    carries a backup link to the same upload page: check it as above and open it in Chrome like
    Option 1. A session lasts 30 minutes and takes up to 50 files: images up to 25 MB, fonts
-   (.ttf, .otf, .woff, .woff2) up to 10 MB.
+   (.ttf, .otf, .woff, .woff2) up to 10 MB. PDF, .pptx and .docx are rejected by the panel (see
+   "Documents").
 2. The files land unclassified. For fonts the panel shows "family · weight · style" and lets
    the designer correct them there; that saves through `update_inbox_item`, which only the
    panel calls. Never call it yourself.
@@ -66,12 +67,15 @@ Option 1.
    to `ICON`, otherwise `OTHER`) and write its description from the name as in "Pick the tool";
    pass `variantOfId` only when the name clearly marks a rendition of an existing asset. Then
    call `preview_inbox_classification`. If it warns that an entry contradicts a designer's
-   correction, fix the entry; never override the designer.
+   correction, fix the entry; never override the designer. A `DOCUMENT` (.md or .txt) needs no
+   role: it goes straight into the brand's knowledge.
 5. Save right away, in the same turn: call `apply_inbox_classification` with the reference and
    the same entries. Do not ask for confirmation first; the user already chose to save these
-   files when they pressed *Listo*. The one exception: if the preview warns that a font would
+   files when they pressed *Listo*. The exceptions: if the preview warns that a font would
    replace a family already saved in that role, ask a single yes/no before saving, because the
-   old family and its files are removed and cannot be recovered.
+   old family and its files are removed and cannot be recovered; and if it reports that a
+   document would replace existing knowledge fragments, tell the user how many and ask a single
+   yes/no (two different documents with the same file name overwrite each other).
 6. Then show the list of what was saved, in plain words and without tool names (file, what it
    was saved as, and its description; for fonts family, weight and style), and ask one
    question: "¿Quieres cambiar algo?". The apply answers with a download link per saved file
@@ -86,6 +90,19 @@ Option 1.
      it as in steps 3 to 5.
    Then show the updated item and ask "¿Algo más?" until they say no. Anything left unclassified
    in the inbox expires after 24 hours.
+
+## Documents (brand knowledge)
+
+A document is brand knowledge, not an asset: it never gets `request_asset_upload` or a local copy.
+
+- **.md and .txt:** through the upload panel (Option 0). They land in the brand's knowledge as
+  the `DOCUMENT` kind.
+- **PDF, .pptx, .docx:** the panel rejects them. Ask the user to drag or attach the file into the
+  chat; the host extracts the text and you save it with `add_knowledge`.
+- **Replace, not add.** Re-uploading a document with the same file name replaces its previous
+  knowledge. `add_knowledge` also replaces the entry with the same `sourceLabel`. Use one stable
+  `sourceLabel` per topic, never reuse a label for a different topic, and to extend a topic send
+  the previous content plus the new one. Before replacing, read the labels with `list_knowledge`.
 
 ## Option 1: upload in the browser
 

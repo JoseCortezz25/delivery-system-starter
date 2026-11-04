@@ -19,6 +19,17 @@ A brand's colors, fonts, voice, frameworks, assets, and knowledge live in **Deco
 server reachable through the `decodex-brand` connection in `.mcp.json`. One connection is one
 brand; call `get_brand` to confirm which one.
 
+**Brand hierarchy.** A brand can have a parent: global brand, country variant, sub-brand (up to
+3 levels). `list_accessible_brands` may show sub-brands the user was never invited to directly:
+a membership on a parent grants the same role on everything below it, never upward.
+- **Voice:** a sub-brand without its own voice inherits the nearest ancestor's when read with
+  `get_brand_voice` (precedence, not a merge). `set_brand_voice` on a sub-brand creates its own
+  override and never changes the parent. The inheritance does not yet reach piece generation.
+- **Knowledge does not inherit.** If a fact is missing on a sub-brand, do not assume the
+  parent's applies; check the parent (`switch_brand`) only if the user confirms.
+- **Linking brands is an admin task** done in Decodex, not by you: if a designer asks to link
+  a brand to a parent, tell them an admin does it there.
+
 - **Setup writes to Decodex.** When the user hands you a color, font, tone rule, framework spec,
   asset, or brand fact, save it with the matching tool (`set_brand_color`,
   `request_font_upload`/`add_google_font`, `set_brand_voice`, `add_framework`,
@@ -51,8 +62,9 @@ brand; call `get_brand` to confirm which one.
 - Fonts: `request_font_upload` (the fast path), `add_google_font`; `add_brand_font` only as a
   fallback.
 - Frameworks: `add_framework`.
-- Knowledge: `add_knowledge`, `list_knowledge`, `delete_knowledge`.
-- Assets and fonts dropped in the chat: the upload panel, `open_upload_inbox` →
+- Knowledge: `add_knowledge` (replaces the entry with the same `sourceLabel`; see
+  `decodex-asset-upload`, "Documents"), `list_knowledge`, `delete_knowledge`.
+- Assets, fonts and `.md`/`.txt` documents dropped in the chat: the upload panel, `open_upload_inbox` →
   `list_inbox_items` → `preview_inbox_classification` → `apply_inbox_classification` right
   away (no confirmation, except a font replacing a saved family) → show what was saved and
   ask if they want to change anything (`update_asset`, `delete_asset`). `update_inbox_item`
@@ -105,8 +117,9 @@ project. Read colors, fonts, voice, and foundations only when a step needs them:
 
 When the user asks you to remember, save, or keep something for later — a decision, a
 correction, a fact about this brand that isn't documented yet — save it as brand knowledge with
-`add_knowledge` (this brand's own Knowledge primitive). One entry per topic is enough, so a
-future session can find it without making the user repeat it. If the connection is
+`add_knowledge` (this brand's own Knowledge primitive). One entry per topic, under a stable
+`sourceLabel` (the same label replaces the old entry), is enough, so a future session can find it
+without making the user repeat it. If the connection is
 unavailable, do not save it anywhere else: say so (see "Connection errors" in
 `decodex-workflow`).
 
