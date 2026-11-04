@@ -64,11 +64,11 @@ rutas:
 
 ```bash
 # Proyecto nuevo (la carpeta debe estar vacía o no existir)
-curl -fsSL https://raw.githubusercontent.com/JoseCortezz25/delivery-system-starter/v2.0.0/install-harness.sh \
+curl -fsSL https://github.com/JoseCortezz25/delivery-system-starter/releases/latest/download/install-harness.sh \
   | bash -s -- --mode install --dir ./mi-marca
 
 # Actualizar el arnés de un proyecto existente (no toca los datos de la marca)
-curl -fsSL https://raw.githubusercontent.com/JoseCortezz25/delivery-system-starter/v2.0.0/install-harness.sh \
+curl -fsSL https://github.com/JoseCortezz25/delivery-system-starter/releases/latest/download/install-harness.sh \
   | bash -s -- --mode update --dir .
 ```
 
@@ -101,8 +101,20 @@ Al abrir Claude Code dentro del proyecto, aprueba los servidores MCP del proyect
 
 ### Publicar una versión (mantenedores)
 
-1. Publica una pre-release (`vX.Y.Z-rc.N`). Los instaladores la ignoran por defecto.
-2. Pruébala desde cero con `--version vX.Y.Z-rc.N` (script y plugin).
-3. Antes de la release final, actualiza la versión del comando de una línea en `install-harness.sh`
-   y en este README.
-4. Publica la release final `vX.Y.Z` marcada como *Latest*.
+El comando de una línea descarga el instalador desde la última release
+(`releases/latest/download/install-harness.sh`), así que nunca hay que editar su versión. A cambio,
+**cada release debe llevar `install-harness.sh` adjunto como archivo**.
+
+1. Publica una pre-release, adjuntando el instalador. Los instaladores la ignoran por defecto:
+   ```bash
+   gh release create vX.Y.Z-rc.N install-harness.sh --target main --prerelease --title "vX.Y.Z-rc.N"
+   ```
+2. Pruébala desde cero (script y plugin). Como `latest` no apunta a una pre-release, usa la URL del tag:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/JoseCortezz25/delivery-system-starter/vX.Y.Z-rc.N/install-harness.sh \
+     | bash -s -- --mode install --dir ./prueba --version vX.Y.Z-rc.N
+   ```
+3. Publica la release final marcada como *Latest*, también con el instalador adjunto:
+   ```bash
+   gh release create vX.Y.Z install-harness.sh --target main --latest --title "vX.Y.Z"
+   ```
