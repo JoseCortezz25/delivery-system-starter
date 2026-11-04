@@ -11,7 +11,7 @@
 #   install-harness.sh --mode update  --dir <existing-project> [--version vX.Y.Z] [--dry-run] [--force]
 #
 # One-liner (no plugin, no auth; public repo):
-#   curl -fsSL https://raw.githubusercontent.com/JoseCortezz25/delivery-system-starter/v1.1.0/install-harness.sh \
+#   curl -fsSL https://raw.githubusercontent.com/JoseCortezz25/delivery-system-starter/v2.0.0/install-harness.sh \
 #     | bash -s -- --mode update --dir .
 #
 # Options:

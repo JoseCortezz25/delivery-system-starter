@@ -52,3 +52,57 @@ Decodex es la fuente de verdad de la marca. Si un proyecto todavía tiene conten
 `foundations/` o `frameworks/`, la skill `decodex-sync` lo pasa a Decodex una sola vez y luego
 bloquea ambas carpetas con `.decodex-sync.json` (ver `RULES.md`). Solo el usuario puede
 desbloquearlas, borrando ese archivo.
+
+## Instalación
+
+El arnés se instala siempre desde una **release** publicada en GitHub, nunca desde `main`. Hay dos
+rutas:
+
+- **Con el plugin de Claude Code** (`/decodex:new`): crea el proyecto de marca a partir de la última
+  release. Ver el README del plugin.
+- **Sin plugin**, con `install-harness.sh` (el repo es público, no requiere autenticación):
+
+```bash
+# Proyecto nuevo (la carpeta debe estar vacía o no existir)
+curl -fsSL https://raw.githubusercontent.com/JoseCortezz25/delivery-system-starter/v2.0.0/install-harness.sh \
+  | bash -s -- --mode install --dir ./mi-marca
+
+# Actualizar el arnés de un proyecto existente (no toca los datos de la marca)
+curl -fsSL https://raw.githubusercontent.com/JoseCortezz25/delivery-system-starter/v2.0.0/install-harness.sh \
+  | bash -s -- --mode update --dir .
+```
+
+Opciones: `--version <tag>` fija una release concreta (por defecto, la más reciente) y `--dry-run`
+muestra qué cambiaría sin escribir nada. La actualización la corre la persona en su terminal, no la
+IA: los hooks del arnés bloquean que la IA modifique `.claude/`, `CLAUDE.md` y `RULES.md`.
+
+### Dependencias
+
+| Dependencia | Para qué | Instalación (macOS) |
+| --- | --- | --- |
+| Claude Code | Operar el proyecto | — |
+| `curl`, `tar` | Descargar e instalar el arnés | Vienen con el sistema |
+| `jq` | **Obligatorio**: sin él, los hooks de protección bloquean todas las ediciones y comandos | `brew install jq` |
+| Node.js (`npx`) | Servidores MCP de Playwright y Chrome DevTools | `brew install node` |
+| Google Chrome | Abrir piezas y páginas de carga | — |
+| Python 3.9+ con `.venv` | Exportar piezas a imagen | Ver abajo |
+| Cuenta de Decodex | Conexión `decodex-brand` (login OAuth en el primer uso). Rol Codifier para configurar la marca, Maker para producir | Pedirla al equipo Decodex |
+
+Entorno de Python, una vez por proyecto desde su raíz:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install playwright Pillow
+.venv/bin/python -m playwright install chromium
+```
+
+Al abrir Claude Code dentro del proyecto, aprueba los servidores MCP del proyecto y autentícate en
+`decodex-brand` con `/mcp`.
+
+### Publicar una versión (mantenedores)
+
+1. Publica una pre-release (`vX.Y.Z-rc.N`). Los instaladores la ignoran por defecto.
+2. Pruébala desde cero con `--version vX.Y.Z-rc.N` (script y plugin).
+3. Antes de la release final, actualiza la versión del comando de una línea en `install-harness.sh`
+   y en este README.
+4. Publica la release final `vX.Y.Z` marcada como *Latest*.
