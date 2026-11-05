@@ -105,8 +105,9 @@ several turns; call it once when the request is done or the user moves on to som
 If a tool fails or is unavailable: stop, say it in plain words, do not invent values and do
 not save locally instead. Options: 1) retry (log in again: tell the user, in plain words, to
 open `/mcp`, choose Decodex and sign in), 2) consult only what is already
-in the local folders (never `foundations/` or `frameworks/` once they are locked), nothing
-saved, 3) stop here.
+in `engine/`, `content/`, `library/` and `references/` (`foundations/` and `frameworks/` only
+while the project is not locked; never once `.decodex-sync.json` exists), nothing saved,
+3) stop here.
 
 Missing mandatory data (for example fonts): "Falta la tipografía oficial." Options: 1) upload
 the font file, 2) use a system font only for this test (not saved to the brand).
