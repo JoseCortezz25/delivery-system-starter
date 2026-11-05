@@ -28,8 +28,7 @@ A brand may have one foundations document, or several (a base doc, a design-syst
 doc, a structured data file). Read the text/data sources first — a PDF is the *original* source
 those were written from, not a shortcut around them; only open one if a category from Step 2 comes
 up genuinely empty after reading everything else. A brand document worth keeping as knowledge goes
-to Decodex by its format (`decodex-asset-upload`, "Documents"): `.md`/`.txt` through the upload
-panel, PDF/.pptx/.docx attached in the chat and saved with `add_knowledge`.
+to Decodex by its format (see `decodex-asset-upload`, "Documents").
 
 **If a source has a version changelog** (a running log of corrections, several hundred lines or
 more): don't read it front-to-back on a first pass. Locate the current/final state sections first
@@ -91,9 +90,10 @@ open it to "double check" — the written spec (plus any changelog) is the knowl
 engine is not, per the one rule above.
 
 **If no (only raw structural assets exist — no prose spec at all): this is a reconstruction, not a
-migration.** This is the SVG scenario, but it generalizes to any case where a framework was only
-ever built directly into a design/structure file, never written up. Treat that structural source
-(SVG, or an equivalent structured design export) the same way `framework-construction.md` treats
+migration.** This is the case where a framework was only ever built directly into a design/structure
+file (for example an SVG from the legacy tooling), never written up. Such a file is only a read-only
+geometry source: pieces are still built as HTML, never SVG (`RULES.md`, rule 9). Treat that structural
+source (SVG, or an equivalent structured design export) the same way `framework-construction.md` treats
 "Path A: structure in Figma" — it gives you real geometry, not intent. Concretely:
 
 - Read the structural files as text/XML (viewBox, coordinates, real measurements) to get exact

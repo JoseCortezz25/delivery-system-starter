@@ -8,11 +8,7 @@ metadata:
 
 # Decodex Render Pipeline
 
-## Why this skill exists
-
-A shared render helper that only supports a square clip forces every non-square builder
-(9:16 stories, banners) to hand-roll its own near-identical screenshot function. That is exactly
-the class of improvised, one-off code this skill exists to prevent, for any brand.
+## Use these scripts
 
 **Do not write your own HTML→image rendering code or your own image-resizing code.** Use the
 scripts below instead. They are brand-agnostic — they know nothing about any brand's tokens,
