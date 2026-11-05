@@ -99,7 +99,7 @@ that assignment changes framework to framework.
 
 These categories exist inside the configuration of EACH framework, because their value differs
 depending on what that framework solves. They are not filled in ahead of time. They all end up
-living in one place: that framework's document, saved in Decodex with `add_framework` (its working draft is a temporary file outside the project) — there is no code, the document IS the complete specification.
+living in one place: that framework's document, saved in Decodex with `add_framework` — there is no code, the document IS the complete specification.
 
 ### B0. Intent, objective, and channels
 
