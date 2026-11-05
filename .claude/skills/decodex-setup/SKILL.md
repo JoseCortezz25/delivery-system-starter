@@ -24,8 +24,9 @@ color is for: save what they give you and let each tool's reply tell you what is
   - Tone: `set_brand_voice`. Optional basics (timezone, currency, default language):
     `set_brand_core`. Both replace everything on each call, so read what is stored first
     (`get_brand_voice`) and send every field again, or an omitted one is cleared.
-  - Facts, legal rules and colorways: `add_knowledge` (text plus a source label). Only the
-    labels can be read back (`list_knowledge`), not the text.
+  - Facts, legal rules and colorways: `add_knowledge` (text plus a source label; the same label
+    replaces the entry, so one stable label per topic). Only the labels can be read back
+    (`list_knowledge`), not the text. Whole documents: `decodex-asset-upload`, "Documents".
   - Products: `save_product`, `update_product`, `list_products`.
   - Tokens with no dedicated tool (spacing, radii, the logo clear-space rule): `set_foundation`,
     only for values the user gives you, with the key named as in `tokenization.md`

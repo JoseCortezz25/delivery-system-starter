@@ -27,7 +27,9 @@ Everything else below exists to protect that rule.
 A brand may have one foundations document, or several (a base doc, a design-system doc, a rules
 doc, a structured data file). Read the text/data sources first — a PDF is the *original* source
 those were written from, not a shortcut around them; only open one if a category from Step 2 comes
-up genuinely empty after reading everything else.
+up genuinely empty after reading everything else. A brand document worth keeping as knowledge goes
+to Decodex by its format (`decodex-asset-upload`, "Documents"): `.md`/`.txt` through the upload
+panel, PDF/.pptx/.docx attached in the chat and saved with `add_knowledge`.
 
 **If a source has a version changelog** (a running log of corrections, several hundred lines or
 more): don't read it front-to-back on a first pass. Locate the current/final state sections first
@@ -63,7 +65,8 @@ legacy project's foundations already sit in this project's `foundations/` or `fr
 - Don't copy a raw data file into Decodex knowledge (or into `library/`) if its content is already
   fully absorbed into what you just saved — that's pure duplication, not a second source.
 - **Legacy brand facts that aren't tokens** (notes, decisions, learnings about the brand): save
-  them to Decodex with `add_knowledge`, one entry per topic — never into a local folder.
+  them to Decodex with `add_knowledge`, one entry per topic under a stable `sourceLabel` (the same
+  label replaces the old entry) — never into a local folder.
 
 ## Step 3 — Copy real assets into `library/`, organized by type
 
@@ -122,7 +125,7 @@ placeholder.
 ## Step 6 — Log every unresolved gap explicitly
 
 A gap is a normal outcome of this process, not a failure to hide. Leave it stated where it
-belongs (an `add_knowledge` entry for a brand-wide gap, the framework's working draft for a
+belongs (an `add_knowledge` entry for a brand-wide gap, under its own stable label, the framework's working draft for a
 framework gap) or in the project's own `research`/discoveries record if one exists — never invent a plausible-sounding value to close it quietly.
 
 ## What this skill does not do

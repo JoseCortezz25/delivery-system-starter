@@ -164,7 +164,7 @@ Map each item to the tool that covers it (the same mapping as `decodex-setup` an
 | A Google Fonts family | `add_google_font` | `get_brand_fonts` |
 | A font FILE, logo or image | out of scope: point to `decodex-asset-upload` | `get_brand_fonts`, `list_assets` |
 | Each `frameworks/<name>.md` | `add_framework` (name from the file, `specMarkdown` = the file text, slots per `framework-construction.md` step 7) | `list_frameworks`, `get_framework` |
-| Colorways, legal rules, other brand facts | `add_knowledge`, one entry per topic with a clear `sourceLabel` | `list_knowledge` (labels only) |
+| Colorways, legal rules, other brand facts | `add_knowledge`, one entry per topic with a clear, stable `sourceLabel` (the same label replaces) | `list_knowledge` (labels only) |
 
 **Foundation keys.** Send each key to `set_foundation` exactly as the local file writes it, dots
 included (`qa-sync.radius.card`, `qa-sync.spacing.safe`). Never rename, shorten, re-namespace or
