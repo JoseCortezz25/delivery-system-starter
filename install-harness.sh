@@ -20,15 +20,21 @@
 #   --version <tag>         release tag to install (default: latest tag on the repo).
 #   --repo <owner/name>     source repo (default: JoseCortezz25/delivery-system-starter).
 #   --dry-run               print what would change; write nothing.
-#   --force                 update even if the git working tree is dirty (not recommended).
+#   --force                 update even if harness files have uncommitted changes (they are replaced).
+#   --source-dir <path>     use a local copy of the harness instead of downloading (for testing).
 #   -h, --help              this help.
+#
+# Update keeps the user's data: codex-lock.json (brand, project) is merged, not rewritten;
+# .mcp.json keeps any extra MCP servers; .gitignore keeps the user's own lines;
+# .claude/settings.local.json is preserved. Uncommitted work in content/, library/, etc. is fine.
+# JSON merges use jq, or python3 if jq is missing; with neither, JSON files are left untouched.
 #
 # Run it yourself (not through the AI): the harness guard blocks AI writes to .claude/, CLAUDE.md
 # and RULES.md, so updates are a user action.
 set -euo pipefail
 
 REPO="JoseCortezz25/delivery-system-starter"
-MODE="" TARGET="." VERSION="" DRY=0 FORCE=0
+MODE="" TARGET="." VERSION="" DRY=0 FORCE=0 SOURCE_DIR=""
 LOCK="codex-lock.json"
 
 # Harness overlay: overwritten wholesale on update (these are the tooling layer, not user data).
@@ -40,7 +46,7 @@ die() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 say() { printf '%s\n' "$*"; }
 act() { if [[ $DRY -eq 1 ]]; then printf '[dry-run] %s\n' "$*"; else printf '%s\n' "$*"; fi; }
 
-usage() { sed -n '3,33p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
+usage() { sed -n '3,40p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -50,6 +56,7 @@ while [[ $# -gt 0 ]]; do
     --repo)    REPO="${2-}"; shift 2 ;;
     --dry-run) DRY=1; shift ;;
     --force)   FORCE=1; shift ;;
+    --source-dir) SOURCE_DIR="${2-}"; shift 2 ;;
     -h|--help) usage 0 ;;
     *) die "unknown argument: $1 (see --help)" ;;
   esac
@@ -58,9 +65,16 @@ done
 [[ "$MODE" == "install" || "$MODE" == "update" ]] || die "--mode must be 'install' or 'update'"
 for bin in curl tar; do command -v "$bin" >/dev/null 2>&1 || die "'$bin' is required"; done
 HAVE_JQ=0; command -v jq >/dev/null 2>&1 && HAVE_JQ=1
+# JSON tool for merges: jq preferred, python3 as fallback, "none" means never rewrite existing JSON.
+JSON_TOOL="none"
+if [[ $HAVE_JQ -eq 1 ]]; then JSON_TOOL="jq"
+elif command -v python3 >/dev/null 2>&1 && python3 -c 'import json' >/dev/null 2>&1; then JSON_TOOL="python3"; fi
 
 # --- Resolve version (latest tag if not given) -------------------------------
-if [[ -z "$VERSION" ]]; then
+if [[ -n "$SOURCE_DIR" ]]; then
+  [[ -d "$SOURCE_DIR" ]] || die "--source-dir does not exist: $SOURCE_DIR"
+  [[ -n "$VERSION" ]] || VERSION="local"
+elif [[ -z "$VERSION" ]]; then
   say "Resolving latest release tag of $REPO ..."
   tags_json="$(curl -fsSL "https://api.github.com/repos/$REPO/tags" || die "cannot reach GitHub for $REPO")"
   if [[ $HAVE_JQ -eq 1 ]]; then
@@ -83,29 +97,127 @@ else
   if [[ ! -d "$TARGET/.claude" && ! -f "$TARGET/$LOCK" ]]; then
     die "no harness found in $TARGET (no .claude/ or $LOCK). Use --mode install for a fresh project."
   fi
+  # Only uncommitted changes in files this script replaces block the update; brand work
+  # (content/, library/, foundations/ ...) is never touched, so it may be dirty.
   if [[ $FORCE -eq 0 ]] && git -C "$TARGET" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-    [[ -z "$(git -C "$TARGET" status --porcelain)" ]] || \
-      die "git working tree in $TARGET is dirty. Commit/stash first, or pass --force."
+    dirty="$(cd "$TARGET" && git status --porcelain -- "${HARNESS_PATHS[@]}" 2>/dev/null | grep -v ' \.claude/settings\.local\.json$' || true)"
+    [[ -z "$dirty" ]] || \
+      die "harness files in $TARGET have uncommitted changes (they would be replaced):
+$dirty
+Commit/stash them first, or pass --force."
   fi
 fi
 TARGET_ABS="$(cd "$TARGET" && pwd -P)"
 
 # --- Download + extract to a temp staging dir --------------------------------
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
-say "Downloading tarball ..."
-curl -fsSL "https://github.com/$REPO/archive/refs/tags/$VERSION.tar.gz" \
-  | tar xz -C "$TMP" --strip-components=1 || die "download/extract failed for $REPO@$VERSION"
+COMMIT=""
+if [[ -n "$SOURCE_DIR" ]]; then
+  say "Using local source $SOURCE_DIR ..."
+  (cd "$SOURCE_DIR" && tar cf - --exclude .git .) | tar xf - -C "$TMP" || die "cannot copy $SOURCE_DIR"
+  COMMIT="$(git -C "$SOURCE_DIR" rev-parse HEAD 2>/dev/null || true)"
+else
+  say "Downloading tarball ..."
+  curl -fsSL "https://github.com/$REPO/archive/refs/tags/$VERSION.tar.gz" \
+    | tar xz -C "$TMP/" --strip-components=1 || die "download/extract failed for $REPO@$VERSION"
+  # Exact commit of the tag (plain-text API response; empty if unavailable).
+  COMMIT="$(curl -fsSL -H 'Accept: application/vnd.github.sha' \
+    "https://api.github.com/repos/$REPO/commits/$VERSION" 2>/dev/null || true)"
+  [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]] || COMMIT=""
+fi
+
+# --- JSON helpers (jq or python3) --------------------------------------------
+# merge_mcp <user .mcp.json> <release .mcp.json> <out>: user file with release servers on top.
+merge_mcp() {
+  case "$JSON_TOOL" in
+    jq) jq -s '.[0] * {mcpServers: ((.[0].mcpServers // {}) + (.[1].mcpServers // {}))}' "$1" "$2" > "$3" ;;
+    python3) python3 - "$1" "$2" "$3" <<'PYEOF'
+import json, sys
+user, rel, out = sys.argv[1:4]
+u = json.load(open(user)); r = json.load(open(rel))
+u.setdefault("mcpServers", {}).update(r.get("mcpServers", {}))
+json.dump(u, open(out, "w"), indent=2); open(out, "a").write("\n")
+PYEOF
+    ;;
+    *) return 1 ;;
+  esac
+}
+
+# update_lock <lock> <out>: set harness.{name,version,repo,commit,updatedAt}, keep every other key,
+# and drop the legacy flat keys (harnessVersion/harnessRepo/harnessUpdatedAt).
+update_lock() {
+  local now; now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  case "$JSON_TOOL" in
+    jq) jq --arg v "$VERSION" --arg r "https://github.com/$REPO" --arg c "$COMMIT" --arg t "$now" '
+          (.schemaVersion //= 1)
+          | .harness = ((.harness // {}) + {name: "decodex", version: $v, repo: $r, updatedAt: $t})
+          | (if $c == "" then del(.harness.commit) else .harness.commit = $c end)
+          | del(.harnessVersion, .harnessRepo, .harnessUpdatedAt)' "$1" > "$2" ;;
+    python3) python3 - "$1" "$2" "$VERSION" "https://github.com/$REPO" "$COMMIT" "$now" <<'PYEOF'
+import json, sys
+src, out, v, r, c, t = sys.argv[1:7]
+d = json.load(open(src))
+d.setdefault("schemaVersion", 1)
+h = d.get("harness") if isinstance(d.get("harness"), dict) else {}
+h.update({"name": "decodex", "version": v, "repo": r, "updatedAt": t})
+if c: h["commit"] = c
+else: h.pop("commit", None)
+d["harness"] = h
+for k in ("harnessVersion", "harnessRepo", "harnessUpdatedAt"): d.pop(k, None)
+json.dump(d, open(out, "w"), indent=2); open(out, "a").write("\n")
+PYEOF
+    ;;
+    *) return 1 ;;
+  esac
+}
 
 # --- Copy the harness overlay ------------------------------------------------
 say ""; say "Applying harness ($MODE) to $TARGET_ABS:"
 for p in "${HARNESS_PATHS[@]}"; do
   src="$TMP/$p"; dst="$TARGET_ABS/$p"
   [[ -e "$src" ]] || { say "  skip (not in release): $p"; continue; }
+
+  # .mcp.json: keep the user's extra servers, refresh the harness ones.
+  if [[ "$p" == ".mcp.json" && -f "$dst" ]]; then
+    if [[ "$JSON_TOOL" == "none" ]]; then
+      say "  keep $p (no jq/python3 to merge it safely; compare with the release by hand)"
+    else
+      act "  merge $p (your extra MCP servers are kept)"
+      if [[ $DRY -eq 0 ]]; then
+        merge_mcp "$dst" "$src" "$TMP/mcp.merged" || die "cannot merge $p (invalid JSON?)"
+        mv "$TMP/mcp.merged" "$dst"
+      fi
+    fi
+    continue
+  fi
+
+  # .gitignore: append the release lines that are missing; never drop the user's lines.
+  if [[ "$p" == ".gitignore" && -f "$dst" ]]; then
+    missing="$(grep -vxF -f "$dst" "$src" | grep -v '^[[:space:]]*$' || true)"
+    if [[ -z "$missing" ]]; then
+      say "  keep $p (already up to date)"
+    else
+      act "  add missing lines to $p"
+      if [[ $DRY -eq 0 ]]; then
+        [[ -z "$(tail -c1 "$dst")" ]] || printf '\n' >> "$dst"
+        printf '\n# Added by Decodex harness %s\n%s\n' "$VERSION" "$missing" >> "$dst"
+      fi
+    fi
+    continue
+  fi
+
   act "  overwrite $p"
   if [[ $DRY -eq 0 ]]; then
+    if [[ "$p" == ".claude" && -f "$dst/settings.local.json" ]]; then
+      cp "$dst/settings.local.json" "$TMP/settings.local.json.keep"   # personal settings survive
+    fi
     if [[ -d "$src" ]]; then rm -rf "$dst"; fi   # dir: replace wholesale so removed files are dropped
     mkdir -p "$(dirname "$dst")"
     cp -R "$src" "$dst"
+    if [[ -f "$TMP/settings.local.json.keep" && "$p" == ".claude" ]]; then
+      mv "$TMP/settings.local.json.keep" "$dst/settings.local.json"
+      say "  keep .claude/settings.local.json (your personal settings)"
+    fi
   fi
 done
 
@@ -121,23 +233,31 @@ for d in "${SKELETON_DIRS[@]}"; do
 done
 
 # --- Record the installed version --------------------------------------------
-if [[ $DRY -eq 0 ]]; then
-  now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  if [[ $HAVE_JQ -eq 1 && -f "$TARGET_ABS/$LOCK" ]]; then
-    tmp_lock="$(mktemp)"
-    jq --arg v "$VERSION" --arg r "$REPO" --arg t "$now" \
-       '.harnessVersion=$v | .harnessRepo=$r | .harnessUpdatedAt=$t' \
-       "$TARGET_ABS/$LOCK" > "$tmp_lock" && mv "$tmp_lock" "$TARGET_ABS/$LOCK"
-  else
-    cat > "$TARGET_ABS/$LOCK" <<JSON
+# Format matches the plugin: harness.version (nested). Brand/project keys are always kept.
+if [[ -f "$TARGET_ABS/$LOCK" && "$JSON_TOOL" == "none" ]]; then
+  say "  keep $LOCK unchanged (no jq/python3; version not recorded, your brand data is safe)"
+else
+  act "  record version $VERSION in $LOCK"
+  if [[ $DRY -eq 0 ]]; then
+    lock_in="$TARGET_ABS/$LOCK"
+    if [[ ! -f "$lock_in" ]]; then lock_in="$TMP/empty-lock.json"; printf '{}
+' > "$lock_in"; fi
+    if [[ "$JSON_TOOL" == "none" ]]; then
+      cat > "$TARGET_ABS/$LOCK" <<JSON
 {
-  "harnessRepo": "$REPO",
-  "harnessVersion": "$VERSION",
-  "harnessUpdatedAt": "$now"
+  "schemaVersion": 1,
+  "harness": {
+    "name": "decodex",
+    "version": "$VERSION",
+    "repo": "https://github.com/$REPO"
+  }
 }
 JSON
+    else
+      update_lock "$lock_in" "$TMP/lock.new" || die "cannot update $LOCK (invalid JSON?)"
+      mv "$TMP/lock.new" "$TARGET_ABS/$LOCK"
+    fi
   fi
-  act "  wrote $LOCK (version $VERSION)"
 fi
 
 say ""
