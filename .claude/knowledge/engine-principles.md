@@ -6,14 +6,13 @@ itself. This document is the one exception: four engineering principles that are
 brand and to stack, worth writing down because they prevent costly mistakes if whoever builds
 the engine doesn't already know them. They aren't blocking for configuring foundations or
 frameworks — they apply once someone builds that implementation, reading each framework's
-approved spec from Decodex (`get_framework`) as the specification, or its temporary working
-draft while that framework is still being built.
+approved spec from Decodex (`get_framework`) as the specification.
 
 ## Everything is regenerable
 
 No final asset is hand-edited. If something looks wrong, the fix goes into the token or into the
-corresponding section of the framework document (its working draft, then saved again with
-`add_framework`) — never into the already-exported image file.
+corresponding section of the framework document (see `framework-construction.md`) — never into the
+already-exported image file.
 Re-producing a piece from the specification must reproduce the expected result, every time.
 
 ## Measure with a real browser, never estimate

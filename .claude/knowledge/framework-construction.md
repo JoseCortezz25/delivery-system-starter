@@ -33,10 +33,9 @@ opening the next.
 ## Configuration protocol for a single framework (detail of step 2)
 
 Each framework is a mini-project: it has its own intent, objective, channels, and rules. The
-result is **a single document**: drafted in a temporary file outside the project (the working draft)
-and, once approved, saved in Decodex with `add_framework` (the approved version, see step 7).
-The working draft never goes in `frameworks/`: that folder is a local baseline, synced once with
-`decodex-sync` and then locked.
+result is **a single document**, kept as a working draft and, once approved, saved in Decodex with
+`add_framework` (step 7). Where the draft lives and why: the root `CLAUDE.md`, "Framework working
+drafts".
 
 **No code is built at this layer.** The document, while it's being drafted together with the
 brand expert, IS the complete specification. If something isn't in the document, it isn't

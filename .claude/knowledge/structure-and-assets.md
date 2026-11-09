@@ -3,10 +3,9 @@
 This is the only place that defines the folder structure. No other document repeats it — they
 only reference it. See the non-redundancy rule below.
 
-Brand data itself lives in Decodex (see the root `CLAUDE.md`), the source of truth. The folders
-below are the local layer: framework drafts, local copies of assets, generated output and the
-engine. `foundations/` and `frameworks/` are a local baseline: an older project's local
-brand data, synced once to Decodex with `decodex-sync` and then locked (see "Sync marker" below).
+Brand data itself lives in Decodex (see the root `CLAUDE.md`, "The brand lives in Decodex", which
+also covers the `foundations/` and `frameworks/` baseline). The folders below are the local layer:
+framework drafts, local copies of assets, generated output and the engine.
 
 ## What exists in a project
 
@@ -74,18 +73,15 @@ Written once by `decodex-sync` (its `lock-local-folders.sh` script) after every 
 }
 ```
 
-While it exists the hooks freeze both folders for the AI (no read, search or change, and no
-search over the project root); see `RULES.md`. It is add-only: the AI never edits or deletes it.
-Only the user unlocks the project, by deleting it themselves.
+While it exists both folders are frozen for the AI; the rule and what it blocks live in
+`RULES.md`, "Protected files and frozen brand folders".
 
 ## Where each asset goes
 
-- **Every raw brand asset is uploaded to Decodex first (see `decodex-asset-upload`), and then a
-  copy lives in `library/`, organized by type.** A file the user uploaded in the chat panel or
-  in the browser gets
-  its local copy, downloaded from Decodex, when a piece first needs it. This applies to every
-  asset, whether every framework uses it (the main logo) or only one does (a product photo):
-  its copy goes in `library/<type>/` all the same.
+- **Every raw brand asset is uploaded to Decodex first, and then a copy lives in `library/`,
+  organized by type** (ordering and how the copy is made: `decodex-asset-upload`, "Local copy").
+  This applies to every asset, whether every framework uses it (the main logo) or only one does
+  (a product photo): its copy goes in `library/<type>/` all the same.
 - **A framework-specific asset is not moved into `frameworks/` or a framework-specific folder.** It stays in
   `library/`, under its type folder; a subfolder per framework is only created if the number of files actually
   justifies it — the same criterion used for variants (see `framework-construction.md`): don't
@@ -113,19 +109,9 @@ the exception, not the norm. A brand fact goes to `add_knowledge`, never to a ne
 
 ## Where each kind of data lives
 
-| What | Decodex tool (write / read) | Stays local |
-|---|---|---|
-| Palette | `set_brand_color` / `get_brand_colors` | — |
-| Fonts | upload panel (`open_upload_inbox` → `apply_inbox_classification`), `request_font_upload`, `add_google_font` (`add_brand_font` fallback) / `get_brand_fonts` (with a download link per uploaded file) | — |
-| Tone, legal | `set_brand_voice`, `set_brand_core` / `get_brand_voice` | — |
-| Other foundations: named tokens, logo clear-space | `set_foundation`, `delete_foundation` / `get_foundations` | — |
-| Asset files | upload panel (`open_upload_inbox` → `apply_inbox_classification`), `request_asset_upload`, `request_batch_asset_upload` / `get_asset`, `list_assets`, `search_assets`, `get_asset_download_url` | — |
-| Framework spec | `add_framework` / `list_frameworks`, `get_framework` | its working draft (temporary) while it's built |
-| Brand facts, colorways, documents | `add_knowledge` (replaces the same `sourceLabel`), `list_knowledge`, `delete_knowledge`; `.md`/`.txt` also through the upload panel (`decodex-asset-upload`, "Documents") | — |
-| Designer learnings | `save_piece_learning` / `search_piece_learnings` | — |
-
-Every kind of brand data now has a Decodex tool. Local content still in `foundations/` or
-`frameworks/` is passed to Decodex once with `decodex-sync`, which then locks both folders.
+Every kind of brand data has a Decodex tool: see the root `CLAUDE.md`, "Decodex tools by stage"
+(write and read tools per kind). Nothing is stored locally except a framework's temporary working
+draft while it is built and the `library/` copies of asset files.
 
 ## New-project startup checklist
 

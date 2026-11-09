@@ -93,7 +93,8 @@ Option 1.
 
 ## Documents (brand knowledge)
 
-A document is brand knowledge, not an asset: it never gets `request_asset_upload` or a local copy.
+This is the canonical rule for documents; other files point here. A document is brand knowledge,
+not an asset: it never gets `request_asset_upload` or a local copy.
 
 - **.md and .txt:** through the upload panel (Option 0). They land in the brand's knowledge as
   the `DOCUMENT` kind.
@@ -127,13 +128,14 @@ Use it when the user prefers it, or when the browser cannot be opened.
 1. Ask for the folder and the exact file name, and check that it exists. Never guess a path.
    An image only attached to the conversation is not a file: you may read colors from it, but
    you cannot upload it.
-2. Copy the file into `library/<type>/`. If Desktop asks permission to read outside the project
-   folder, tell the user to accept it.
-3. Request the link, check it as above, and upload from the copy:
-   `curl -fsS -F "file=@library/<type>/<name>" "<uploadUrl>"`. Batch: one
-   `-F "files=@<path>"` per file, in the same order as the descriptions.
-4. Confirm with `list_assets` that it shows as ready. Never show the link or curl's output to
+2. Request the link, check it as above, and upload from the user's original file:
+   `curl -fsS -F "file=@<path>" "<uploadUrl>"`. If Desktop asks permission to read outside the
+   project folder, tell the user to accept it. Batch: one `-F "files=@<path>"` per file, in the
+   same order as the descriptions.
+3. Confirm with `list_assets` that it shows as ready. Never show the link or curl's output to
    the user.
+4. Only after the upload is confirmed, copy the file into `library/<type>/` (a plain copy, no
+   download). This is the "upload first, then copy" order of the root `CLAUDE.md`.
 5. If the file cannot be read, curl fails or the link expired: request a new link once. If it
    fails again, switch to Option 1 without making the user repeat anything.
 

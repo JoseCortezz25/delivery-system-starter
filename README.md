@@ -5,8 +5,7 @@ generar piezas de publicidad a escala, de forma **agéntica**: se toma el design
 (paleta, tipografía, logo, tono, plantillas) y se convierte en prompts y tokens estandarizados, para
 que una IA pueda generar las piezas gráficas (HTML → PNG/JPEG) sin diagramar cada una a mano.
 
-> Este repo es la **estructura estándar** (propuesta) que cualquier proyecto de marca en Decodex debería
-> adoptar — todavía en construcción y sujeta a ajustes.
+> Este repo es la **estructura estándar** que cualquier proyecto de marca en Decodex debe adoptar.
 
 ## La idea central
 
@@ -73,8 +72,23 @@ curl -fsSL https://github.com/JoseCortezz25/delivery-system-starter/releases/lat
 ```
 
 Opciones: `--version <tag>` fija una release concreta (por defecto, la más reciente) y `--dry-run`
-muestra qué cambiaría sin escribir nada. La actualización la corre la persona en su terminal, no la
-IA: los hooks del arnés bloquean que la IA modifique `.claude/`, `CLAUDE.md` y `RULES.md`.
+muestra qué cambiaría sin escribir nada.
+
+La actualización conserva lo del usuario: la marca y el proyecto de `codex-lock.json` (solo cambia
+`harness.version`), los servidores MCP extra de `.mcp.json`, las líneas propias de `.gitignore` y
+`.claude/settings.local.json`. Los cambios sin guardar en `content/`, `library/` y demás carpetas de
+marca no la bloquean; solo se detiene si hay cambios sin guardar en archivos del arnés (que se
+reemplazan), y `--force` la obliga a seguir. Usa `jq` o, si no está, `python3`; sin ninguno de los
+dos no reescribe los JSON existentes.
+
+También actualiza proyectos antiguos (v1.1.0, sin `codex-lock.json`): mueve `resources/` a
+`library/`, quita `knowledge/` si está vacía (si tiene archivos la deja y avisa), quita el servidor
+`figma-desktop` y guarda los archivos viejos del arnés (`AGENTS.md`, `codex-flow.svg`) en
+`.harness-backup/<fecha>/`. Nada de la marca se borra. Después hay que conectar la marca a Decodex.
+
+No se corre desde una sesión de Claude abierta dentro del proyecto: los hooks del arnés bloquean y
+revierten los cambios en `.claude/`, `CLAUDE.md` y `RULES.md`. Corre el comando en tu terminal, o usa
+`/decodex:update` del plugin desde una sesión abierta en la carpeta padre del proyecto.
 
 ### Dependencias
 
@@ -96,8 +110,41 @@ python3 -m venv .venv
 .venv/bin/python -m playwright install chromium
 ```
 
-Al abrir Claude Code dentro del proyecto, aprueba los servidores MCP del proyecto y autentícate en
-`decodex-brand` con `/mcp`.
+## Conectar Decodex
+
+La marca vive en Decodex, así que antes de trabajar hay que conectarse (el servidor `decodex-brand`
+está declarado en `.mcp.json`; una conexión es una marca).
+
+1. Abre la carpeta del proyecto en Claude Code (o Claude Desktop).
+2. Aprueba los servidores MCP del proyecto cuando te lo pida (incluido `decodex-brand`).
+3. Escribe `/mcp`, elige `decodex-brand` y la opción para autenticarte. Se abre el navegador para
+   entrar con tu cuenta de Decodex (OAuth).
+4. Vuelve al chat y verifica: pídele a Claude que te muestre la marca. Debe responder con el nombre
+   de la marca (la herramienta `get_brand`) y, si el proyecto tiene `codex-lock.json`, coincidir con
+   la marca del proyecto.
+
+Tu cuenta necesita el rol **Codifier** (configurar la marca) o **Maker** (crear piezas); lo asigna
+el equipo Decodex. Desde Claude solo se puede leer y guardar lo que ese rol permite.
+
+### Si algo falla
+
+| Síntoma | Qué hacer |
+| --- | --- |
+| No aparece `decodex-brand` en `/mcp` | No se aprobaron los servidores MCP del proyecto, o falta `.mcp.json` en la raíz. Reabre el proyecto y aprueba los servidores; si el archivo falta, actualiza el arnés (`--mode update`). |
+| El inicio de sesión falla o entraste con otra cuenta | Repite el paso 3 desde `/mcp` y entra con la cuenta correcta. Si Claude dice que tu usuario no tiene acceso a la marca, pídele el acceso al administrador. |
+| La sesión expiró o Claude dice que no has entrado | Escribe `/mcp`, elige `decodex-brand` y autentícate de nuevo; luego repite tu pedido. |
+| Error de conexión a mitad de la sesión | Claude se detiene sin inventar valores ni guardar nada localmente y ofrece reintentar (volver a entrar con `/mcp`), consultar solo lo ya local o parar. |
+
+
+### Crear o cambiar skills (mantenedores)
+
+Las skills viven en este repo, en `.claude/skills/`, y llegan a los proyectos de marca solo con una
+release (ver abajo; se actualizan con `--mode update`). Los diseñadores no pueden añadir las suyas
+dentro de su proyecto, y es intencional, para proteger la integridad del arnés: los hooks bloquean
+que la IA cree o edite archivos dentro de `.claude/` (`protect-claude-dir.sh`), bloquean los comandos
+de shell que los cambien (`block-protected-delete.sh`) y revierten lo que se haya cambiado de todos
+modos (`guard-verify.sh`). Si alguien de verdad necesita un cambio ahí, lo corre la persona misma
+en su terminal con `!` (ver `RULES.md`); para algo permanente, se propone a los mantenedores.
 
 ### Publicar una versión (mantenedores)
 
