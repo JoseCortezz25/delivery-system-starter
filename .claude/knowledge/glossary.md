@@ -12,6 +12,7 @@
 | **Slot / hueco** | The position inside a framework where an atom or molecule goes | the headline slot, the logo slot |
 | **Atom / molecule / component** | Atom is the smallest unit; a molecule can contain several atoms and/or molecules | a color swatch (atom), a price tag combining a number + a label (molecule) |
 | **Adaptive design** | The same framework (piece) reflowed into different formats (1:1, 9:16, 16:9, etc.) and channels, without changing its identity — only its slots' sizes, positions, and text scaling adapt per format | one framework rendered at 1:1 and at 9:16 |
+| **Sub-brand / brand hierarchy** | A brand with a parent: global brand, country variant, sub-brand (max 3 levels). Voice is inherited by precedence; knowledge is not. Rule in the root `CLAUDE.md` | "Brand X" → "Brand X Mexico" → a sub-brand of it |
 | **Digital Twin** | Future concept: a 3D-recontextualized product image (not blocking today) | — |
 
 ## Folder structure

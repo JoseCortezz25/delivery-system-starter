@@ -121,7 +121,7 @@ the exception, not the norm. A brand fact goes to `add_knowledge`, never to a ne
 | Other foundations: named tokens, logo clear-space | `set_foundation`, `delete_foundation` / `get_foundations` | — |
 | Asset files | upload panel (`open_upload_inbox` → `apply_inbox_classification`), `request_asset_upload`, `request_batch_asset_upload` / `get_asset`, `list_assets`, `search_assets`, `get_asset_download_url` | — |
 | Framework spec | `add_framework` / `list_frameworks`, `get_framework` | its working draft (temporary) while it's built |
-| Brand facts, colorways | `add_knowledge`, `list_knowledge`, `delete_knowledge` | — |
+| Brand facts, colorways, documents | `add_knowledge` (replaces the same `sourceLabel`), `list_knowledge`, `delete_knowledge`; `.md`/`.txt` also through the upload panel (`decodex-asset-upload`, "Documents") | — |
 | Designer learnings | `save_piece_learning` / `search_piece_learnings` | — |
 
 Every kind of brand data now has a Decodex tool. Local content still in `foundations/` or

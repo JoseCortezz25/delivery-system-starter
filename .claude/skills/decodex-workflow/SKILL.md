@@ -103,7 +103,8 @@ several turns; call it once when the request is done or the user moves on to som
 ## Connection errors
 
 If a tool fails or is unavailable: stop, say it in plain words, do not invent values and do
-not save locally instead. Options: 1) retry (log in again), 2) consult only what is already
+not save locally instead. Options: 1) retry (log in again: tell the user, in plain words, to
+open `/mcp`, choose Decodex and sign in), 2) consult only what is already
 in the local folders (never `foundations/` or `frameworks/` once they are locked), nothing
 saved, 3) stop here.
 
