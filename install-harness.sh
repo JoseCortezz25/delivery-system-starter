@@ -27,6 +27,8 @@
 # Update keeps the user's data: codex-lock.json (brand, project) is merged, not rewritten;
 # .mcp.json keeps any extra MCP servers; .gitignore keeps the user's own lines;
 # .claude/settings.local.json is preserved. Uncommitted work in content/, library/, etc. is fine.
+# Legacy v1.1.0 projects are migrated: resources/ becomes library/, an empty knowledge/ is removed,
+# and retired harness files go to .harness-backup/<timestamp>/.
 # JSON merges use jq, or python3 if jq is missing; with neither, JSON files are left untouched.
 #
 # Run it yourself (not through the AI): the harness guard blocks AI writes to .claude/, CLAUDE.md
@@ -41,6 +43,11 @@ LOCK="codex-lock.json"
 HARNESS_PATHS=(".claude" "CLAUDE.md" "RULES.md" ".mcp.json" ".gitignore")
 # Folder skeleton: created if missing, NEVER emptied — this is where the user's brand data lives.
 SKELETON_DIRS=("foundations" "frameworks" "library" "content" "engine" "references")
+# Files older harness releases shipped and no longer do (v1.1.0 "Codex" layout). On update they are
+# moved to a backup folder, never deleted.
+RETIRED_FILES=("AGENTS.md" "codex-flow.svg")
+# MCP servers older releases shipped and no longer do; removed from .mcp.json on update.
+RETIRED_MCP_SERVERS=("figma-desktop")
 
 die() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 say() { printf '%s\n' "$*"; }
@@ -63,7 +70,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 [[ "$MODE" == "install" || "$MODE" == "update" ]] || die "--mode must be 'install' or 'update'"
-for bin in curl tar; do command -v "$bin" >/dev/null 2>&1 || die "'$bin' is required"; done
+for bin in curl tar find; do command -v "$bin" >/dev/null 2>&1 || die "'$bin' is required"; done
 HAVE_JQ=0; command -v jq >/dev/null 2>&1 && HAVE_JQ=1
 # JSON tool for merges: jq preferred, python3 as fallback, "none" means never rewrite existing JSON.
 JSON_TOOL="none"
@@ -127,15 +134,20 @@ else
 fi
 
 # --- JSON helpers (jq or python3) --------------------------------------------
+RETIRED_JSON="[$(printf '"%s",' "${RETIRED_MCP_SERVERS[@]}" | sed 's/,$//')]"
 # merge_mcp <user .mcp.json> <release .mcp.json> <out>: user file with release servers on top.
 merge_mcp() {
   case "$JSON_TOOL" in
-    jq) jq -s '.[0] * {mcpServers: ((.[0].mcpServers // {}) + (.[1].mcpServers // {}))}' "$1" "$2" > "$3" ;;
-    python3) python3 - "$1" "$2" "$3" <<'PYEOF'
+    jq) jq -s --argjson retired "$RETIRED_JSON" \
+          '.[0] * {mcpServers: ((.[0].mcpServers // {}) + (.[1].mcpServers // {}))}
+           | .mcpServers |= with_entries(select(.key as $k | ($retired | index($k)) | not))' \
+          "$1" "$2" > "$3" ;;
+    python3) python3 - "$1" "$2" "$3" "$RETIRED_JSON" <<'PYEOF'
 import json, sys
-user, rel, out = sys.argv[1:4]
+user, rel, out, retired = sys.argv[1:5]
 u = json.load(open(user)); r = json.load(open(rel))
 u.setdefault("mcpServers", {}).update(r.get("mcpServers", {}))
+for name in json.loads(retired): u["mcpServers"].pop(name, None)
 json.dump(u, open(out, "w"), indent=2); open(out, "a").write("\n")
 PYEOF
     ;;
@@ -221,10 +233,43 @@ for p in "${HARNESS_PATHS[@]}"; do
   fi
 done
 
+# --- Migrate the legacy v1.1.0 layout (update only; never deletes user data) -----
+# only_gitkeep <dir>: true when the dir holds no files other than .gitkeep placeholders.
+# Fails safe: if find errors, the dir is treated as having data and is never removed.
+only_gitkeep() { local out; out="$(find "$1" -type f ! -name .gitkeep -print -quit 2>/dev/null)" || return 1; [[ -z "$out" ]]; }
+MOVED_RESOURCES=0
+if [[ "$MODE" == "update" ]]; then
+  BACKUP="$TARGET_ABS/.harness-backup/$(date -u +%Y%m%dT%H%M%SZ)"
+  for f in "${RETIRED_FILES[@]}"; do
+    [[ -e "$TARGET_ABS/$f" ]] || continue
+    act "  move old harness file $f to ${BACKUP#"$TARGET_ABS"/}/"
+    if [[ $DRY -eq 0 ]]; then mkdir -p "$BACKUP"; mv "$TARGET_ABS/$f" "$BACKUP/"; fi
+  done
+  # resources/ was renamed to library/ (brand assets: logos, images, fonts ...).
+  if [[ -d "$TARGET_ABS/resources" ]]; then
+    if [[ ! -d "$TARGET_ABS/library" ]] || only_gitkeep "$TARGET_ABS/library"; then
+      act "  move resources/ to library/ (your brand assets, renamed folder)"
+      MOVED_RESOURCES=1
+      if [[ $DRY -eq 0 ]]; then rm -rf "$TARGET_ABS/library"; mv "$TARGET_ABS/resources" "$TARGET_ABS/library"; fi
+    else
+      say "  keep resources/ (library/ already has files; move your assets into library/ by hand)"
+    fi
+  fi
+  # knowledge/ moved to Decodex; an empty one is removed, one with files is kept.
+  if [[ -d "$TARGET_ABS/knowledge" ]]; then
+    if only_gitkeep "$TARGET_ABS/knowledge"; then
+      act "  remove empty knowledge/ (brand knowledge now lives in Decodex)"
+      [[ $DRY -eq 1 ]] || rm -rf "$TARGET_ABS/knowledge"
+    else
+      say "  keep knowledge/ (it has your files; save them to the brand in Decodex, then delete it)"
+    fi
+  fi
+fi
+
 # --- Ensure the folder skeleton (never clobber existing data) ----------------
 for d in "${SKELETON_DIRS[@]}"; do
   dst="$TARGET_ABS/$d"
-  if [[ -d "$dst" ]]; then
+  if [[ -d "$dst" ]] || [[ "$d" == "library" && ${MOVED_RESOURCES:-0} -eq 1 ]]; then
     say "  keep (has your data): $d/"
   else
     act "  create $d/ (+ .gitkeep)"
