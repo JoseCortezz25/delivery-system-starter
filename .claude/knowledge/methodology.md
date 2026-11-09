@@ -16,14 +16,13 @@ tokens inside another brand's project.
 framework.** There is no single "adaptive rules" document that applies uniformly to everything.
 Each framework behaves differently because it solves a different problem (a product shot vs. an
 environment photo, a price offer vs. a brand message), so each one needs its own complete
-specification: one framework document, drafted in a temporary file outside the project and approved in Decodex
-(see `glossary.md` and the root `CLAUDE.md`).
+specification: one framework document (see `glossary.md`; where it is drafted and saved: the root
+`CLAUDE.md`, "Framework working drafts").
 
 The one thing that IS truly cross-cutting — and is therefore resolved once, before touching any
 framework — is the **brand foundations**: the identity that doesn't change no matter which
 framework is being built. See Decodex (`get_foundations`, `get_brand_colors`, `get_brand_fonts`,
-`get_brand_voice`), the source of truth; a local `foundations/` is only a local baseline,
-synced once with `decodex-sync`.
+`get_brand_voice`), the source of truth (root `CLAUDE.md`).
 
 ## The three levels
 
@@ -34,13 +33,11 @@ synced once with `decodex-sync`.
 2. **Framework (configured one at a time, result = a document):** each framework arrives through
    one of two possible paths — from Figma, or from a reference image + description — and is
    configured in detail, section by section, together with the brand expert. The result is
-   **a single document, drafted in a temporary working file**: intent, objective, channels, color roles, image
+   **a single document**: intent, objective, channels, color roles, image
    mode, variants, the complete list of elements (dynamic and fixed), typography and text
    scaling, and the exact measurements of every element — spacing, margins, radii, elevations,
    strokes — for every size the framework covers. There is no code at this layer: the document,
    built together with the brand expert, IS the complete specification for that framework.
-   the working draft is a temporary file outside the project; once approved, the document is saved to
-   Decodex with `add_framework`, and that is the version that holds (`get_framework`).
 3. **Rendering engine (technical infrastructure, a separate concern):** the implementation built
    AFTERWARDS, reading these framework documents as the specification. Lives in `engine/` — see
    the root `CLAUDE.md` for how it relates to the other folders.

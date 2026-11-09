@@ -1,4 +1,4 @@
-# Decodex — Standard Brand Structure (Proposal)
+# Decodex — Standard Brand Structure
 
 > **Decodex is the encoding of a brand into code.** It turns a brand's design system — palette,
 > typography, logo, tone, templates — into standardized prompts and tokens, so pieces of ad
@@ -64,7 +64,8 @@ a membership on a parent grants the same role on everything below it, never upwa
 - Frameworks: `add_framework`.
 - Knowledge: `add_knowledge` (replaces the entry with the same `sourceLabel`; see
   `decodex-asset-upload`, "Documents"), `list_knowledge`, `delete_knowledge`.
-- Assets, fonts and `.md`/`.txt` documents dropped in the chat: the upload panel, `open_upload_inbox` →
+- Assets, fonts and `.md`/`.txt` documents dropped in the chat (documents: `decodex-asset-upload`,
+  "Documents"): the upload panel, `open_upload_inbox` →
   `list_inbox_items` → `preview_inbox_classification` → `apply_inbox_classification` right
   away (no confirmation, except a font replacing a saved family) → show what was saved and
   ask if they want to change anything (`update_asset`, `delete_asset`). `update_inbox_item`
@@ -242,9 +243,8 @@ naturally — you already have the context, you don't need to prove it back to t
 
 Shared brand layer, tokenized once per brand: palette, typography, logo rules, tone/legal, named
 tokens. It lives in Decodex (`get_foundations`, `get_brand_colors`, `get_brand_fonts`,
-`get_brand_voice`; see `structure-and-assets.md`). This folder only keeps what an older project
-wrote locally: it is synced once to Decodex with `decodex-sync` and then locked. Nothing new is
-written here.
+`get_brand_voice`). This folder only keeps what an older project wrote locally (baseline rule:
+see "The brand lives in Decodex"). Nothing new is written here.
 
 ### `frameworks/` — Frameworks primitive (synced to Decodex, then locked)
 
@@ -252,8 +252,8 @@ Template system: slots/huecos, one document per framework, documenting intent, c
 roles, image mode, variants, elements (dynamic + fixed), text scaling, and exact measurements per
 size. A slot receives a color, font, text, image or logo from the brand. The approved version
 lives in Decodex (`add_framework`), listed with `list_frameworks` and read with `get_framework`.
-This folder only keeps older local framework documents: synced once with `decodex-sync`, then
-locked. Nothing new is written here.
+This folder only keeps older local framework documents (baseline rule: see "The brand lives in
+Decodex"). Nothing new is written here.
 
 ### Framework working drafts (temporary, outside the project)
 
@@ -265,11 +265,10 @@ discarded afterwards. Decodex always wins.
 
 ### Locked folders (`.decodex-sync.json`)
 
-When `.decodex-sync.json` exists at the project root, `foundations/` and `frameworks/` are frozen:
-the hooks deny reading, searching or changing them, and searches over the project root. Read the
-brand from Decodex, and scope searches to a specific folder (`engine/`, `content/`, `library/`,
-`references/`). Only the user unlocks the project, by deleting that file themselves.
-See `RULES.md`.
+When `.decodex-sync.json` exists at the project root, `foundations/` and `frameworks/` are frozen.
+Read the brand from Decodex, and scope every search to a specific folder (`engine/`, `content/`,
+`library/`, `references/`), never the project root. Only the user unlocks the project, by deleting
+that file themselves. The full rule lives in `RULES.md`, "Protected files and frozen brand folders".
 
 ### `library/` — Insumos primitive (Librería de insumos)
 
@@ -284,10 +283,9 @@ Organized by asset type:
 - `library/fonts/` — brand typeface files.
 
 **Every insumo is uploaded to Decodex first, then a copy lives in `library/`.** The local copy is
-downloaded from Decodex when a piece first needs it. This applies to every asset, whether every
-framework uses it or only one does: its copy goes in `library/<type>/`, never duplicated and
-never moved into a framework-specific folder. A subfolder per framework inside a type folder is
-only created if the number of files actually justifies it (see `structure-and-assets.md`).
+made after the upload is confirmed (see `decodex-asset-upload`, "Local copy"). One copy per asset
+in `library/<type>/`, never duplicated and never moved into a framework-specific folder; placement
+details are in `structure-and-assets.md`, "Where each asset goes".
 
 **Uploading to Decodex.** Every file, fonts included, goes through `decodex-asset-upload`: the
 upload panel in the chat when it is available, otherwise an upload link opened in the browser;
@@ -328,12 +326,14 @@ See `RULES.md` for the full set of general technical rules the AI must follow in
 
 ## Skills
 
-| Skill | Purpose |
+Each skill's `description` says when to use it; the router in `decodex-workflow` invokes them.
+
+| Skill | Role |
 |---|---|
-| `decodex-workflow` | Entry point of every session: silent checks, router, reply format (one popup question per turn), the order Setup then Production, and connection errors. Invoke it first, at the start of every session. |
-| `decodex-setup` | Step-by-step brand setup (colors, fonts, logo, tone, frameworks, test piece) with the right tool for each item. |
-| `decodex-asset-upload` | The single route to send any file (logo, image, icon, font) to Decodex: an upload link opened in the browser (one per font weight/style), a host check, verification, and the download of the local copy into `library/`. |
-| `decodex-production` | Producing one piece at a time as HTML exported to an image: inputs, render preflight, review and approval. |
-| `decodex-render-pipeline` | Deterministic, pre-built scripts to export an HTML piece to a raster image (PNG/JPEG/WebP) with an exact pixel clip, and to scale/resize an existing image. Use any time a piece needs to be rendered to an image file or an image needs to be resized — call these scripts instead of writing new rendering or resizing code from scratch. |
-| `decodex-legacy-migration` | Checklist for migrating a legacy, unstructured Decodex brand implementation into this project's structure — foundations, frameworks (including the case where a framework was never written up, only built into a design/structure file), and library assets. Brand data goes to Decodex with the setup tools, never into `foundations/`. Never touches the legacy engine/build code. |
-| `decodex-sync` | One-time, one-way sync of the local `foundations/` and `frameworks/` Markdown into Decodex (brand confirmation, Codifier check, plan with conflicts, approval, write, read-back), then locks both folders with `.decodex-sync.json`. Use when a project has local content there and no marker. |
+| `decodex-workflow` | Entry point of every session (invoke it first): checks, router, reply format, connection errors. |
+| `decodex-setup` | Step-by-step brand setup. |
+| `decodex-asset-upload` | The single route to send any file or document to Decodex, and the local copy. |
+| `decodex-production` | Producing one piece at a time as HTML exported to an image. |
+| `decodex-render-pipeline` | Pre-built scripts to export HTML to an image, resize, and measure references. |
+| `decodex-legacy-migration` | Migrating a legacy brand implementation into this structure. |
+| `decodex-sync` | One-time sync of local `foundations/` and `frameworks/` into Decodex, then lock. |

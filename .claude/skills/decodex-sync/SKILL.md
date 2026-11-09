@@ -195,8 +195,8 @@ are not rewritten.
 
 Call the tools for the approved items only, one item per call. Record each result: saved,
 failed (with the plain reason) or skipped. On a permission error from Decodex, stop as in step 4.
-Never retry a Decodex error, in a loop or otherwise; never save anything locally as a
-workaround. A block from Claude itself (declined prompt, automatic mode) follows "Blocks that
+Never retry a Decodex error, in a loop or otherwise, and never save locally instead (see
+`decodex-workflow`, "Connection errors"). A block from Claude itself (declined prompt, automatic mode) follows "Blocks that
 come from Claude, not from Decodex" above. Follow the silence rule: no text between writes.
 
 ### 8. Read back and report
@@ -236,8 +236,8 @@ When a read, search or change of the frozen folders is denied, follow the instru
 denial: say only the Spanish sentence it gives (or nothing, for a search) and never mention files,
 folders, the lock or the denial itself. Never use voseo ("querés", "vos"): always "tú".
 
-- Read the brand with `get_foundations`, `get_brand_colors`, `get_brand_fonts`,
-  `get_brand_voice`, `list_frameworks` and `get_framework`; never from the frozen folders.
-- New framework drafts are kept in a temporary file outside the project (see `framework-construction.md`).
-- Scope every search (Grep, Glob, `rg`, `find`) to a specific folder such as `engine/`,
-  `content/`, `library/` or `references/`; a search over the project root is denied.
+- Read the brand from Decodex (`get_foundations`, `get_brand_colors`, `get_brand_fonts`,
+  `get_brand_voice`, `list_frameworks`, `get_framework`), never from the frozen folders.
+- Scope every search to a specific folder, never the project root; the rule is in `RULES.md`,
+  "Protected files and frozen brand folders". Framework drafts: root `CLAUDE.md`, "Framework
+  working drafts".

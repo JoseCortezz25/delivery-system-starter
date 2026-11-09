@@ -20,11 +20,9 @@ belongs inside each framework document itself.
    text rules, exact measurements, and sizes are never generalized upward or drafted for several
    frameworks at once — each one is configured on its own, with continuous verification before
    approving it, before moving to the next.
-4. **Each framework is a single document.** The approved version is saved in Decodex with
-   `add_framework`; its working draft is a temporary file kept outside the project (see
-   `framework-construction.md`). `frameworks/` is a local baseline, synced once to Decodex and then locked (see "Frozen brand
-   folders" below). It is written at a high level of detail — a specification, for
-   someone to implement later. No code lives at this layer.
+4. **Each framework is a single document.** Where it is drafted and saved: see the root
+   `CLAUDE.md`, "Framework working drafts". It is written at a high level of detail — a
+   specification, for someone to implement later. No code lives at this layer.
 5. **Names follow the established token/role family convention.** Never an invented, loose name
    created in the moment.
 6. **Approval before scaling.** The first size's document is shown and approved before adding
@@ -34,13 +32,10 @@ belongs inside each framework document itself.
    `add_knowledge` — so a future session starts from what was already resolved, instead of
    re-reading the method package from scratch. The project's `CLAUDE.md` describes how the
    project works; it never holds brand values.
-8. **Each fact lives in exactly one place.** Decodex is the source of truth for brand data:
-   foundations, frameworks and asset files. `foundations/` and `frameworks/` only keep what an
-   older project wrote locally, until `decodex-sync` passes it to Decodex; framework-wide facts
-   live in that framework's document; a single size's measurements live in that size's row; the folder structure itself lives in
-   `.claude/knowledge/structure-and-assets.md`. The files in `library/` are local copies of the
-   assets stored in Decodex, organized by type: one copy per asset, never duplicated across
-   folders, never moved into a framework-specific folder.
+8. **Each fact lives in exactly one place.** Decodex is the source of truth for brand data (see
+   the root `CLAUDE.md`, "The brand lives in Decodex"); framework-wide facts live in that
+   framework's document; a single size's measurements live in that size's row; the folder
+   structure and where each asset goes live in `.claude/knowledge/structure-and-assets.md`.
 9. **Construction is HTML — never SVG.** SVG was tried and failed: "El SVG no sirvió: movía
    textos y posiciones, no es manipulable, no incrusta imágenes bien, no vale para piezas
    completas ni video." Every engine in this project renders a piece as HTML and exports it to a

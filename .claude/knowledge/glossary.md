@@ -4,7 +4,7 @@
 
 | Concept | What it is | Generic example |
 |---|---|---|
-| **Framework** | A reusable visual structure, documented in its own framework document (drafted in a temporary working file, approved in Decodex) with its complete adaptive system | "Product framework": centered object + logo + text below, "product" image mode, its own text limits |
+| **Framework** | A reusable visual structure, documented in its own framework document with its complete adaptive system | "Product framework": centered object + logo + text below, "product" image mode, its own text limits |
 | **Variant** | A variation of components over the SAME composition — never a different layout | "Offer" variant (with price) vs. "Invitation" variant (message only), on the same structure; or "berry" vs. "mango" variant (same layout, different color/product) |
 | **Element** | Each piece that makes up a framework — text, image, shape, or empty space — whether dynamic or fixed | Headline (dynamic), logo (fixed), platform CTA zone (fixed, empty) |
 | **Delivery bucket** | A group of sizes requested together because they go to the same channel | "Social" (9:16, 1:1) vs. "Display" (banners of several sizes) |
@@ -21,13 +21,11 @@ Quick reference — see the root `CLAUDE.md` for the full description of each fo
 
 | Folder | Primitive | Meaning |
 |---|---|---|
-| `foundations/` | Foundations | Shared brand layer, tokenized once per brand: palette, typography, logo, tone, legal. Lives in Decodex; this folder is a local baseline, synced once with `decodex-sync` and then locked. |
-| `frameworks/` | Frameworks | One document per framework: slots, intent, variants, measurements. The approved version lives in Decodex (`add_framework`, read with `get_framework`); this folder is a local baseline, synced once with `decodex-sync` and then locked. |
-| `library/` | Librería de insumos | Raw brand assets: logos, images, videos, icons, sounds, fonts. Uploaded to Decodex (`request_asset_upload`) first, never saved here first. |
+| `foundations/` | Foundations | Shared brand layer, tokenized once per brand: palette, typography, logo, tone, legal. Lives in Decodex; this folder is only a local baseline (see the root `CLAUDE.md`). |
+| `frameworks/` | Frameworks | One document per framework: slots, intent, variants, measurements. The approved version lives in Decodex (`add_framework`, read with `get_framework`); this folder is only a local baseline. |
+| `library/` | Librería de insumos | Raw brand assets: logos, images, videos, icons, sounds, fonts. Uploaded to Decodex first; the local copy is made after the upload is confirmed (`decodex-asset-upload`, "Local copy"). |
 | `content/` | Content generation | Generated output — copy, video, photo, Digital Twins — produced by running a framework through the engine. |
 | `engine/` | Rendering engine | Scripts that read the framework docs and produce the pieces that land in `content/`. |
 
-Note: this file lives under `.claude/knowledge/` — harness-level knowledge about how Decodex itself
-works, available to any AI operating this project. Brand knowledge (the Knowledge **primitive**)
-has no local folder: it lives in Decodex — brand facts with `add_knowledge`, designer learnings
-with `save_piece_learning`.
+Brand knowledge (the Knowledge **primitive**) has no local folder: it lives in Decodex (see the
+root `CLAUDE.md`, "Persisting what the user teaches you").
