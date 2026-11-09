@@ -72,8 +72,18 @@ curl -fsSL https://github.com/JoseCortezz25/delivery-system-starter/releases/lat
 ```
 
 Opciones: `--version <tag>` fija una release concreta (por defecto, la más reciente) y `--dry-run`
-muestra qué cambiaría sin escribir nada. La actualización la corre la persona en su terminal, no la
-IA: los hooks del arnés bloquean que la IA modifique `.claude/`, `CLAUDE.md` y `RULES.md`.
+muestra qué cambiaría sin escribir nada.
+
+La actualización conserva lo del usuario: la marca y el proyecto de `codex-lock.json` (solo cambia
+`harness.version`), los servidores MCP extra de `.mcp.json`, las líneas propias de `.gitignore` y
+`.claude/settings.local.json`. Los cambios sin guardar en `content/`, `library/` y demás carpetas de
+marca no la bloquean; solo se detiene si hay cambios sin guardar en archivos del arnés (que se
+reemplazan), y `--force` la obliga a seguir. Usa `jq` o, si no está, `python3`; sin ninguno de los
+dos no reescribe los JSON existentes.
+
+No se corre desde una sesión de Claude abierta dentro del proyecto: los hooks del arnés bloquean y
+revierten los cambios en `.claude/`, `CLAUDE.md` y `RULES.md`. Corre el comando en tu terminal, o usa
+`/decodex:update` del plugin desde una sesión abierta en la carpeta padre del proyecto.
 
 ### Dependencias
 
