@@ -14,8 +14,11 @@ logo, fonts, colors, tone and frameworks as complete, in progress (a logo upload
 ready yet: remind the user to finish the upload; `list_assets` shows the link) or not started. Do not ask what a
 color is for: save what they give you and let each tool's reply tell you what is missing.
 
-- **A1 Brand.** Confirm it with `get_brand`. Wrong brand: `switch_brand` if available.
-  Creating a brand is an administrator task; say so, do not attempt it.
+- **A1 Brand.** Sign in first if the chat has not (`sign_in`, root `CLAUDE.md`), then confirm
+  the brand with `get_brand`. Wrong brand: `switch_brand` if available, otherwise `sign_in`
+  again choosing that brand. Brands are created in the Decodex admin app by an administrator or
+  a codifier, not from the chat; say so, do not attempt it. Giving someone access to a brand is
+  done by an administrator in Decodex.
 - **A2 Foundations.** Ask how they deliver: 1) values typed in chat, 2) files (logos, fonts,
   images), 3) brand documents or a reference image. Offer a Figma link only when a Figma tool
   is connected. Save each item with its tool:

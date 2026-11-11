@@ -113,7 +113,7 @@ python3 -m venv .venv
 ## Conectar Decodex
 
 La marca vive en Decodex, así que antes de trabajar hay que conectarse (el servidor `decodex-brand`
-está declarado en `.mcp.json`; una conexión es una marca).
+está declarado en `.mcp.json`; un chat con sesión iniciada es una marca).
 
 1. Abre la carpeta del proyecto en Claude Code (o Claude Desktop).
 2. Aprueba los servidores MCP del proyecto cuando te lo pida (incluido `decodex-brand`).
@@ -122,6 +122,11 @@ está declarado en `.mcp.json`; una conexión es una marca).
 4. Vuelve al chat y verifica: pídele a Claude que te muestre la marca. Debe responder con el nombre
    de la marca (la herramienta `get_brand`) y, si el proyecto tiene `codex-lock.json`, coincidir con
    la marca del proyecto.
+
+Si tu agencia comparte una sola cuenta de Claude, además tienes que iniciar sesión en cada chat con
+tu propio usuario de Decodex: Claude lo hace con la herramienta `sign_in` (un panel en el chat, o
+un enlace y un código de 8 caracteres que pegas en el chat). Nunca escribas tu contraseña en el
+chat. La sesión dura 8 horas; para cambiar de marca se inicia sesión de nuevo.
 
 Tu cuenta necesita el rol **Codifier** (configurar la marca) o **Maker** (crear piezas); lo asigna
 el equipo Decodex. Desde Claude solo se puede leer y guardar lo que ese rol permite.
