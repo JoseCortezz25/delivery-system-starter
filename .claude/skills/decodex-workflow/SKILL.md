@@ -31,13 +31,14 @@ same question as a numbered list in plain text and stop.
    is no `codex-lock.json` (the template itself or an older project), skip the comparison in
    step 2: use the brand `get_brand` returns, and if the user says it is not theirs, offer the
    ones `list_accessible_brands` shows and switch only to the one they pick.
-2. Call `get_brand`. It is the project's brand when its id equals `brand.id`, or, when the lock
+2. Sign in first if the chat has not (root `CLAUDE.md`, "Sign in first": `sign_in`, and
+   `chatToken` on every call). Then call `get_brand`. It is the project's brand when its id equals `brand.id`, or, when the lock
    has no id, when its name equals `brand.name` exactly, ignoring case. If it is not, call
    `list_accessible_brands` and look for the project's brand the same way:
    - listed once → ask with the popup before switching: "Este proyecto es de la marca
      <brand.name>, pero ahora estás conectado a <marca actual>. ¿Cambio a <brand.name>?" with
-     1) "Sí, cambiar" (recommended) and 2) "No". On yes, `switch_brand` with that brand's id,
-     then `get_brand` again to confirm. On no, stop and say this project only works with
+     1) "Sí, cambiar" (recommended) and 2) "No". On yes, `switch_brand` with that brand's id (if it is not
+     available, `sign_in` again choosing that brand), then `get_brand` again to confirm. On no, stop and say this project only works with
      <brand.name>. Do not work on another brand;
    - listed more than once (same name) → ask which one, showing each brand's name and id;
    - not listed → stop and say: "Tu usuario no tiene acceso a la marca <brand.name> en
@@ -102,7 +103,8 @@ several turns; call it once when the request is done or the user moves on to som
 
 ## Connection errors
 
-If a tool fails or is unavailable: stop, say it in plain words, do not invent values and do
+If a tool says the person must sign in, or its sign-in is no longer valid, call `sign_in` and
+retry once (root `CLAUDE.md`, "Sign in first"). If a tool fails or is unavailable: stop, say it in plain words, do not invent values and do
 not save locally instead. Options: 1) retry (log in again: tell the user, in plain words, to
 open `/mcp`, choose Decodex and sign in), 2) consult only what is already
 in `engine/`, `content/`, `library/` and `references/` (`foundations/` and `frameworks/` only

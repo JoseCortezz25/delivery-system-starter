@@ -88,7 +88,10 @@ it and the integrity guard restores it).
 
 ### 2. Session
 
-Call `get_brand` once. Stop on the first failure, without waiting: never sleep, poll, schedule a
+Sign in first if the chat has not (`sign_in`, root `CLAUDE.md`), then call `get_brand` once.
+If it says the person needs to sign in on this chat or the sign-in is no longer valid, that is
+the chat sign-in, not the connection: call `sign_in` (root `CLAUDE.md`, "Sign in first") and
+call `get_brand` once more. For anything else, stop on the first failure, without waiting: never sleep, poll, schedule a
 wake-up or retry, because a connection that needs sign-in does not fix itself. All of these mean
 "not signed in": the decodex-brand tools are missing, the connection is still connecting or
 pending, it needs authentication, or the call fails with authentication, expired session or
@@ -117,8 +120,8 @@ free text.
 - Other brands are listed → ask with the popup "¿A qué marca pasamos la información?", one option
   per other brand (at most 4, by name) plus "Ninguna de estas". On a brand, `switch_brand` (when
   the tool is available) with its id, then `get_brand` again and repeat this step's confirmation.
-  If `switch_brand` is not available, tell the user to connect to that brand and ask for this
-  again, and stop. On "Ninguna de estas" → stop with the same sentence as when no other brand is
+  If `switch_brand` is not available, call `sign_in` again so the user chooses that brand, then
+  `get_brand` and repeat this step's confirmation. On "Ninguna de estas" → stop with the same sentence as when no other brand is
   listed.
 
 ### 4. Role check (Codifier only)
