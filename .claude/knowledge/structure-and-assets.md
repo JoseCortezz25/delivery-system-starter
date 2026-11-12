@@ -13,7 +13,7 @@ framework drafts, local copies of assets, generated output and the engine.
 project/
 ├── foundations/                  # local baseline — synced once to Decodex, then locked
 ├── frameworks/                   # local baseline — synced once to Decodex, then locked
-├── library/                      # Insumos primitive — every raw brand asset, organized by type (uploaded to Decodex first)
+├── library/                      # "the assets folder" (`resources/` in older projects) — Insumos primitive: every raw brand asset, by type (uploaded to Decodex first)
 │   ├── logos/
 │   ├── images/
 │   ├── videos/
@@ -76,18 +76,34 @@ Written once by `decodex-sync` (its `lock-local-folders.sh` script) after every 
 While it exists both folders are frozen for the AI; the rule and what it blocks live in
 `RULES.md`, "Protected files and frozen brand folders".
 
+## The assets folder
+
+The assets folder holds every raw brand asset. Older projects name it `resources/`, newer ones
+`library/`. Both names are valid and are respected as they are: **never rename, move or merge one
+into the other** (pieces in `content/` link assets by relative paths such as
+`../../../library/fonts/x.otf` or `../../../resources/...`). Which one it is, in this order:
+
+1. Only one of `library/` or `resources/` exists at the project root → that one.
+2. Both exist → the one that holds files other than `.gitkeep`. If both do, `library/`, and also
+   read `resources/`. Never move anything.
+3. Neither exists → `library/` (create it).
+
+Everywhere else in the harness, "the assets folder" and `<assets>/<type>/` (`logos/`, `images/`,
+`videos/`, `icons/`, `sounds/`, `fonts/`) mean this rule. A new link in a piece uses the real name
+of the folder the file is in.
+
 ## Where each asset goes
 
-- **Every raw brand asset is uploaded to Decodex first, and then a copy lives in `library/`,
+- **Every raw brand asset is uploaded to Decodex first, and then a copy lives in the assets folder,
   organized by type** (ordering and how the copy is made: `decodex-asset-upload`, "Local copy").
   This applies to every asset, whether every framework uses it (the main logo) or only one does
-  (a product photo): its copy goes in `library/<type>/` all the same.
+  (a product photo): its copy goes in `<assets>/<type>/` all the same.
 - **A framework-specific asset is not moved into `frameworks/` or a framework-specific folder.** It stays in
-  `library/`, under its type folder; a subfolder per framework is only created if the number of files actually
+  the assets folder, under its type folder; a subfolder per framework is only created if the number of files actually
   justifies it — the same criterion used for variants (see `framework-construction.md`): don't
   split until the volume asks for it.
 - **A file is never duplicated across folders.** If two frameworks need the same asset, it lives
-  once in `library/`, and each framework document references it by name.
+  once in the assets folder, and each framework document references it by name.
 
 ## Non-redundancy rule between documents
 
@@ -111,7 +127,7 @@ the exception, not the norm. A brand fact goes to `add_knowledge`, never to a ne
 
 Every kind of brand data has a Decodex tool: see the root `CLAUDE.md`, "Decodex tools by stage"
 (write and read tools per kind). Nothing is stored locally except a framework's temporary working
-draft while it is built and the `library/` copies of asset files.
+draft while it is built and the assets-folder copies of asset files.
 
 ## New-project startup checklist
 

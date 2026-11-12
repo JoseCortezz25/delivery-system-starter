@@ -32,23 +32,33 @@ it, write it to a file or edit it. A failed call without a valid token read and 
 A personal connection (where `chatToken` is optional) works without a token: sign in there only
 when a tool says so.
 
-**Changing brand.** Take the brand's id from `list_accessible_brands` (or from `create_brand`),
-then, in this order, use the first that applies:
-1. A signed-in chat: `switch_brand_in_chat` with `selectedBrandId`. No password is asked again.
-   Its result carries a new `chatToken`: pass that one on every later call of the chat, never
-   the old one. If it refuses (no access to that brand), say so and do not switch.
-2. No chat sign-in and `switch_brand` is offered (personal connection): `switch_brand`.
-3. Neither is available, or `switch_brand_in_chat` returns no new token: `sign_in` again and
-   the person chooses the other brand.
+**Changing brand.** One project folder belongs to one brand (`codex-lock.json`), and the chat
+works on that brand only. Mixing another brand into this chat would bring its context into the
+conversation and make Claude work it inside this folder.
+- **This project's own brand** (the chat is connected to a different one, `decodex-workflow`
+  step 2): take its id from `list_accessible_brands`, then, in this order, use the first that
+  applies:
+  1. A signed-in chat: `switch_brand_in_chat` with `selectedBrandId`. No password is asked again.
+     Its result carries a new `chatToken`: pass that one on every later call of the chat, never
+     the old one. If it refuses (no access to that brand), say so and do not switch.
+  2. No chat sign-in and `switch_brand` is offered (personal connection): `switch_brand`.
+  3. Neither is available, or `switch_brand_in_chat` returns no new token: `sign_in` again and
+     the person chooses the project's brand.
 
-Then call `get_brand` to confirm. Every place in this harness that says "change brand" means
-these steps.
+  Then call `get_brand` to confirm. Every place in this harness that says "change brand" means
+  these steps, and only for the project's own brand.
+- **Any other brand: never switch in this chat.** Say it in plain words, no popup unless there is
+  a real choice: "Esta carpeta es solo para la marca <marca del proyecto>. Para trabajar en
+  <otra marca>, abre un chat nuevo en la carpeta de esa marca. Si esa marca todavía no tiene
+  proyecto, abre un chat en la carpeta principal y pide ahí un proyecto nuevo de Decodex." Never show commands.
 
 **Creating a brand and giving access** happen in the chat only when the person asks:
 - `create_brand` (Administrator or Codifier; a Codifier can create at most 10 brands, ever)
-  creates it with just a name, and the creator becomes its Codifier. It does not switch the chat:
-  change brand to it (above) before working on it. Confirm the exact name with the popup first;
-  a brand cannot be deleted from the chat.
+  creates it with just a name, and the creator becomes its Codifier. It does not switch the chat
+  and you must not switch it either (above): tell the person, in Spanish, that the new brand needs
+  its own project and a new chat (same wording as "Any other brand"). The one exception is the
+  project's own brand, created by `decodex-workflow` step 2. Confirm the exact name with the popup
+  first; a brand cannot be deleted from the chat.
 - `assign_brand_member` (Administrator only) gives a person, by email, the `CODIFIER` or `MAKER`
   role on **the brand this chat is connected to** (it takes no brand). Confirm the email, role
   and brand with the popup first. If the person already has access or the email has no Decodex
@@ -63,7 +73,8 @@ a membership on a parent grants the same role on everything below it, never upwa
   `get_brand_voice` (precedence, not a merge). `set_brand_voice` on a sub-brand creates its own
   override and never changes the parent. The inheritance does not yet reach piece generation.
 - **Knowledge does not inherit.** If a fact is missing on a sub-brand, do not assume the
-  parent's applies; check the parent (change brand, see above) only if the user confirms.
+  parent's applies; the parent is another brand, so reading it means its own project and chat (see
+  "Changing brand").
 - **Linking brands is an admin task** done in Decodex, not by you: if a designer asks to link
   a brand to a parent, tell them an admin does it there.
 
@@ -86,9 +97,9 @@ a membership on a parent grants the same role on everything below it, never upwa
   synced once to Decodex and then locked.** The tools cover everything they hold (named tokens and the logo clear-space with
   `set_foundation`, colorways with `add_knowledge`, frameworks with `add_framework`). A project
   that still has content there is synced once with `decodex-sync`, which also uploads the logos,
-  images and font files in `library/`, then locks both folders (`.decodex-sync.json`); nothing
+  images and font files in the assets folder, then locks both folders (`.decodex-sync.json`); nothing
   new is written into them. Nothing of the brand stays only on this computer. Frameworks are read with
-  `list_frameworks`/`get_framework`; `library/` is regenerable with `get_asset_download_url` and
+  `list_frameworks`/`get_framework`; the assets folder is regenerable with `get_asset_download_url` and
   the font links `get_brand_fonts` lists.
 - **`content/`, `engine/`, and `references/` are unchanged.** Decodex does not generate or render
   pieces; it only centralizes the brand data `engine/` needs.
@@ -121,7 +132,7 @@ a membership on a parent grants the same role on everything below it, never upwa
 `get_brand_fonts`, `get_brand_voice`, `list_frameworks`, `get_framework`, `get_asset`,
 `get_asset_download_url`, `list_assets`, `search_assets`, `list_products`, `ask_brand`,
 `list_accessible_brands`, `switch_brand_in_chat` (signed-in chat), `switch_brand` (not offered on
-a shared connection). See "Changing brand".
+a shared connection), both only to put the chat on this project's own brand. See "Changing brand".
 
 **Brands and access (only when the person asks):** `create_brand` (Administrator or Codifier),
 `assign_brand_member` (Administrator). See "Creating a brand and giving access".
@@ -134,7 +145,7 @@ renders pieces; rendering is `engine/`.
 ## Knowledge — load first
 
 Read every file below before doing anything else in this project: before your first message to
-the user, and before touching `library/`, `content/`, or `engine/`.
+the user, and before touching the assets folder, `content/`, or `engine/`.
 These are the standing instructions for how Decodex works — nothing else here makes sense without
 them.
 
@@ -313,24 +324,26 @@ discarded afterwards. Decodex always wins.
 
 When `.decodex-sync.json` exists at the project root, `foundations/` and `frameworks/` are frozen.
 Read the brand from Decodex, and scope every search to a specific folder (`engine/`, `content/`,
-`library/`, `references/`), never the project root. Only the user unlocks the project, by deleting
+the assets folder, `references/`), never the project root. Only the user unlocks the project, by deleting
 that file themselves. The full rule lives in `RULES.md`, "Protected files and frozen brand folders".
 
-### `library/` — Insumos primitive (Librería de insumos)
+### The assets folder (`library/` or `resources/`) — Insumos primitive (Librería de insumos)
 
 Brand asset library: logos, brand images, brand videos, sounds, and any other raw brand asset.
-Organized by asset type:
+Older projects name the folder `resources/`, newer ones `library/`: which one applies, and why
+neither is ever renamed or moved, is defined once in `structure-and-assets.md`, "The assets
+folder". Organized by asset type:
 
-- `library/logos/` — brand logo files (all variants: full, mark-only, light/dark, etc.).
-- `library/images/` — brand images / photos.
-- `library/videos/` — brand videos.
-- `library/icons/` — icon sets.
-- `library/sounds/` — sound assets.
-- `library/fonts/` — brand typeface files.
+- `<assets>/logos/` — brand logo files (all variants: full, mark-only, light/dark, etc.).
+- `<assets>/images/` — brand images / photos.
+- `<assets>/videos/` — brand videos.
+- `<assets>/icons/` — icon sets.
+- `<assets>/sounds/` — sound assets.
+- `<assets>/fonts/` — brand typeface files.
 
-**Every insumo is uploaded to Decodex first, then a copy lives in `library/`.** The local copy is
+**Every insumo is uploaded to Decodex first, then a copy lives in the assets folder.** The local copy is
 made after the upload is confirmed (see `decodex-asset-upload`, "Local copy"). One copy per asset
-in `library/<type>/`, never duplicated and never moved into a framework-specific folder; placement
+in `<assets>/<type>/`, never duplicated and never moved into a framework-specific folder; placement
 details are in `structure-and-assets.md`, "Where each asset goes".
 
 **Uploading to Decodex.** Every file, fonts included, goes through `decodex-asset-upload`: the
@@ -382,4 +395,4 @@ Each skill's `description` says when to use it; the router in `decodex-workflow`
 | `decodex-production` | Producing one piece at a time as HTML exported to an image. |
 | `decodex-render-pipeline` | Pre-built scripts to export HTML to an image, resize, and measure references. |
 | `decodex-legacy-migration` | Migrating a legacy brand implementation into this structure. |
-| `decodex-sync` | One-time sync of local `foundations/`, `frameworks/` and the `library/` files into Decodex, then lock. |
+| `decodex-sync` | One-time sync of local `foundations/`, `frameworks/` and the assets-folder files into Decodex, then lock. |

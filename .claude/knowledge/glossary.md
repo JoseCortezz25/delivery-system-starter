@@ -23,7 +23,7 @@ Quick reference — see the root `CLAUDE.md` for the full description of each fo
 |---|---|---|
 | `foundations/` | Foundations | Shared brand layer, tokenized once per brand: palette, typography, logo, tone, legal. Lives in Decodex; this folder is only a local baseline (see the root `CLAUDE.md`). |
 | `frameworks/` | Frameworks | One document per framework: slots, intent, variants, measurements. The approved version lives in Decodex (`add_framework`, read with `get_framework`); this folder is only a local baseline. |
-| `library/` | Librería de insumos | Raw brand assets: logos, images, videos, icons, sounds, fonts. Uploaded to Decodex first; the local copy is made after the upload is confirmed (`decodex-asset-upload`, "Local copy"). |
+| `library/` (or `resources/` in older projects: "the assets folder", see `structure-and-assets.md`) | Librería de insumos | Raw brand assets: logos, images, videos, icons, sounds, fonts. Uploaded to Decodex first; the local copy is made after the upload is confirmed (`decodex-asset-upload`, "Local copy"). |
 | `content/` | Content generation | Generated output — copy, video, photo, Digital Twins — produced by running a framework through the engine. |
 | `engine/` | Rendering engine | Scripts that read the framework docs and produce the pieces that land in `content/`. |
 
