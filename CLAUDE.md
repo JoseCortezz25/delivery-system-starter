@@ -63,8 +63,9 @@ a membership on a parent grants the same role on everything below it, never upwa
 - **Decodex is the source of truth; `foundations/` and `frameworks/` are a local baseline
   synced once to Decodex and then locked.** The tools cover everything they hold (named tokens and the logo clear-space with
   `set_foundation`, colorways with `add_knowledge`, frameworks with `add_framework`). A project
-  that still has content there is synced once with `decodex-sync`, which then locks both folders
-  (`.decodex-sync.json`); nothing new is written into them. Frameworks are read with
+  that still has content there is synced once with `decodex-sync`, which also uploads the logos,
+  images and font files in `library/`, then locks both folders (`.decodex-sync.json`); nothing
+  new is written into them. Nothing of the brand stays only on this computer. Frameworks are read with
   `list_frameworks`/`get_framework`; `library/` is regenerable with `get_asset_download_url` and
   the font links `get_brand_fonts` lists.
 - **`content/`, `engine/`, and `references/` are unchanged.** Decodex does not generate or render
@@ -355,4 +356,4 @@ Each skill's `description` says when to use it; the router in `decodex-workflow`
 | `decodex-production` | Producing one piece at a time as HTML exported to an image. |
 | `decodex-render-pipeline` | Pre-built scripts to export HTML to an image, resize, and measure references. |
 | `decodex-legacy-migration` | Migrating a legacy brand implementation into this structure. |
-| `decodex-sync` | One-time sync of local `foundations/` and `frameworks/` into Decodex, then lock. |
+| `decodex-sync` | One-time sync of local `foundations/`, `frameworks/` and the `library/` files into Decodex, then lock. |
