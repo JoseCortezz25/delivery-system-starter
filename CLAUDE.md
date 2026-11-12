@@ -25,13 +25,36 @@ before the first Decodex call of a chat when the tools mark `chatToken` as requi
 connection, and whenever a tool says the person needs to sign in or its sign-in is "no longer
 valid" (it lasts 8 hours). Follow its result: an in-chat panel, or
 a link plus an 8-character code the person pastes in the chat, which you pass to
-`redeem_sign_in_code`. Never call `sign_in_check_credentials` or `sign_in_choose_brand` (panel
-only) and never ask for a password in the chat. The result gives a `chatToken` (`ct1_...`): pass
-it as `chatToken` on every Decodex call of the chat, and never show it, write it to a file or
-edit it. A failed call without a valid token read and changed nothing. To change brand when
-`switch_brand` is not available, call `sign_in` again and choose the other brand. A personal
-connection (where `chatToken` is optional) works without a token: sign in there only when a tool
-says so.
+`redeem_sign_in_code`. Never call `sign_in_check_credentials`, `sign_in_choose_brand` or
+`sign_in_create_brand` (panel only) and never ask for a password in the chat. The result gives a
+`chatToken` (`ct1_...`): pass it as `chatToken` on every Decodex call of the chat, and never show
+it, write it to a file or edit it. A failed call without a valid token read and changed nothing.
+A personal connection (where `chatToken` is optional) works without a token: sign in there only
+when a tool says so.
+
+**Changing brand.** Take the brand's id from `list_accessible_brands` (or from `create_brand`),
+then, in this order, use the first that applies:
+1. A signed-in chat: `switch_brand_in_chat` with `selectedBrandId`. No password is asked again.
+   Its result carries a new `chatToken`: pass that one on every later call of the chat, never
+   the old one. If it refuses (no access to that brand), say so and do not switch.
+2. No chat sign-in and `switch_brand` is offered (personal connection): `switch_brand`.
+3. Neither is available, or `switch_brand_in_chat` returns no new token: `sign_in` again and
+   the person chooses the other brand.
+
+Then call `get_brand` to confirm. Every place in this harness that says "change brand" means
+these steps.
+
+**Creating a brand and giving access** happen in the chat only when the person asks:
+- `create_brand` (Administrator or Codifier; a Codifier can create at most 10 brands, ever)
+  creates it with just a name, and the creator becomes its Codifier. It does not switch the chat:
+  change brand to it (above) before working on it. Confirm the exact name with the popup first;
+  a brand cannot be deleted from the chat.
+- `assign_brand_member` (Administrator only) gives a person, by email, the `CODIFIER` or `MAKER`
+  role on **the brand this chat is connected to** (it takes no brand). Confirm the email, role
+  and brand with the popup first. If the person already has access or the email has no Decodex
+  user, say so in plain words; inviting new users is done in Decodex, not here.
+- A permission error on either one means the role does not allow it: say who can do it (an
+  administrator) and do not retry.
 
 **Brand hierarchy.** A brand can have a parent: global brand, country variant, sub-brand (up to
 3 levels). `list_accessible_brands` may show sub-brands the user was never invited to directly:
@@ -40,8 +63,7 @@ a membership on a parent grants the same role on everything below it, never upwa
   `get_brand_voice` (precedence, not a merge). `set_brand_voice` on a sub-brand creates its own
   override and never changes the parent. The inheritance does not yet reach piece generation.
 - **Knowledge does not inherit.** If a fact is missing on a sub-brand, do not assume the
-  parent's applies; check the parent (`switch_brand`, or `sign_in` again choosing it when
-  `switch_brand` is not available) only if the user confirms.
+  parent's applies; check the parent (change brand, see above) only if the user confirms.
 - **Linking brands is an admin task** done in Decodex, not by you: if a designer asks to link
   a brand to a parent, tell them an admin does it there.
 
@@ -97,7 +119,11 @@ a membership on a parent grants the same role on everything below it, never upwa
 **Production (read; needs the produce permission):** `get_foundations`, `get_brand_colors`,
 `get_brand_fonts`, `get_brand_voice`, `list_frameworks`, `get_framework`, `get_asset`,
 `get_asset_download_url`, `list_assets`, `search_assets`, `list_products`, `ask_brand`,
-`list_accessible_brands`, `switch_brand` (not offered on a shared connection: use `sign_in`).
+`list_accessible_brands`, `switch_brand_in_chat` (signed-in chat), `switch_brand` (not offered on
+a shared connection). See "Changing brand".
+
+**Brands and access (only when the person asks):** `create_brand` (Administrator or Codifier),
+`assign_brand_member` (Administrator). See "Creating a brand and giving access".
 
 **Learning:** `save_piece_learning` after a piece, `search_piece_learnings` before starting one.
 
