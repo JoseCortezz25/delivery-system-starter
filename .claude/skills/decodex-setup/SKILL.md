@@ -15,9 +15,9 @@ ready yet: remind the user to finish the upload; `list_assets` shows the link) o
 color is for: save what they give you and let each tool's reply tell you what is missing.
 
 - **A1 Brand.** Sign in first if the chat has not (`sign_in`, root `CLAUDE.md`), then confirm
-  the brand with `get_brand`. Wrong brand: change brand (root `CLAUDE.md`, "Changing brand":
-  `switch_brand_in_chat` first). An administrator or a codifier who asks for a new brand can
-  create it with `create_brand`, and an administrator who asks to give someone access to this
+  the brand with `get_brand`. Not the project's brand: change brand to the project's own
+  (root `CLAUDE.md`, "Changing brand"); never switch to any other brand in this chat. An administrator or a codifier who asks for a new brand can
+  create it with `create_brand` (it gets its own project and chat, no switch here), and an administrator who asks to give someone access to this
   brand can do it with `assign_brand_member` (root `CLAUDE.md`, "Creating a brand and giving
   access"). Never do either unprompted.
 - **A2 Foundations.** Ask how they deliver: 1) values typed in chat, 2) files (logos, fonts,

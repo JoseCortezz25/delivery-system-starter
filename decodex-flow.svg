@@ -28,7 +28,7 @@
 
   <!-- Stage 2: library + frameworks -->
   <rect x="30" y="230" width="220" height="90" rx="10" fill="#f5f5f5" stroke="#999999" stroke-width="1.5"/>
-  <text x="140" y="265" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">library/</text>
+  <text x="140" y="265" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">library/ o resources/</text>
   <text x="140" y="286" font-size="12" text-anchor="middle" fill="#555555">insumos — logos, photos,</text>
   <text x="140" y="302" font-size="12" text-anchor="middle" fill="#555555">video, icons, sounds, fonts</text>
 
@@ -52,7 +52,7 @@
 
   <rect x="380" y="410" width="220" height="90" rx="10" fill="#fdece8" stroke="#cc4c33" stroke-width="2"/>
   <text x="490" y="445" font-size="15" font-weight="700" text-anchor="middle" fill="#8f2f1a">engine/</text>
-  <text x="490" y="466" font-size="12" text-anchor="middle" fill="#8f4433">reads foundations + library +</text>
+  <text x="490" y="466" font-size="12" text-anchor="middle" fill="#8f4433">reads foundations + assets +</text>
   <text x="490" y="482" font-size="12" text-anchor="middle" fill="#8f4433">frameworks, generates a piece</text>
 
   <line x1="600" y1="455" x2="728" y2="455" stroke="#333333" stroke-width="1.5" marker-end="url(#arrow)"/>

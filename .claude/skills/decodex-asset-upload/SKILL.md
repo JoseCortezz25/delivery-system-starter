@@ -1,6 +1,6 @@
 ---
 name: decodex-asset-upload
-description: The only route to send brand files (logos, images, icons, product photos, fonts, any binary) and brand documents (.md, .txt, PDF, .pptx, .docx) to Decodex - the upload panel in the chat when available, otherwise an upload link opened in the browser, then verify it and keep the local copy in library/. Use whenever a file must reach Decodex, from setup, production or a migration.
+description: The only route to send brand files (logos, images, icons, product photos, fonts, any binary) and brand documents (.md, .txt, PDF, .pptx, .docx) to Decodex - the upload panel in the chat when available, otherwise an upload link opened in the browser, then verify it and keep the local copy in the assets folder (library/ or resources/). Use whenever a file must reach Decodex, from setup, production or a migration.
 compatibility: Requires the decodex-brand MCP connection, curl, and Google Chrome on macOS for the browser upload.
 metadata:
   version: "0.1.0"
@@ -134,8 +134,8 @@ Use it when the user prefers it, or when the browser cannot be opened.
    same order as the descriptions.
 3. Confirm with `list_assets` that it shows as ready. Never show the link or curl's output to
    the user.
-4. Only after the upload is confirmed, copy the file into `library/<type>/` (a plain copy, no
-   download). This is the "upload first, then copy" order of the root `CLAUDE.md`.
+4. Only after the upload is confirmed, copy the file into `<assets>/<type>/` (the assets folder of
+   `structure-and-assets.md`; a plain copy, no download). This is the "upload first, then copy" order of the root `CLAUDE.md`.
 5. If the file cannot be read, curl fails or the link expired: request a new link once. If it
    fails again, switch to Option 1 without making the user repeat anything.
 
@@ -157,20 +157,21 @@ Use it when the user prefers it, or when the browser cannot be opened.
 
 ## Local copy
 
-When a piece first needs a file that is not in `library/<type>/` yet:
+When a piece first needs a file that is not in `<assets>/<type>/` yet (the assets folder of `structure-and-assets.md`: `library/` or
+`resources/`):
 
 1. Call `get_asset_download_url` with the asset id (from `list_assets` or `search_assets`) and
    check the link as above. It is valid for the time the tool states, so request it right before
    downloading.
-2. Download it: `curl -fsS -o "library/<type>/<name>" "<downloadUrl>"`. The server names the
+2. Download it: `curl -fsS -o "<assets>/<type>/<name>" "<downloadUrl>"`. The server names the
    file by its id, so choose `<name>` yourself: a short kebab-case name from the asset's
    description plus the extension of its type (`logo-main-blue-on-yellow.png`). Never show the
    link or curl's output to the user.
 3. If it fails, request a new link once. If it fails again, ask the user where the file is
-   saved and copy it into `library/<type>/` (a copy, no new upload).
+   saved and copy it into `<assets>/<type>/` (a copy, no new upload).
 
 An uploaded font works the same way, with its link from `get_brand_fonts` instead: one link per
 weight and style, valid 60 minutes (call it again for fresh ones). Check each link as above and
-save it as `library/fonts/<family>-<weight>-<style>.<ext>` (`souvenir-std-700-normal.woff2`),
+save it as `<assets>/fonts/<family>-<weight>-<style>.<ext>` (`souvenir-std-700-normal.woff2`),
 with the extension of the uploaded file (.ttf, .otf, .woff or .woff2). A font from Google Fonts
 has no file: the HTML links it instead.

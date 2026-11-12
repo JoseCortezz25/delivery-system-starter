@@ -57,6 +57,6 @@ Hooks in `.claude/hooks/` enforce these rules and deny with a reason that ends i
 - **Frozen brand folders:** while the marker exists, `foundations/` and `frameworks/` are frozen.
   The AI may not read, search, copy or change them with any tool, and searches whose scope is the
   project root (or a folder above it) are denied: scope them to a specific folder (`engine/`,
-  `content/`, `library/`, `references/`). Read the brand from Decodex instead. The
+  `content/`, the assets folder (`library/` or `resources/`), `references/`). Read the brand from Decodex instead. The
   shell part of this block is best-effort: never try to work around it. Without the marker,
   nothing here applies.

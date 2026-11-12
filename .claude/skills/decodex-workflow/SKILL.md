@@ -30,7 +30,8 @@ same question as a numbered list in plain text and stop.
    `brand.id` when present, and `brand.name`. That is the brand this project belongs to. If there
    is no `codex-lock.json` (the template itself or an older project), skip the comparison in
    step 2: use the brand `get_brand` returns, and if the user says it is not theirs, offer the
-   ones `list_accessible_brands` shows and switch only to the one they pick.
+   ones `list_accessible_brands` shows and switch only to the one they pick (with no lock the project
+   has no brand yet, so this picks it; once picked, it stays the project's brand).
 2. Sign in first if the chat has not (root `CLAUDE.md`, "Sign in first": `sign_in`, and
    `chatToken` on every call). Then call `get_brand`. It is the project's brand when its id equals `brand.id`, or, when the lock
    has no id, when its name equals `brand.name` exactly, ignoring case. If it is not, call
@@ -40,14 +41,15 @@ same question as a numbered list in plain text and stop.
      1) "Sí, cambiar" (recommended) and 2) "No". On yes, change brand to that brand's id (root `CLAUDE.md`,
      "Changing brand": `switch_brand_in_chat` first), then `get_brand` again to confirm. On no, stop and say this project only works with
      <brand.name>. Do not work on another brand;
+     a request for any other brand later in the chat is not switched either (root `CLAUDE.md`, "Changing brand");
    - listed more than once (same name) → ask which one, showing each brand's name and id;
    - not listed and the lock has a `brand.id` → the brand exists but this user cannot reach it:
      stop and say: "Tu usuario no tiene acceso a la marca <brand.name> en Decodex. Pídele
      acceso a tu administrador." Do not work on another brand;
    - not listed and the lock has no `brand.id` → the brand may not exist yet. Ask with the popup:
      "No encuentro la marca <brand.name> en Decodex. ¿La creo con ese nombre?" with 1) "Sí,
-     crearla" (recommended) and 2) "No". On yes, `create_brand` with `brand.name`, then change
-     brand to the new id (root `CLAUDE.md`, "Changing brand") and `get_brand` to confirm. On no,
+     crearla" (recommended) and 2) "No". On yes, `create_brand` with `brand.name` (this is the project's own brand, so this chat does switch
+     to it), then change brand to the new id (root `CLAUDE.md`, "Changing brand") and `get_brand` to confirm. On no,
      or on a permission error, stop with the sentence of the case above. Never create a brand
      with another name, and never create one when the lock has a `brand.id`.
 3. Call `get_brand_setup_status`. If any call fails, go to "Connection errors".
@@ -61,7 +63,10 @@ Greet by the brand's name and ask, with the popup:
 
 If `foundations/` or `frameworks/` hold Markdown content and there is no `.decodex-sync.json`
 at the project root, the local brand data can be passed to Decodex once: offer it and invoke
-`decodex-sync` on yes. Any request to pass, sync or send the local brand base or templates to the
+`decodex-sync` on yes. Offer it too when the assets folder (`structure-and-assets.md`) holds a logo, image or font file that Decodex
+does not have yet (no `list_assets` description with `(archivo: <file name>)`, or the font's
+weight missing from `get_brand_fonts`), even with the marker: `decodex-sync` then uploads only
+those files. Any request to pass, sync or send the local brand base, templates or files to the
 brand again ("pasa otra vez la información a la marca") also goes to `decodex-sync`, which answers
 it; never offer to redo it or to overwrite the brand from the local copies yourself.
 
@@ -114,7 +119,7 @@ If a tool says the person must sign in, or its sign-in is no longer valid, call 
 retry once (root `CLAUDE.md`, "Sign in first"). If a tool fails or is unavailable: stop, say it in plain words, do not invent values and do
 not save locally instead. Options: 1) retry (log in again: tell the user, in plain words, to
 open `/mcp`, choose Decodex and sign in), 2) consult only what is already
-in `engine/`, `content/`, `library/` and `references/` (`foundations/` and `frameworks/` only
+in `engine/`, `content/`, the assets folder and `references/` (`foundations/` and `frameworks/` only
 while the project is not locked; never once `.decodex-sync.json` exists), nothing saved,
 3) stop here.
 

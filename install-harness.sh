@@ -3,8 +3,8 @@
 #
 # The harness lives in a public GitHub repo (delivery-system-starter), pinned to a release tag.
 # This script copies ONLY the harness/tooling layer into a project. It never touches the user's
-# brand data or generated work (foundations/, frameworks/, library/, content/, engine/,
-# references/ contents, or .decodex-sync.json).
+# brand data or generated work (foundations/, frameworks/, library/ or resources/, content/,
+# engine/, references/ contents, or .decodex-sync.json).
 #
 # Usage:
 #   install-harness.sh --mode install --dir <new-or-empty-dir> [--version vX.Y.Z] [--dry-run]
@@ -26,9 +26,11 @@
 #
 # Update keeps the user's data: codex-lock.json (brand, project) is merged, not rewritten;
 # .mcp.json keeps any extra MCP servers; .gitignore keeps the user's own lines;
-# .claude/settings.local.json is preserved. Uncommitted work in content/, library/, etc. is fine.
-# Legacy v1.1.0 projects are migrated: resources/ becomes library/, an empty knowledge/ is removed,
-# and retired harness files go to .harness-backup/<timestamp>/.
+# .claude/settings.local.json is preserved. Uncommitted work in content/, library/, resources/, etc. is fine.
+# The brand assets folder is library/ (newer projects) or resources/ (older ones): both are valid and
+# update never renames, moves or merges them, and never creates an empty library/ beside resources/.
+# Legacy v1.1.0 projects are migrated: an empty knowledge/ is removed, and retired harness files go
+# to .harness-backup/<timestamp>/.
 # JSON merges use jq, or python3 if jq is missing; with neither, JSON files are left untouched.
 #
 # Run it yourself (not through the AI): the harness guard blocks AI writes to .claude/, CLAUDE.md
@@ -105,7 +107,7 @@ else
     die "no harness found in $TARGET (no .claude/ or $LOCK). Use --mode install for a fresh project."
   fi
   # Only uncommitted changes in files this script replaces block the update; brand work
-  # (content/, library/, foundations/ ...) is never touched, so it may be dirty.
+  # (content/, library/, resources/, foundations/ ...) is never touched, so it may be dirty.
   if [[ $FORCE -eq 0 ]] && git -C "$TARGET" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     dirty="$(cd "$TARGET" && git status --porcelain -- "${HARNESS_PATHS[@]}" 2>/dev/null | grep -v ' \.claude/settings\.local\.json$' || true)"
     [[ -z "$dirty" ]] || \
@@ -237,7 +239,6 @@ done
 # only_gitkeep <dir>: true when the dir holds no files other than .gitkeep placeholders.
 # Fails safe: if find errors, the dir is treated as having data and is never removed.
 only_gitkeep() { local out; out="$(find "$1" -type f ! -name .gitkeep -print -quit 2>/dev/null)" || return 1; [[ -z "$out" ]]; }
-MOVED_RESOURCES=0
 if [[ "$MODE" == "update" ]]; then
   BACKUP="$TARGET_ABS/.harness-backup/$(date -u +%Y%m%dT%H%M%SZ)"
   for f in "${RETIRED_FILES[@]}"; do
@@ -245,15 +246,9 @@ if [[ "$MODE" == "update" ]]; then
     act "  move old harness file $f to ${BACKUP#"$TARGET_ABS"/}/"
     if [[ $DRY -eq 0 ]]; then mkdir -p "$BACKUP"; mv "$TARGET_ABS/$f" "$BACKUP/"; fi
   done
-  # resources/ was renamed to library/ (brand assets: logos, images, fonts ...).
+  # resources/ (older projects) is a valid brand assets folder: kept as it is, never moved.
   if [[ -d "$TARGET_ABS/resources" ]]; then
-    if [[ ! -d "$TARGET_ABS/library" ]] || only_gitkeep "$TARGET_ABS/library"; then
-      act "  move resources/ to library/ (your brand assets, renamed folder)"
-      MOVED_RESOURCES=1
-      if [[ $DRY -eq 0 ]]; then rm -rf "$TARGET_ABS/library"; mv "$TARGET_ABS/resources" "$TARGET_ABS/library"; fi
-    else
-      say "  keep resources/ (library/ already has files; move your assets into library/ by hand)"
-    fi
+    say "  keep resources/ (brand assets folder, not renamed or moved)"
   fi
   # knowledge/ moved to Decodex; an empty one is removed, one with files is kept.
   if [[ -d "$TARGET_ABS/knowledge" ]]; then
@@ -269,7 +264,9 @@ fi
 # --- Ensure the folder skeleton (never clobber existing data) ----------------
 for d in "${SKELETON_DIRS[@]}"; do
   dst="$TARGET_ABS/$d"
-  if [[ -d "$dst" ]] || [[ "$d" == "library" && ${MOVED_RESOURCES:-0} -eq 1 ]]; then
+  if [[ "$d" == "library" && ! -d "$dst" && -d "$TARGET_ABS/resources" ]]; then
+    say "  skip library/ (this project uses resources/ as its brand assets folder)"
+  elif [[ -d "$dst" ]]; then
     say "  keep (has your data): $d/"
   else
     act "  create $d/ (+ .gitkeep)"

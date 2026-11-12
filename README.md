@@ -34,7 +34,7 @@ por una a mano.
 | -------------- | ------------------------------------------------------------------------------ |
 | `foundations/` | Base local heredada (paleta, tipografía, logo, tono, legal): se sincroniza una vez a Decodex y queda bloqueada |
 | `frameworks/`  | Documentos de framework heredados: se sincronizan una vez a Decodex y quedan bloqueados |
-| `library/`     | Los insumos crudos de la marca: logos, fotos, videos, íconos, sonidos, fuentes |
+| `library/` (o `resources/` en proyectos antiguos) | Los insumos crudos de la marca: logos, fotos, videos, íconos, sonidos, fuentes |
 | `content/`     | Las piezas ya generadas, organizadas por proyecto/campaña                      |
 | `references/`  | Miniaturas/montajes de frameworks ya aprobados, para consulta visual rápida    |
 | `engine/`      | El motor que genera las piezas                                                 |
@@ -76,13 +76,13 @@ muestra qué cambiaría sin escribir nada.
 
 La actualización conserva lo del usuario: la marca y el proyecto de `codex-lock.json` (solo cambia
 `harness.version`), los servidores MCP extra de `.mcp.json`, las líneas propias de `.gitignore` y
-`.claude/settings.local.json`. Los cambios sin guardar en `content/`, `library/` y demás carpetas de
+`.claude/settings.local.json`. Los cambios sin guardar en `content/`, la carpeta de insumos (`library/` o `resources/`) y demás carpetas de
 marca no la bloquean; solo se detiene si hay cambios sin guardar en archivos del arnés (que se
 reemplazan), y `--force` la obliga a seguir. Usa `jq` o, si no está, `python3`; sin ninguno de los
 dos no reescribe los JSON existentes.
 
-También actualiza proyectos antiguos (v1.1.0, sin `codex-lock.json`): mueve `resources/` a
-`library/`, quita `knowledge/` si está vacía (si tiene archivos la deja y avisa), quita el servidor
+También actualiza proyectos antiguos (v1.1.0, sin `codex-lock.json`): deja `resources/`
+tal cual (la carpeta de insumos puede llamarse `library/` o `resources/`, nunca se renombra ni se mueve), quita `knowledge/` si está vacía (si tiene archivos la deja y avisa), quita el servidor
 `figma-desktop` y guarda los archivos viejos del arnés (`AGENTS.md`, `codex-flow.svg`) en
 `.harness-backup/<fecha>/`. Nada de la marca se borra. Después hay que conectar la marca a Decodex.
 
@@ -126,7 +126,7 @@ está declarado en `.mcp.json`; un chat con sesión iniciada es una marca).
 Si tu agencia comparte una sola cuenta de Claude, además tienes que iniciar sesión en cada chat con
 tu propio usuario de Decodex: Claude lo hace con la herramienta `sign_in` (un panel en el chat, o
 un enlace y un código de 8 caracteres que pegas en el chat). Nunca escribas tu contraseña en el
-chat. La sesión dura 8 horas; para cambiar de marca se inicia sesión de nuevo.
+chat. La sesión dura 8 horas; cada proyecto es de una sola marca: para trabajar otra marca se abre un chat nuevo en la carpeta de esa marca.
 
 Tu cuenta necesita el rol **Codifier** (configurar la marca) o **Maker** (crear piezas); lo asigna
 el equipo Decodex. Desde Claude solo se puede leer y guardar lo que ese rol permite.

@@ -120,7 +120,7 @@ across ALL sizes of this framework — they aren't requested again per size. The
 references them by file name, never duplicates them.
 
 Every B8 asset (e.g. the product cutout) is uploaded with `decodex-asset-upload` before the test
-piece, and the test piece uses its local copy in `library/`. In product mode (B2), a file with a
+piece, and the test piece uses its local copy in the assets folder (`library/` or `resources/`). In product mode (B2), a file with a
 baked-in background is still usable for the test, but the document records "pending: clean
 cutout" until a clean one arrives.
 

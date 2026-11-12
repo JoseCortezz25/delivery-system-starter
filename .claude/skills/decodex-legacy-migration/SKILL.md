@@ -1,6 +1,6 @@
 ---
 name: decodex-legacy-migration
-description: Migrate a legacy, unstructured Decodex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (Decodex for foundations and frameworks, plus library/, content/, engine/, references/), saving brand data to Decodex with the setup tools and never into foundations/. Use when a brand already has a Decodex-style implementation that predates this structure and needs to be brought in.
+description: Migrate a legacy, unstructured Decodex brand implementation (foundations/frameworks/assets scattered ad hoc, possibly with old generator code) into this project's standard harness structure (Decodex for foundations and frameworks, plus the assets folder, content/, engine/, references/), saving brand data to Decodex with the setup tools and never into foundations/. Use when a brand already has a Decodex-style implementation that predates this structure and needs to be brought in.
 compatibility: Claude Code / Agent Skills-compatible runtimes
 metadata:
   version: "0.1.0"
@@ -59,24 +59,28 @@ legacy project's foundations already sit in this project's `foundations/` or `fr
   different file than expected (an operating guide, not the foundations doc itself).
 - **Watch for filename drift**: the foundations source may name asset files that don't match what
   actually shipped on disk (typos, renamed files, a changed separator). Use the real, on-disk
-  filenames in what you save and in `library/`; flag the mismatch in prose. Don't silently
+  filenames in what you save and in the assets folder; flag the mismatch in prose. Don't silently
   "correct" the source, and don't silently use the wrong name either.
-- Don't copy a raw data file into Decodex knowledge (or into `library/`) if its content is already
+- Don't copy a raw data file into Decodex knowledge (or into the assets folder) if its content is already
   fully absorbed into what you just saved — that's pure duplication, not a second source.
 - **Legacy brand facts that aren't tokens** (notes, decisions, learnings about the brand): save
   them to Decodex with `add_knowledge`, one entry per topic under a stable `sourceLabel` (the same
   label replaces the old entry) — never into a local folder.
 
-## Step 3 — Copy real assets into `library/`, organized by type
+## Step 3 — Copy real assets into the assets folder, organized by type
+
+The assets folder is whichever of `library/` or `resources/` the project already has
+(`structure-and-assets.md`, "The assets folder"). Never rename, move or merge it, and never
+migrate one name into the other.
 
 Inspect what's actually inside each source asset folder before deciding where it goes — don't
-infer the category from the source folder's own name. Organize by type into the existing `library/`
-subfolders (`logos/`, `images/`, `videos/`, `icons/`, `sounds/`, `fonts/`).
+infer the category from the source folder's own name. Organize by type into the existing subfolders
+of the assets folder (`logos/`, `images/`, `videos/`, `icons/`, `sounds/`, `fonts/`).
 
 Some assets won't fit any existing subfolder cleanly (reusable design-component templates, fixed
 graphic elements that are closer to framework building blocks than plain insumos). Place them in
 the closest existing category and say so explicitly in your report — that's a judgment call, not a
-new rule. Don't invent a new `library/` subfolder for a one-off case; only propose one if the same
+new rule. Don't invent a new assets-folder subfolder for a one-off case; only propose one if the same
 kind of asset shows up again in a third brand.
 
 ## Step 4 — For each framework, check whether a written spec already exists
