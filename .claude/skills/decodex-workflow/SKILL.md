@@ -37,12 +37,19 @@ same question as a numbered list in plain text and stop.
    `list_accessible_brands` and look for the project's brand the same way:
    - listed once → ask with the popup before switching: "Este proyecto es de la marca
      <brand.name>, pero ahora estás conectado a <marca actual>. ¿Cambio a <brand.name>?" with
-     1) "Sí, cambiar" (recommended) and 2) "No". On yes, `switch_brand` with that brand's id (if it is not
-     available, `sign_in` again choosing that brand), then `get_brand` again to confirm. On no, stop and say this project only works with
+     1) "Sí, cambiar" (recommended) and 2) "No". On yes, change brand to that brand's id (root `CLAUDE.md`,
+     "Changing brand": `switch_brand_in_chat` first), then `get_brand` again to confirm. On no, stop and say this project only works with
      <brand.name>. Do not work on another brand;
    - listed more than once (same name) → ask which one, showing each brand's name and id;
-   - not listed → stop and say: "Tu usuario no tiene acceso a la marca <brand.name> en
-     Decodex. Pídele acceso a tu administrador." Do not work on another brand.
+   - not listed and the lock has a `brand.id` → the brand exists but this user cannot reach it:
+     stop and say: "Tu usuario no tiene acceso a la marca <brand.name> en Decodex. Pídele
+     acceso a tu administrador." Do not work on another brand;
+   - not listed and the lock has no `brand.id` → the brand may not exist yet. Ask with the popup:
+     "No encuentro la marca <brand.name> en Decodex. ¿La creo con ese nombre?" with 1) "Sí,
+     crearla" (recommended) and 2) "No". On yes, `create_brand` with `brand.name`, then change
+     brand to the new id (root `CLAUDE.md`, "Changing brand") and `get_brand` to confirm. On no,
+     or on a permission error, stop with the sentence of the case above. Never create a brand
+     with another name, and never create one when the lock has a `brand.id`.
 3. Call `get_brand_setup_status`. If any call fails, go to "Connection errors".
 
 Greet by the brand's name and ask, with the popup:

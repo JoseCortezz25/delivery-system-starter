@@ -128,10 +128,9 @@ free text.
   las que tienes acceso. Si necesitas trabajar en otra marca, pídele acceso a tu administrador y
   vuelve a pedirme esto."
 - Other brands are listed → ask with the popup "¿A qué marca pasamos la información?", one option
-  per other brand (at most 4, by name) plus "Ninguna de estas". On a brand, `switch_brand` (when
-  the tool is available) with its id, then `get_brand` again and repeat this step's confirmation.
-  If `switch_brand` is not available, call `sign_in` again so the user chooses that brand, then
-  `get_brand` and repeat this step's confirmation. On "Ninguna de estas" → stop with the same sentence as when no other brand is
+  per other brand (at most 4, by name) plus "Ninguna de estas". On a brand, change brand to its id
+  (root `CLAUDE.md`, "Changing brand": `switch_brand_in_chat` first), then `get_brand` again and
+  repeat this step's confirmation. On "Ninguna de estas" → stop with the same sentence as when no other brand is
   listed.
 
 ### 4. Role check (Codifier only)
