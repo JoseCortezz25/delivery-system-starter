@@ -29,6 +29,13 @@ a link plus an 8-character code the person pastes in the chat, which you pass to
 `sign_in_create_brand` (panel only) and never ask for a password in the chat. The result gives a
 `chatToken` (`ct1_...`): pass it as `chatToken` on every Decodex call of the chat, and never show
 it, write it to a file or edit it. A failed call without a valid token read and changed nothing.
+The person picks, or creates, the brand inside the sign-in panel, and it must be this project's
+brand (`codex-lock.json`: `brand.id`, or `brand.name` when there is no id). Before the panel, say
+so: "Elige la marca <brand.name> en el panel." If the result is another brand, follow the router
+of `decodex-workflow` and "Changing brand" below. When the 8 hours run out and you sign in again,
+do not start over: resume what the person was doing and never repeat the question that opens
+the chat (`decodex-workflow`, "Start of a chat"). If the result states the person's role on the
+brand, keep it as the role of this chat (see "Roles"); `switch_brand_in_chat` returns it again.
 A personal connection (where `chatToken` is optional) works without a token: sign in there only
 when a tool says so.
 
@@ -36,7 +43,7 @@ when a tool says so.
 works on that brand only. Mixing another brand into this chat would bring its context into the
 conversation and make Claude work it inside this folder.
 - **This project's own brand** (the chat is connected to a different one, `decodex-workflow`
-  step 2): take its id from `list_accessible_brands`, then, in this order, use the first that
+  step 2; `switch_brand_in_chat` exists only to put the chat on this brand): take its id from `list_accessible_brands`, then, in this order, use the first that
   applies:
   1. A signed-in chat: `switch_brand_in_chat` with `selectedBrandId`. No password is asked again.
      Its result carries a new `chatToken`: pass that one on every later call of the chat, never
@@ -259,11 +266,12 @@ question with the popup instead of guessing.
 
 ## First message to the user
 
-Before writing anything, invoke the `decodex-workflow` skill. It runs the silent checks
-(`get_brand`, `get_brand_setup_status`), shows the router, and drives the Setup and Production
-steps. Never name tools, folders, or files to the user.
+Before writing anything, invoke the `decodex-workflow` skill. It signs in, runs the silent checks
+(`get_brand`, `get_brand_setup_status`), works out once whether the person came to produce pieces
+or to codify the brand (from the opening message, or one question), and drives the Setup and
+Production steps. Never name tools, folders, or files to the user.
 
-For a brand with nothing stored yet, explain in one sentence what this system is (adaptive,
+For a brand with nothing stored yet where the person is codifying it, explain in one sentence what this system is (adaptive,
 tokenized, one project = one brand) and ask for the brand's base documents — whatever already
 exists, in any format; they don't need to be unified first. Do not start on the first framework
 until the brand's colors, fonts, logos, and voice are saved and the user approves them. Wait for
@@ -272,13 +280,25 @@ that the user or Decodex has not given you.
 
 ## Guiding each kind of user
 
-Ask once, in plain words, whether they came to configure the brand or to produce pieces
-(`decodex-setup` or `decodex-production`). Do not ask for their "role".
+Once per chat, `decodex-workflow` finds out whether they came to produce pieces or to codify the
+brand (`decodex-production` or `decodex-setup`); it never asks again in that chat. Do not ask for
+their "role".
 
-- **Permissions:** the server decides what each user may do. If a tool answers that the action
-  is not allowed, tell the user in plain words that their access doesn't cover it and to ask
-  their administrator. Do not retry, and never work around it (for example by saving the value
-  in a local file).
+### Roles
+
+On a brand a person is a Codifier (curates the brand, and can also produce and create brands) or
+a Maker (only produces); administrators can do both. The server decides what each user may do.
+
+- **Know the role from the result.** When the sign-in, `redeem_sign_in_code` or
+  `switch_brand_in_chat` result states the person's role, use it. When it does not, do not guess.
+- **A refused write.** If a tool answers that the action is not allowed, do not retry and never
+  work around it (for example by saving the value in a local file). For setup tools say: "En
+  esta marca puedes producir piezas, pero no codificarla. Pídele permiso a tu administrador." For
+  anything else, say in plain words that their access does not cover it and to ask their
+  administrator.
+- **Producing on a brand that is not codified yet** (setup status shows the base missing:
+  colors, fonts, logos): never produce with an empty brand (the pieces would be generic). See
+  `decodex-production`, B1.
 - **One rule the server does not enforce yet:** mass campaign production belongs to the Maker,
   so if a Codifier asks for it, say so and ask how they want to proceed.
 
@@ -288,8 +308,9 @@ If the brand's setup is complete (`get_brand_setup_status` shows no gaps), do **
 status report. Load the context silently, then just greet and ask what they want, using the brand's name
 naturally — you already have the context, you don't need to prove it back to them:
 
-- **Good:** a short greeting by the brand's name, then the router question from
-  `decodex-workflow` with "produce a piece" recommended.
+- **Good:** a short greeting by the brand's name, then the start-of-chat question from
+  `decodex-workflow` (only when the opening message did not already say what they want) with
+  "Producir piezas" recommended.
 - **Bad:** listing which frameworks are documented, what the engine currently knows how to build,
   how many pieces exist so far, which formats are covered. That's internal bookkeeping — the user
   didn't ask for a status report, they asked to build something. Only share that kind of detail if

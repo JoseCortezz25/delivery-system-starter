@@ -1,6 +1,6 @@
 ---
 name: decodex-workflow
-description: Entry point of every Decodex brand session. Runs the silent checks, shows the router (configure the brand, create a piece, review what is saved), sets the reply format and the order Setup then Production, and hands off to decodex-setup or decodex-production. Use at the start of every session and whenever the user moves between configuring the brand and producing pieces.
+description: Entry point of every Decodex brand session. Signs in, runs the silent checks, works out once per chat whether the person came to produce pieces or to codify the brand (from the opening message, or with one question), sets the reply format and the order Setup then Production, and hands off to decodex-setup, decodex-production or decodex-sync. Use at the start of every session and whenever the user asks to move between codifying the brand and producing pieces.
 compatibility: Requires the decodex-brand MCP connection.
 metadata:
   version: "0.1.0"
@@ -33,7 +33,8 @@ same question as a numbered list in plain text and stop.
    ones `list_accessible_brands` shows and switch only to the one they pick (with no lock the project
    has no brand yet, so this picks it; once picked, it stays the project's brand).
 2. Sign in first if the chat has not (root `CLAUDE.md`, "Sign in first": `sign_in`, and
-   `chatToken` on every call). Then call `get_brand`. It is the project's brand when its id equals `brand.id`, or, when the lock
+   `chatToken` on every call). The person picks the brand inside the sign-in panel, and it must
+   be the project's own. Then call `get_brand`. It is the project's brand when its id equals `brand.id`, or, when the lock
    has no id, when its name equals `brand.name` exactly, ignoring case. If it is not, call
    `list_accessible_brands` and look for the project's brand the same way:
    - listed once → ask with the popup before switching: "Este proyecto es de la marca
@@ -54,29 +55,60 @@ same question as a numbered list in plain text and stop.
      with another name, and never create one when the lock has a `brand.id`.
 3. Call `get_brand_setup_status`. If any call fails, go to "Connection errors".
 
-Greet by the brand's name and ask, with the popup:
+### Start of a chat: produce or codify (once per chat)
 
-1. "Configurar mi marca" → invoke `decodex-setup`
-2. "Crear una pieza" → invoke `decodex-production`
-3. "Ver o cambiar lo ya guardado" → read it back with the `get_*` tools; changes go through
-   `decodex-setup`
+After the checks above, work out the person's intent **once per chat**. First match the opening
+message of the chat, loosely (ignore case and accents; `<X>` is the brand name). The Decodex
+plugin pre-fills these:
 
-If `foundations/` or `frameworks/` hold Markdown content and there is no `.decodex-sync.json`
-at the project root, the local brand data can be passed to Decodex once: offer it and invoke
-`decodex-sync` on yes. Offer it too when the assets folder (`structure-and-assets.md`) holds a logo, image or font file that Decodex
+| Opening message | Intent |
+|---|---|
+| "Hola, quiero codificar la marca <X>" | codify: invoke `decodex-setup` |
+| "Hola, quiero producir piezas de la marca <X>" | produce: `decodex-production` |
+| "Hola, ya actualicé el proyecto de la marca <X>. Quiero iniciar sesión y sincronizar." | sign in, run the sync path below, then ask the question below |
+| "Hola, empecemos a configurar la marca <X>" (older plugin) | codify: invoke `decodex-setup` |
+
+If the opening message is none of these but already makes the intent clear ("quiero hacer un
+banner" is produce; "quiero subir los logos" is codify), use it. Otherwise greet by the brand's
+name and ask, with the popup, header "Inicio": "¿Qué quieres hacer?" with 1) "Producir piezas"
+and 2) "Codificar la marca". Recommend 2 while the brand is not ready to produce (`decodex-production`
+B1), 1 once it is. Seeing or changing what is already saved is part of 2 (read it back with the
+`get_*` tools; changes go through `decodex-setup`). Do not open with a status report.
+
+- **Ask at most once per chat.** Never repeat the question later in the same chat, not even
+  after a new sign-in because the 8 hours ran out: sign in again and resume what the person was
+  doing. If the person later asks to switch task ("ahora quiero producir", "mejor configuremos
+  los colores"), do it, subject to their role (root `CLAUDE.md`, "Roles").
+- **Role.** The person's role on this brand comes from the sign-in or `switch_brand_in_chat`
+  result when it states it. Codify as a Maker: say "En esta marca puedes producir piezas, pero
+  no codificarla. Pídele permiso a tu administrador." and offer to produce instead. When the
+  result does not state the role, do not guess: go ahead and answer a permission refusal the same
+  way (root `CLAUDE.md`, "Roles").
+- **Old project with local brand information** (the sync trigger below). A Codifier or
+  administrator: offer `decodex-sync` and invoke it on yes. A Maker, or a permission refusal on
+  that offer: say "Este proyecto tiene información de la marca que todavía no está en Decodex.
+  Pídele a quien codifica la marca que abra este proyecto para pasarla." and allow producing
+  only when the brand in Decodex is already codified (`decodex-production` B1). When the role is not stated, decide it with the silent
+  check in `decodex-sync`, step 4, before offering anything.
+
+**Sync trigger.** If `foundations/` or `frameworks/` hold Markdown content and there is no
+`.decodex-sync.json` at the project root, the local brand data can be passed to Decodex once.
+Offer it too when the assets folder (`structure-and-assets.md`) holds a logo, image or font file that Decodex
 does not have yet (no `list_assets` description with `(archivo: <file name>)`, or the font's
 weight missing from `get_brand_fonts`), even with the marker: `decodex-sync` then uploads only
 those files. Any request to pass, sync or send the local brand base, templates or files to the
 brand again ("pasa otra vez la información a la marca") also goes to `decodex-sync`, which answers
-it; never offer to redo it or to overwrite the brand from the local copies yourself.
+it; never offer to redo it or to overwrite the brand from the local copies yourself. The sync
+opening message goes straight to `decodex-sync` (it still asks for the brand confirmation), then
+continues with the question above.
 
-Recommend 1 while the brand is not ready to produce, 2 once it is. A brand is ready when setup
-status shows no gaps (logo, fonts, colors, tone and frameworks), which means at least one
-framework is saved. Do not open with a status report.
+A brand is ready to produce when setup status shows no gaps (logo, fonts, colors, tone and
+frameworks), which means at least one framework is saved.
 
-Roles: the server decides permissions. A Maker never changes brand rules; a Codifier
-configures and does not mass-produce. If a tool says the action is not allowed, say so in
-plain words, point to their administrator, and never work around it.
+Roles: the server decides permissions (root `CLAUDE.md`, "Roles"). A Maker never changes brand
+rules; a Codifier curates the brand and can also produce, but does not mass-produce. If a tool
+says the action is not allowed, say so in plain words, point to their administrator, and never
+work around it.
 
 ## Order
 

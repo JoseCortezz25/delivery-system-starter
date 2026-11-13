@@ -22,10 +22,18 @@ Rules that hold for every piece:
 
 Steps:
 
-- **B1 Brand and framework.** Silent: `get_brand_setup_status`. If gaps remain, say the brand
-  is not ready to produce and offer `decodex-setup` (Codifier) or their administrator. Ask
-  which framework they want among the ones `list_frameworks` shows, and read it with
-  `get_framework`; if none exists, say so and offer the same. Ask: 1) describe the piece,
+- **B1 Brand and framework.** Silent: `get_brand_setup_status`. Producing with an empty brand is
+  forbidden (the pieces would be generic), so when something is missing, stop here:
+  - Base missing (colors, fonts, logos): a Codifier, an administrator, or a person whose role is
+    not stated hears "Esta marca aún no tiene su base (colores, tipografías, logos). ¿La
+    codificamos primero?", asked with the popup, and on yes goes to `decodex-setup`.
+  - Only frameworks missing (`list_frameworks` shows none): the same people hear "Esta marca aún
+    no tiene plantillas guardadas. ¿Las armamos primero?", with the same popup.
+  - A Maker, in either case, hears "Esta marca aún no está lista para producir. Pídele a quien
+    la codifica que la complete." and nothing is produced.
+
+  Otherwise ask which framework they want among the ones `list_frameworks` shows, and read it
+  with `get_framework`. Ask: 1) describe the piece,
   2) the data is in a spreadsheet, 3) repeat a previous one (`search_piece_learnings`). A spreadsheet is only a column contract (columns map
   1:1 to the framework's dynamic elements, plus a variant column): produce its first row as one
   piece and say plainly that batch production is not available yet.

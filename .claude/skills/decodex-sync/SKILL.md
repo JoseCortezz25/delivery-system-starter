@@ -130,17 +130,21 @@ brand it is in free text.
 
 ### 4. Role check (Codifier only)
 
-Only a Codifier (or administrator) may configure a brand. The MCP does not expose the role yet.
-**Temporary:** until `get_brand` returns the role (pending backend change), check it with
-`list_knowledge`: it is read-only, takes no arguments, and the server only answers it for users
-allowed to configure the brand. Never use a delete or write tool for this check.
+Only a Codifier (or administrator) may configure a brand. If the sign-in (or
+`switch_brand_in_chat`) result states the person's role, read it from there and skip the probe
+below: a Codifier or administrator continues; a Maker stops with the Maker sentence below.
+
+When the result does not state the role, do not guess: probe with `list_knowledge`, which is
+read-only, takes no arguments, and the server only answers it for users allowed to configure the
+brand. Never use a delete or write tool for this check.
 
 Call `list_knowledge` once, silently, and read the result:
 
 - A list, or a "no knowledge yet" style text (no error) → Codifier or administrator: continue.
 - An error saying "You do not have permission to perform this action." → a Maker. Stop with
-  exactly: "Tu acceso es para crear piezas, no para configurar la marca, así que no puedo pasar
-  esta información. Si necesitas hacerlo, pídeselo a tu administrador."
+  exactly: "Este proyecto tiene información de la marca que todavía no está en Decodex. Pídele a
+  quien codifica la marca que abra este proyecto para pasarla." (The person can still produce
+  pieces when the brand in Decodex is already codified: `decodex-workflow`, "Start of a chat".)
 - The call is blocked or not approved (by the user, a permission prompt or the automatic
   mode), or any other error → stop with exactly: "No pude confirmar que tu acceso permita
   configurar la marca, así que no voy a pasar la información. Inténtalo de nuevo más tarde o
@@ -148,8 +152,6 @@ Call `list_knowledge` once, silently, and read the result:
 
 This check is mandatory. Never skip it, never assume the role, never offer the user to continue
 without it, and never explain how it works.
-
-When `get_brand` exposes the role, replace this check with reading it, and delete this section.
 
 ### 5. Read the local files
 
