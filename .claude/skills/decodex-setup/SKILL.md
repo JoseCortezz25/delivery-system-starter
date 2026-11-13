@@ -19,7 +19,7 @@ color is for: save what they give you and let each tool's reply tell you what is
   (root `CLAUDE.md`, "Changing brand"); never switch to any other brand in this chat. An administrator or a codifier who asks for a new brand can
   create it with `create_brand` (it gets its own project and chat, no switch here), and an administrator who asks to give someone access to this
   brand can do it with `assign_brand_member` (root `CLAUDE.md`, "Creating a brand and giving
-  access"). Never do either unprompted.
+  access"). Never do either unprompted. A person who is a Maker, or whose write is refused for permission, gets the sentence in root `CLAUDE.md`, "Roles"; nothing is saved elsewhere.
 - **A2 Foundations.** Ask how they deliver: 1) values typed in chat, 2) files (logos, fonts,
   images), 3) brand documents or a reference image. Offer a Figma link only when a Figma tool
   is connected. Save each item with its tool:

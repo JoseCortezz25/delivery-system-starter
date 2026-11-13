@@ -22,23 +22,35 @@ Rules that hold for every piece:
 
 Steps:
 
-- **B1 Brand and framework.** Silent: `get_brand_setup_status`. If gaps remain, say the brand
-  is not ready to produce and offer `decodex-setup` (Codifier) or their administrator. Ask
-  which framework they want among the ones `list_frameworks` shows, and read it with
-  `get_framework`; if none exists, say so and offer the same. Ask: 1) describe the piece,
+- **B1 Brand and framework.** Silent: `get_brand_setup_status`. Producing with an empty brand is
+  forbidden (the pieces would be generic), so when something is missing, stop here:
+  - Base missing (colors, fonts, logos): a Codifier, an administrator, or a person whose role is
+    not stated hears "Esta marca aún no tiene su base (colores, tipografías, logos). ¿La
+    codificamos primero?", asked with the popup, and on yes goes to `decodex-setup`.
+  - Only frameworks missing (`list_frameworks` shows none): the same people hear "Esta marca aún
+    no tiene plantillas guardadas. ¿Las armamos primero?", with the same popup.
+  - A Maker, in either case, hears "Esta marca aún no está lista para producir. Pídele a quien
+    la codifica que la complete." and nothing is produced.
+
+  Otherwise ask which framework they want among the ones `list_frameworks` shows, and read it
+  with `get_framework`. Ask: 1) describe the piece,
   2) the data is in a spreadsheet, 3) repeat a previous one (`search_piece_learnings`). A spreadsheet is only a column contract (columns map
   1:1 to the framework's dynamic elements, plus a variant column): produce its first row as one
   piece and say plainly that batch production is not available yet.
-- **B2 Inputs and preflight.** Framework from `get_framework`; colors, fonts, tokens and tone
-  from `get_brand_colors`, `get_brand_fonts`, `get_foundations` and `get_brand_voice` (Google
-  fonts can be linked in the HTML; an uploaded font whose file is not in `<assets>/fonts/` yet (`<assets>` = the assets folder of `structure-and-assets.md`) is
-  downloaded with "Local copy" in `decodex-asset-upload`, and if that fails, ask the user where
-  it is saved and copy it there; never swap in another font without saying so; in the HTML use
-  the custom properties exactly as `get_foundations` names them); legal or prohibited claims
-  with `ask_brand` before drafting copy; the product with `list_products`; logo and images:
-  find them with `search_assets` or `list_assets`, then use the copy in the assets folder. If a needed
-  file is not in it yet, get it with "Local copy" in `decodex-asset-upload`: never
-  recreate a logo and never transcribe base64. Before the first render check that the
+- **B2 Inputs and preflight.** Decodex is the only source of inputs (logos, images, fonts,
+  colors, tone): never look for one on the person's computer, never ask where it is saved and
+  never copy one from a local path. Framework from `get_framework`; colors, fonts, tokens and
+  tone from `get_brand_colors`, `get_brand_fonts`, `get_foundations` and `get_brand_voice`
+  (Google fonts can be linked in the HTML; in the HTML use the custom properties exactly as
+  `get_foundations` names them); legal or prohibited claims with `ask_brand` before drafting
+  copy; the product with `list_products`; logo, images and uploaded font files: find them with
+  `search_assets`, `list_assets` or `get_brand_fonts`, then, for every one the piece uses, verify
+  its copy in the assets folder against Decodex with "Local copy" in `decodex-asset-upload`
+  (missing or different hash: download it again). Use only files verified that way; never
+  recreate a logo, never transcribe base64 and never swap in another font without saying so. If
+  an input is missing in Decodex, say it is missing and offer to upload it with
+  `decodex-asset-upload` (for example "Esta tipografía no está en Decodex. ¿La subimos?"); a
+  Maker who cannot upload asks the person who codifies the brand. Before the first render check that the
   project's `.venv` has Playwright, Pillow and Chromium (see "Installation" in
   `decodex-render-pipeline`). If something is missing, say it in plain words and ask permission
   before installing. If the render scripts fail for any reason, stop and tell the user. Never
