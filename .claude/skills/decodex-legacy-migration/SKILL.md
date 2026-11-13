@@ -59,28 +59,30 @@ legacy project's foundations already sit in this project's `foundations/` or `fr
   different file than expected (an operating guide, not the foundations doc itself).
 - **Watch for filename drift**: the foundations source may name asset files that don't match what
   actually shipped on disk (typos, renamed files, a changed separator). Use the real, on-disk
-  filenames in what you save and in the assets folder; flag the mismatch in prose. Don't silently
+  filenames in what you save; flag the mismatch in prose. Don't silently
   "correct" the source, and don't silently use the wrong name either.
-- Don't copy a raw data file into Decodex knowledge (or into the assets folder) if its content is already
+- Don't copy a raw data file into Decodex knowledge if its content is already
   fully absorbed into what you just saved — that's pure duplication, not a second source.
 - **Legacy brand facts that aren't tokens** (notes, decisions, learnings about the brand): save
   them to Decodex with `add_knowledge`, one entry per topic under a stable `sourceLabel` (the same
   label replaces the old entry) — never into a local folder.
 
-## Step 3 — Copy real assets into the assets folder, organized by type
+## Step 3 — Upload real assets to Decodex, organized by type
 
-The assets folder is whichever of `library/` or `resources/` the project already has
-(`structure-and-assets.md`, "The assets folder"). Never rename, move or merge it, and never
-migrate one name into the other.
+Brand files go to Decodex with `decodex-asset-upload` (Option 0 or Option 1, or `decodex-sync` when
+the files already sit in this project's assets folder); the assets folder (`library/` or
+`resources/`, `structure-and-assets.md`, "The assets folder") only holds the verified copies that
+a piece downloads from Decodex later ("Local copy"). Never rename, move or merge it, and never
+migrate one name into the other. Never copy a legacy file into it by hand.
 
 Inspect what's actually inside each source asset folder before deciding where it goes — don't
-infer the category from the source folder's own name. Organize by type into the existing subfolders
-of the assets folder (`logos/`, `images/`, `videos/`, `icons/`, `sounds/`, `fonts/`).
+infer the category from the source folder's own name. Classify by type with the upload tools' roles (logo, product photo,
+icon, other; fonts by family and weight).
 
 Some assets won't fit any existing subfolder cleanly (reusable design-component templates, fixed
-graphic elements that are closer to framework building blocks than plain insumos). Place them in
-the closest existing category and say so explicitly in your report — that's a judgment call, not a
-new rule. Don't invent a new assets-folder subfolder for a one-off case; only propose one if the same
+graphic elements that are closer to framework building blocks than plain insumos). Upload them under the
+closest existing role and say so explicitly in your report — that's a judgment call, not a
+new rule. Don't invent a new asset role for a one-off case; only propose one if the same
 kind of asset shows up again in a third brand.
 
 ## Step 4 — For each framework, check whether a written spec already exists

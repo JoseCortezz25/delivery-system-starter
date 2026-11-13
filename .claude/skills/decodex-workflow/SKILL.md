@@ -119,9 +119,11 @@ If a tool says the person must sign in, or its sign-in is no longer valid, call 
 retry once (root `CLAUDE.md`, "Sign in first"). If a tool fails or is unavailable: stop, say it in plain words, do not invent values and do
 not save locally instead. Options: 1) retry (log in again: tell the user, in plain words, to
 open `/mcp`, choose Decodex and sign in), 2) consult only what is already
-in `engine/`, `content/`, the assets folder and `references/` (`foundations/` and `frameworks/` only
-while the project is not locked; never once `.decodex-sync.json` exists), nothing saved,
+in `engine/`, `content/` and `references/` (`foundations/` and `frameworks/` only
+while the project is not locked; never once `.decodex-sync.json` exists), nothing saved and
+no new piece (its files cannot be verified without Decodex),
 3) stop here.
 
-Missing mandatory data (for example fonts): "Falta la tipografía oficial." Options: 1) upload
-the font file, 2) use a system font only for this test (not saved to the brand).
+Missing mandatory data (for example fonts): "Esta tipografía no está en Decodex." Options:
+1) upload the font file (`decodex-asset-upload`), 2) leave it for later. Never use a font or any
+other input from the person's computer.

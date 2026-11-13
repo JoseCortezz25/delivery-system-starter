@@ -1,6 +1,6 @@
 ---
 name: decodex-asset-upload
-description: The only route to send brand files (logos, images, icons, product photos, fonts, any binary) and brand documents (.md, .txt, PDF, .pptx, .docx) to Decodex - the upload panel in the chat when available, otherwise an upload link opened in the browser, then verify it and keep the local copy in the assets folder (library/ or resources/). Use whenever a file must reach Decodex, from setup, production or a migration.
+description: The only route to send brand files (logos, images, icons, product photos, fonts, any binary) and brand documents (.md, .txt, PDF, .pptx, .docx) to Decodex - the upload panel in the chat when available, otherwise an upload link opened in the browser, then verify it. Also defines the verified local copy (a cache of Decodex downloads in library/ or resources/). Use whenever a file must reach Decodex, from setup, production or a migration, and before a piece uses a brand file.
 compatibility: Requires the decodex-brand MCP connection, curl, and Google Chrome on macOS for the browser upload.
 metadata:
   version: "0.1.0"
@@ -119,25 +119,25 @@ The recommended route when the upload panel is not available.
 3. When they say it is done, confirm with `list_assets` that it shows as ready. If it is not,
    request a new link once and open it again.
 
-This leaves no local copy; get one with "Local copy" when a piece first needs the file.
+This leaves no local copy; a piece gets one with "Local copy" when it needs the file.
 
-## Option 2: the user says where the file is saved
+## Option 2: upload from the project's own folders (decodex-sync only)
 
-Use it when the user prefers it, or when the browser cannot be opened.
+Used only by `decodex-sync`, which takes each path from the project's own folders (the assets
+folder, `foundations/`, `frameworks/`). Never ask the user where a file is saved, never look for
+files elsewhere on the computer, and never offer this option in any other flow: a file the person
+wants to add goes through Option 0 or Option 1, and an image only attached to the conversation is
+not a file (you may read colors from it, but you cannot upload it).
 
-1. Ask for the folder and the exact file name, and check that it exists. Never guess a path.
-   An image only attached to the conversation is not a file: you may read colors from it, but
-   you cannot upload it.
-2. Request the link, check it as above, and upload from the user's original file:
-   `curl -fsS -F "file=@<path>" "<uploadUrl>"`. If Desktop asks permission to read outside the
-   project folder, tell the user to accept it. Batch: one `-F "files=@<path>"` per file, in the
-   same order as the descriptions.
-3. Confirm with `list_assets` that it shows as ready. Never show the link or curl's output to
+1. Request the link, check it as above, and upload: `curl -fsS -F "file=@<path>" "<uploadUrl>"`.
+   If Desktop asks permission to read outside the project folder, tell the user to accept it.
+   Batch: one `-F "files=@<path>"` per file, in the same order as the descriptions.
+2. Confirm with `list_assets` that it shows as ready. Never show the link or curl's output to
    the user.
-4. Only after the upload is confirmed, copy the file into `<assets>/<type>/` (the assets folder of
-   `structure-and-assets.md`; a plain copy, no download). This is the "upload first, then copy" order of the root `CLAUDE.md`.
-5. If the file cannot be read, curl fails or the link expired: request a new link once. If it
-   fails again, switch to Option 1 without making the user repeat anything.
+3. No copy is made here: the files already live in the project, and a piece verifies its copy
+   with "Local copy" before using it.
+4. If curl fails or the link expired: request a new link once. If it fails again, go to
+   Option 1 without making the user repeat anything.
 
 ## Fonts
 
@@ -151,27 +151,50 @@ Use it when the user prefers it, or when the browser cannot be opened.
    900 in steps of 100, `style` normal or italic), check it as above and open it like Option 1.
    It accepts .ttf, .otf, .woff and .woff2 up to 10 MB.
 5. When they say it is done, confirm with `get_brand_fonts` that the weights appear. Its local
-   copy is downloaded with "Local copy" when a piece first needs it.
+   copy is downloaded with "Local copy" when a piece needs it.
 6. Use `add_brand_font` only as a fallback when the links cannot be used: say first that it
    takes several minutes and continue only after a clear yes.
 
-## Local copy
+## Local copy (a verified cache of Decodex)
 
-When a piece first needs a file that is not in `<assets>/<type>/` yet (the assets folder of `structure-and-assets.md`: `library/` or
-`resources/`):
+Decodex is the only source of brand files. The assets folder (`library/` or `resources/`, see
+`structure-and-assets.md`) is just a cache of what Decodex gave this computer: never put a file
+there from anywhere else, and never use a file in it that was not verified as below.
 
-1. Call `get_asset_download_url` with the asset id (from `list_assets` or `search_assets`) and
-   check the link as above. It is valid for the time the tool states, so request it right before
-   downloading.
-2. Download it: `curl -fsS -o "<assets>/<type>/<name>" "<downloadUrl>"`. The server names the
-   file by its id, so choose `<name>` yourself: a short kebab-case name from the asset's
-   description plus the extension of its type (`logo-main-blue-on-yellow.png`). Never show the
-   link or curl's output to the user.
-3. If it fails, request a new link once. If it fails again, ask the user where the file is
-   saved and copy it into `<assets>/<type>/` (a copy, no new upload).
+**Before each piece, for every asset it uses** (logo, image, icon, font file), silently:
+
+1. Read the expected hash: `get_asset` with the asset id (from `list_assets` or `search_assets`)
+   returns the file's `sha256`. For a font file, use the `sha256` that `get_brand_fonts` or
+   `get_asset` gives for it; when neither gives one, treat the copy as different.
+2. Hash the local copy with `sha256sum "<file>"` or, where that does not exist,
+   `shasum -a 256 "<file>"` (the first field of the output).
+3. The file is missing, or its hash differs from the expected one, or you cannot tell which local
+   file is this asset's: download it again (below), replacing the old file, and hash it once more.
+   If the new hash still differs, request a new link once; if it still differs, stop with a plain
+   sentence ("No pude preparar este archivo de la marca. Inténtalo de nuevo en un momento.") and
+   do not use any copy of it.
+4. The hashes are equal: use the file as is.
+
+Say nothing about the check. If something has to be downloaded and the wait is noticeable, one
+line is enough: "Dame un momento, preparo los archivos de la marca."
+
+**Download:**
+
+1. Call `get_asset_download_url` with the asset id and check the link as above. It is valid for
+   the time the tool states, so request it right before downloading.
+2. `curl -fsS -o "<assets>/<type>/<name>" "<downloadUrl>"`. The server names the file by its id,
+   so choose `<name>` yourself the first time: a short kebab-case name from the asset's
+   description plus the extension of its type (`logo-main-blue-on-yellow.png`), and keep the same
+   name on later downloads. Never show the link or curl's output to the user.
+3. If it fails, request a new link once. If it fails again, stop as in step 3 above. Never ask
+   where the file is saved on the computer and never copy it from anywhere else.
 
 An uploaded font works the same way, with its link from `get_brand_fonts` instead: one link per
 weight and style, valid 60 minutes (call it again for fresh ones). Check each link as above and
 save it as `<assets>/fonts/<family>-<weight>-<style>.<ext>` (`souvenir-std-700-normal.woff2`),
 with the extension of the uploaded file (.ttf, .otf, .woff or .woff2). A font from Google Fonts
 has no file: the HTML links it instead.
+
+**A file that is not in Decodex.** If an asset a piece needs does not exist in Decodex, say so
+and offer to upload it; do not look for it anywhere else. Example: "Esta tipografía no está en
+Decodex. ¿La subimos?" Upload it with Option 0 or Option 1, then download it with this section.

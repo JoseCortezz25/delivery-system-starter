@@ -226,8 +226,8 @@ Call the tools for the approved items only, one item per call. Record each resul
 failed (with the plain reason) or skipped.
 
 Upload the brand files yourself with `decodex-asset-upload`, Option 2, taking each path from
-the project. Do not ask the user where the files are, skip that option's step 4 (the files
-already live in the project), and never use the upload panel or the browser here:
+the project's own folders. Do not ask the user where the files are, and never use the upload
+panel or the browser here:
 
 - Images with the same role go in one `request_batch_asset_upload`: one `-F "files=@<path>"` per
   file, in the order of the descriptions. Originals go first; their variants go in a later batch

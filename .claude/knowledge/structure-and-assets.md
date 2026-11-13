@@ -13,7 +13,7 @@ framework drafts, local copies of assets, generated output and the engine.
 project/
 ├── foundations/                  # local baseline — synced once to Decodex, then locked
 ├── frameworks/                   # local baseline — synced once to Decodex, then locked
-├── library/                      # "the assets folder" (`resources/` in older projects) — Insumos primitive: every raw brand asset, by type (uploaded to Decodex first)
+├── library/                      # "the assets folder" (`resources/` in older projects) — Insumos primitive: a cache of Decodex downloads, by type (verified before each piece)
 │   ├── logos/
 │   ├── images/
 │   ├── videos/
@@ -78,7 +78,9 @@ While it exists both folders are frozen for the AI; the rule and what it blocks 
 
 ## The assets folder
 
-The assets folder holds every raw brand asset. Older projects name it `resources/`, newer ones
+The assets folder is only a cache of the brand files downloaded from Decodex, which is the only
+source of them (every file is verified against Decodex before a piece uses it: `decodex-asset-upload`,
+"Local copy"). Older projects name it `resources/`, newer ones
 `library/`. Both names are valid and are respected as they are: **never rename, move or merge one
 into the other** (pieces in `content/` link assets by relative paths such as
 `../../../library/fonts/x.otf` or `../../../resources/...`). Which one it is, in this order:
@@ -94,10 +96,11 @@ of the folder the file is in.
 
 ## Where each asset goes
 
-- **Every raw brand asset is uploaded to Decodex first, and then a copy lives in the assets folder,
-  organized by type** (ordering and how the copy is made: `decodex-asset-upload`, "Local copy").
+- **Every raw brand asset lives in Decodex; the assets folder only holds a downloaded copy of it,
+  organized by type** (how it is downloaded and verified: `decodex-asset-upload`, "Local copy").
   This applies to every asset, whether every framework uses it (the main logo) or only one does
-  (a product photo): its copy goes in `<assets>/<type>/` all the same.
+  (a product photo): its copy goes in `<assets>/<type>/` all the same. A file never enters the
+  folder from anywhere else, and none is used without that verification.
 - **A framework-specific asset is not moved into `frameworks/` or a framework-specific folder.** It stays in
   the assets folder, under its type folder; a subfolder per framework is only created if the number of files actually
   justifies it — the same criterion used for variants (see `framework-construction.md`): don't
@@ -127,7 +130,7 @@ the exception, not the norm. A brand fact goes to `add_knowledge`, never to a ne
 
 Every kind of brand data has a Decodex tool: see the root `CLAUDE.md`, "Decodex tools by stage"
 (write and read tools per kind). Nothing is stored locally except a framework's temporary working
-draft while it is built and the assets-folder copies of asset files.
+draft while it is built and the assets-folder copies of Decodex downloads.
 
 ## New-project startup checklist
 

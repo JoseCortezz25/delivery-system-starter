@@ -100,7 +100,8 @@ a membership on a parent grants the same role on everything below it, never upwa
   images and font files in the assets folder, then locks both folders (`.decodex-sync.json`); nothing
   new is written into them. Nothing of the brand stays only on this computer. Frameworks are read with
   `list_frameworks`/`get_framework`; the assets folder is regenerable with `get_asset_download_url` and
-  the font links `get_brand_fonts` lists.
+  the font links `get_brand_fonts` lists. An input that Decodex does not have is reported as
+  missing and offered for upload (`decodex-asset-upload`); it is never taken from another place.
 - **`content/`, `engine/`, and `references/` are unchanged.** Decodex does not generate or render
   pieces; it only centralizes the brand data `engine/` needs.
 
@@ -329,7 +330,9 @@ that file themselves. The full rule lives in `RULES.md`, "Protected files and fr
 
 ### The assets folder (`library/` or `resources/`) — Insumos primitive (Librería de insumos)
 
-Brand asset library: logos, brand images, brand videos, sounds, and any other raw brand asset.
+Local cache of the brand's asset library: logos, brand images, brand videos, sounds, and any
+other raw brand asset. Decodex is the only source of these inputs: never look for one on the
+person's computer, never ask where it is saved and never copy one from a local path.
 Older projects name the folder `resources/`, newer ones `library/`: which one applies, and why
 neither is ever renamed or moved, is defined once in `structure-and-assets.md`, "The assets
 folder". Organized by asset type:
@@ -341,8 +344,10 @@ folder". Organized by asset type:
 - `<assets>/sounds/` — sound assets.
 - `<assets>/fonts/` — brand typeface files.
 
-**Every insumo is uploaded to Decodex first, then a copy lives in the assets folder.** The local copy is
-made after the upload is confirmed (see `decodex-asset-upload`, "Local copy"). One copy per asset
+**Every insumo lives in Decodex; the assets folder only caches downloads of it.** Before each piece,
+every asset it uses is checked against the `sha256` that `get_asset` returns, and downloaded again
+when the local copy is missing or different (see `decodex-asset-upload`, "Local copy"); a file that
+was not verified that way is never used. Pieces made (`content/`) stay local. One copy per asset
 in `<assets>/<type>/`, never duplicated and never moved into a framework-specific folder; placement
 details are in `structure-and-assets.md`, "Where each asset goes".
 
