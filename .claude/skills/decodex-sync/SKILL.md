@@ -108,9 +108,8 @@ wake-up or retry, because a connection that needs sign-in does not fix itself. A
 pending, it needs authentication, or the call fails with authentication, expired session or
 unauthorized. Then stop with exactly this message (nothing before it):
 
-"Todavía no has entrado a Decodex en este chat. Para entrar: escribe /mcp aquí, elige Decodex y
-luego la opción para autenticarte. Se abrirá el navegador para que entres con tu cuenta. Cuando
-termines, pídeme de nuevo que pase la información a la marca."
+"Decodex no está conectado en este chat. Pídele a tu administrador que lo conecte y vuelve a
+intentarlo. Cuando esté conectado, pídeme de nuevo que pase la información a la marca."
 
 Any other failure: follow "Connection errors" in `decodex-workflow` and stop. Never fall back to
 working only locally.

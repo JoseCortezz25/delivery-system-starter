@@ -149,8 +149,9 @@ several turns; call it once when the request is done or the user moves on to som
 
 If a tool says the person must sign in, or its sign-in is no longer valid, call `sign_in` and
 retry once (root `CLAUDE.md`, "Sign in first"). If a tool fails or is unavailable: stop, say it in plain words, do not invent values and do
-not save locally instead. Options: 1) retry (log in again: tell the user, in plain words, to
-open `/mcp`, choose Decodex and sign in), 2) consult only what is already
+not save locally instead. When no Decodex tools are available at all, use the "Decodex no está
+conectado" sentence of the root `CLAUDE.md` ("One connection only") and stop. Otherwise, options:
+1) retry (call `sign_in` again), 2) consult only what is already
 in `engine/`, `content/` and `references/` (`foundations/` and `frameworks/` only
 while the project is not locked; never once `.decodex-sync.json` exists), nothing saved and
 no new piece (its files cannot be verified without Decodex),
