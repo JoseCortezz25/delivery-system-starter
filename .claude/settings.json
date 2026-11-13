@@ -1,6 +1,6 @@
 {
   "outputStyle": "default",
-  "enabledMcpjsonServers": ["playwright", "chrome-devtools", "decodex-brand"],
+  "enabledMcpjsonServers": ["playwright", "chrome-devtools"],
   "permissions": {
     "deny": [
       "Read(./.env)",

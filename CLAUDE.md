@@ -16,8 +16,16 @@ running the `engine/` to generate `content/`.
 ## The brand lives in Decodex
 
 A brand's colors, fonts, voice, frameworks, assets, and knowledge live in **Decodex**, a cloud MCP
-server reachable through the `decodex-brand` connection in `.mcp.json`. One signed-in chat is one
-brand; call `get_brand` to confirm which one.
+server reachable through the Decodex connector of the Claude account (named `decodex-brand`; its
+tools may appear with a prefix, such as `mcp__claude_ai_decodex-brand__get_brand`). The project
+does not declare its own Decodex connection. One signed-in chat is one brand; call `get_brand` to
+confirm which one.
+
+**One connection only.** Sign in and make every Decodex call of the chat through the same
+connection. If you see Decodex tools under more than one name, use only the ones you signed in
+with; never mix them, because a sign-in only works on the connection that made it. If no Decodex
+tools are available at all, say exactly: "Decodex no está conectado en este chat. Pídele a tu
+administrador que lo conecte y vuelve a intentarlo." and stop.
 
 **Sign in first.** The agency may share one Claude account, so each chat signs in with the
 person's own Decodex user, and the brand and role of every call are theirs. Call `sign_in`

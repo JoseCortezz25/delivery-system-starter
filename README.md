@@ -100,7 +100,7 @@ revierten los cambios en `.claude/`, `CLAUDE.md` y `RULES.md`. Corre el comando 
 | Node.js (`npx`) | Servidores MCP de Playwright y Chrome DevTools | `brew install node` |
 | Google Chrome | Abrir piezas y páginas de carga | — |
 | Python 3.9+ con `.venv` | Exportar piezas a imagen | Ver abajo |
-| Cuenta de Decodex | Conexión `decodex-brand` (login OAuth en el primer uso). Rol Codifier para configurar la marca, Maker para producir | Pedirla al equipo Decodex |
+| Cuenta de Decodex | Conector `decodex-brand` activo en la cuenta de Claude y un usuario propio de Decodex. Rol Codifier para configurar la marca, Maker para producir | Pedirla al equipo Decodex |
 
 Entorno de Python, una vez por proyecto desde su raíz:
 
@@ -112,33 +112,32 @@ python3 -m venv .venv
 
 ## Conectar Decodex
 
-La marca vive en Decodex, así que antes de trabajar hay que conectarse (el servidor `decodex-brand`
-está declarado en `.mcp.json`; un chat con sesión iniciada es una marca).
+La marca vive en Decodex. La conexión es el **conector de Decodex de la cuenta de Claude**
+(`decodex-brand`), que activa el administrador una sola vez para toda la cuenta. El proyecto no
+declara su propia conexión: tener dos conexiones a Decodex en el mismo chat hace fallar el inicio de
+sesión.
 
-1. Abre la carpeta del proyecto en Claude Code (o Claude Desktop).
-2. Aprueba los servidores MCP del proyecto cuando te lo pida (incluido `decodex-brand`).
-3. Escribe `/mcp`, elige `decodex-brand` y la opción para autenticarte. Se abre el navegador para
-   entrar con tu cuenta de Decodex (OAuth).
-4. Vuelve al chat y verifica: pídele a Claude que te muestre la marca. Debe responder con el nombre
-   de la marca (la herramienta `get_brand`) y, si el proyecto tiene `codex-lock.json`, coincidir con
-   la marca del proyecto.
+1. Abre la carpeta del proyecto en Claude Desktop (o Claude Code con la misma cuenta).
+2. Claude inicia sesión con tu propio usuario de Decodex con la herramienta `sign_in`: un panel en
+   el chat, o un enlace y un código de 8 caracteres que pegas en el chat. Nunca escribas tu
+   contraseña en el chat.
+3. En el panel elige la marca del proyecto. Claude confirma con `get_brand` que coincide con
+   `codex-lock.json`.
 
-Si tu agencia comparte una sola cuenta de Claude, además tienes que iniciar sesión en cada chat con
-tu propio usuario de Decodex: Claude lo hace con la herramienta `sign_in` (un panel en el chat, o
-un enlace y un código de 8 caracteres que pegas en el chat). Nunca escribas tu contraseña en el
-chat. La sesión dura 8 horas; cada proyecto es de una sola marca: para trabajar otra marca se abre un chat nuevo en la carpeta de esa marca.
+La sesión dura 8 horas. Cada proyecto es de una sola marca: para trabajar otra marca se abre un
+chat nuevo en la carpeta de esa marca.
 
-Tu cuenta necesita el rol **Codifier** (configurar la marca) o **Maker** (crear piezas); lo asigna
+Tu usuario necesita el rol **Codifier** (configurar la marca) o **Maker** (crear piezas); lo asigna
 el equipo Decodex. Desde Claude solo se puede leer y guardar lo que ese rol permite.
 
 ### Si algo falla
 
 | Síntoma | Qué hacer |
 | --- | --- |
-| No aparece `decodex-brand` en `/mcp` | No se aprobaron los servidores MCP del proyecto, o falta `.mcp.json` en la raíz. Reabre el proyecto y aprueba los servidores; si el archivo falta, actualiza el arnés (`--mode update`). |
-| El inicio de sesión falla o entraste con otra cuenta | Repite el paso 3 desde `/mcp` y entra con la cuenta correcta. Si Claude dice que tu usuario no tiene acceso a la marca, pídele el acceso al administrador. |
-| La sesión expiró o Claude dice que no has entrado | Escribe `/mcp`, elige `decodex-brand` y autentícate de nuevo; luego repite tu pedido. |
-| Error de conexión a mitad de la sesión | Claude se detiene sin inventar valores ni guardar nada localmente y ofrece reintentar (volver a entrar con `/mcp`), consultar solo lo ya local o parar. |
+| Claude dice "Decodex no está conectado en este chat" | El conector de Decodex no está activo en la cuenta de Claude. Pídele al administrador que lo active. |
+| El inicio de sesión falla o entraste con otro usuario | Pídele a Claude que inicie sesión de nuevo y entra con el usuario correcto. Si dice que tu usuario no tiene acceso a la marca, pídele el acceso al administrador. |
+| La sesión expiró | Claude te pide iniciar sesión otra vez y sigue donde ibas. |
+| Error de conexión a mitad de la sesión | Claude se detiene sin inventar valores ni guardar nada localmente y ofrece reintentar (iniciar sesión de nuevo), consultar solo lo ya local o parar. |
 
 
 ### Crear o cambiar skills (mantenedores)

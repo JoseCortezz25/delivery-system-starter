@@ -1,16 +1,18 @@
 {
   "mcpServers": {
-    "decodex-brand": {
-      "type": "http",
-      "url": "https://mcp.decodex.quadi.io/mcp"
-    },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@playwright/mcp@0.0.83"]
+      "args": [
+        "-y",
+        "@playwright/mcp@0.0.83"
+      ]
     },
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@1.12.0"]
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@1.12.0"
+      ]
     }
   }
 }

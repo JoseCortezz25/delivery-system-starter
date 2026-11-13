@@ -49,7 +49,9 @@ SKELETON_DIRS=("foundations" "frameworks" "library" "content" "engine" "referenc
 # moved to a backup folder, never deleted.
 RETIRED_FILES=("AGENTS.md" "codex-flow.svg")
 # MCP servers older releases shipped and no longer do; removed from .mcp.json on update.
-RETIRED_MCP_SERVERS=("figma-desktop")
+# decodex-brand: Decodex now comes only from the Claude account connector; a second, project-level
+# connection made sign-in tokens fail with "wrong connection".
+RETIRED_MCP_SERVERS=("figma-desktop" "decodex-brand")
 
 die() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 say() { printf '%s\n' "$*"; }
