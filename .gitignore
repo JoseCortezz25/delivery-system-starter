@@ -26,3 +26,6 @@ pip-delete-this-directory.txt
 
 # Claude Code personal settings
 .claude/settings.local.json
+
+# Decodex usage reports
+usage-reports/
