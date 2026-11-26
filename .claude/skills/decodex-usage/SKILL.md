@@ -1,7 +1,7 @@
 ---
 name: decodex-usage
 description: "Trigger: /decodex-usage, usage, consumo, sesiones, costos, tokens, métricas de Claude. Extract raw Claude Code (Desktop & CLI) session telemetry — sessions, costs, tokens (input/output/cache/thinking), tools used with per-call duration, session durations, models, and effort levels — into a clean JSON file ready for downstream HTML report generation."
-compatibility: Requires python3 (standard library only; no external packages). Works on macOS, Windows, and Linux.
+compatibility: Requires python3 (3.9+, standard library only) OR built-in macOS osascript (JXA, zero dev tools required). Works on macOS, Windows, and Linux.
 metadata:
   version: "0.1.0"
 ---
@@ -26,7 +26,14 @@ Determine `--scope` directly from the user's message (do not ask unless the requ
 - **Current project (`project`)**: user says "proyecto", "este proyecto", "proyecto actual", "esta marca", "project", or `--scope project`.
 - **General (`all`, default)**: anything else, including running `/decodex-usage` with no arguments, or saying "general", "todas", "todo", "máquina", "all", `--all`, or `--scope all`.
 
-### 2. Map optional filters
+### 2. Resolve engine (default: auto)
+
+Determine `--engine` directly from the user's message:
+- **Auto (`auto`, default)**: tries Python first and falls back to macOS JXA (`js`) if Python is unavailable or fails.
+- **Python (`python`)**: user says "python", "con python", or `--engine python`.
+- **JavaScript / JXA (`js`)**: user says "js", "javascript", "jxa", "sin python", "osascript", or `--engine js`.
+
+### 3. Map optional filters
 
 If the user mentioned filters, pass them through:
 - Date lower bound (e.g. "desde 2026-11-01", `--since`) → `--since YYYY-MM-DD`
@@ -35,20 +42,21 @@ If the user mentioned filters, pass them through:
 - Compact mode (`--compact`, omits per-call tool array) → `--compact`
 - Custom output path (`--out <path>`) → `--out <path>`
 
-### 3. Run the extractor
+### 4. Run the extractor
 
-Run once with `python3`:
+Run once via the unified shell launcher:
 
 ```bash
-python3 "${CLAUDE_PROJECT_DIR:-.}/.claude/skills/decodex-usage/scripts/extract_usage.py" \
+bash "${CLAUDE_PROJECT_DIR:-.}/.claude/skills/decodex-usage/scripts/extract_usage.sh" \
   --scope <all|project|session> \
+  --engine <auto|python|js> \
   --project-dir "${CLAUDE_PROJECT_DIR:-.}" \
   --print-summary
 ```
 
-Add any mapped optional flags from step 2.
+Add any mapped optional flags from step 3.
 
-### 4. Report the result
+### 5. Report the result
 
 From the compact JSON printed to stdout, reply concisely in Spanish with:
 - Exact path of the generated JSON file (`outputFile`).
